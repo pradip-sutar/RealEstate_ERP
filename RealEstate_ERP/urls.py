@@ -12,4 +12,6 @@ urlpatterns = [
     path('department_label_handler/<int:labelid>/', views.department_label_handler, name='get_label'),
     path('department_grade_handler/', views.department_grade_handler, name='create_grade'),
     path('department_grade_handler/<int:gradeid>/', views.department_grade_handler, name='get_grade'),
+    path('department_designation_handler/', views.department_designation_handler, name='create_designation'),
+    path('department_designation_handler/<int:designationid>/', views.department_designation_handler, name='get_designation'),
 ]

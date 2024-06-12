@@ -135,7 +135,9 @@ def department_name_handler(request, departmentid=None):
     
     elif request.method == 'GET':
         if departmentid is None:
-            return JsonResponse({"error": "Department ID is required for GET requests"}, status=400)
+            departments = Department_Name.objects.all()
+            data = list(departments.values("departmentid", "name", "status"))
+            return JsonResponse(data, safe=False, status=200)
         
         try:
             department = get_object_or_404(Department_Name, pk=departmentid)
@@ -155,6 +157,64 @@ def department_name_handler(request, departmentid=None):
 
 @csrf_exempt
 @transaction.atomic
+def department_designation_handler(request, designationid=None):
+    if request.method == 'POST':
+        try:
+            data = JSONParser().parse(request)
+            designation = data.get('designation')
+            dept_name_id = data.get('dept_name_id')
+            roles_rights = data.get('roles_rights')
+
+            # Validate required fields
+            if not all([designation, dept_name_id, roles_rights]):
+                return JsonResponse({"error": "Missing required fields"}, status=400)
+
+            # Check if the department exists
+            try:
+                dept_name = Department_Name.objects.get(pk=dept_name_id)
+            except Department_Name.DoesNotExist:
+                return JsonResponse({"error": "Department does not exist"}, status=404)
+
+            # Create and save the new designation
+            department_designation = Department_Designation(
+                designation=designation,
+                dept_name=dept_name,
+                roles_rights=roles_rights
+            )
+            department_designation.save()
+            
+            return JsonResponse({"message": "Designation created successfully", "designationid": department_designation.id}, status=201)
+        
+        except ValidationError as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
+    
+    elif request.method == 'GET':
+        if designationid is None:
+            designations = Department_Designation.objects.all()
+            data = list(designations.values("id", "designation", "dept_name_id", "roles_rights"))
+            return JsonResponse(data, safe=False, status=200)
+        
+        try:
+            department_designation = get_object_or_404(Department_Designation, pk=designationid)
+            data = {
+                "designationid": department_designation.id,
+                "designation": department_designation.designation,
+                "dept_name": str(department_designation.dept_name),
+                "roles_rights": department_designation.roles_rights
+            }
+            return JsonResponse(data, status=200)
+        
+        except Department_Designation.DoesNotExist:
+            return JsonResponse({"error": "Designation does not exist"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
+    
+    return HttpResponse(status=405)
+
+@csrf_exempt
+@transaction.atomic
 def department_label_handler(request, labelid=None):
     if request.method == 'POST':
         try:
@@ -162,7 +222,6 @@ def department_label_handler(request, labelid=None):
             designation_id = data.get('designation_id')
             label_description = data.get('label_description')
             status = data.get('status')
-            print(designation_id,label_description,status)
 
             # Validate required fields
             if not all([designation_id, label_description]):
@@ -182,7 +241,9 @@ def department_label_handler(request, labelid=None):
     
     elif request.method == 'GET':
         if labelid is None:
-            return JsonResponse({"error": "Label ID is required for GET requests"}, status=400)
+            labels = Department_Label.objects.all()
+            data = list(labels.values("id", "designation_id", "label_description", "status"))
+            return JsonResponse(data, safe=False, status=200)
         
         try:
             label_obj = get_object_or_404(Department_Label, pk=labelid)
@@ -228,7 +289,9 @@ def department_grade_handler(request, gradeid=None):
     
     elif request.method == 'GET':
         if gradeid is None:
-            return JsonResponse({"error": "Grade ID is required for GET requests"}, status=400)
+            grades = Department_Grade.objects.all()
+            data = list(grades.values("id", "label_id", "grade_description", "status"))
+            return JsonResponse(data, safe=False, status=200)
         
         try:
             grade_obj = get_object_or_404(Department_Grade, pk=gradeid)
