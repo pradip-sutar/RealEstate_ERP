@@ -589,3 +589,29 @@ def system_branch_contact_handler(request):
             branch_contacts = System_branch_contact.objects.all()
             serializer = SystemBranchContactSerializer(branch_contacts, many=True)
             return JsonResponse({"data": serializer.data}, status=200)
+        
+@api_view(['POST', 'GET'])
+@transaction.atomic
+def system_bank_details_handler(request):
+    if request.method == 'POST':
+        data = request.data
+        serializer = SystemBankDetailsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Bank details saved", "data": serializer.data}, status=201)
+        else:
+            return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'GET':
+        bank_name = request.query_params.get('bank_name', None)
+        branch_name = request.query_params.get('branch_name', None)
+        
+        filters = {}
+        if bank_name:
+            filters['bank_name__icontains'] = bank_name
+        if branch_name:
+            filters['branch_name__icontains'] = branch_name
+
+        bank_details = System_bank_details.objects.filter(**filters)
+        serializer = SystemBankDetailsSerializer(bank_details, many=True)
+        return JsonResponse({"data": serializer.data}, status=200)

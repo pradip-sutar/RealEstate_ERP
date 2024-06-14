@@ -132,7 +132,29 @@ class System_branch_contact(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.designation} ({self.branch.name})"
-    
+
+class System_bank_details(models.Model):
+    BANK_ACCOUNT_TYPES = [
+        ('Savings', 'Savings'),
+        ('Current', 'Current'),
+        ('Fixed Deposit', 'Fixed Deposit'),
+        ('Recurring Deposit', 'Recurring Deposit'),
+        ('NRO', 'NRO'),
+        ('NRE', 'NRE'),
+        ('FCNR', 'FCNR'),
+    ]
+
+    bank_name = models.CharField(max_length=255)
+    branch_name = models.CharField(max_length=255)
+    IFSC = models.CharField(max_length=11)
+    account_name = models.CharField(max_length=255)
+    account_no = models.CharField(max_length=20)
+    bank_logo = models.ImageField(upload_to='bank_logos/', blank=True, null=True)
+    account_type = models.CharField(max_length=50, choices=BANK_ACCOUNT_TYPES)
+
+    def __str__(self):
+        return f"{self.bank_name} - {self.branch_name}"
+
 class Department_Name(models.Model):
     departmentid = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255)

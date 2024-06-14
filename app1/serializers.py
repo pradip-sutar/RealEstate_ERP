@@ -60,10 +60,15 @@ class SystemBranchContactSerializer(serializers.ModelSerializer):
         model = System_branch_contact
         fields = '__all__'
 
+class SystemBankDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = System_bank_details
+        fields = '__all__'
 
 
 
 
 
-        
+
+
 
