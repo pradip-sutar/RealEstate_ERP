@@ -90,6 +90,49 @@ class System_branch_type(models.Model):
     def __str__(self):
         return self.type_name
     
+class System_branch_details(models.Model):
+    name = models.CharField(max_length=255)
+    alias = models.CharField(max_length=255, blank=True, null=True)
+    branch_id = models.BigIntegerField(primary_key=True)
+    branch_type = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
+    size = models.CharField(max_length=255)
+    incorporation_no = models.CharField(max_length=255)
+    incorporation_age = models.CharField(max_length=255)
+    incorporation_date = models.DateField()
+    incorporation_certificate = models.FileField(upload_to='incorporation_certificates/',blank=True,null=True)
+    tax_certificate_details = models.TextField()
+    PAN = models.CharField(max_length=10)
+    country = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    PIN = models.CharField(max_length=20)
+    address = models.TextField()
+    registered_office_address = models.TextField()
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    whatsapp = models.CharField(max_length=15, blank=True, null=True)
+    def __str__(self):
+        return f"{self.name} ({self.branch_id})"
+    
+class System_branch_brand(models.Model):
+    letter_header = models.FileField(upload_to='letter_headers/')
+    letter_footer = models.FileField(upload_to='letter_footers/')
+    branch = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"Brand for Branch ID: {self.branch.branch_id}"
+    
+class System_branch_contact(models.Model):
+    name = models.CharField(max_length=255)
+    designation = models.CharField(max_length=255)
+    role = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    whatsapp = models.CharField(max_length=15, blank=True, null=True)
+    branch = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} - {self.designation} ({self.branch.name})"
+    
 class Department_Name(models.Model):
     departmentid = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255)

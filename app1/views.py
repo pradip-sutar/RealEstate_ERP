@@ -506,3 +506,86 @@ def system_branch_type_handler(request):
         branch_types = System_branch_type.objects.all()
         serializer = SystemBranchTypeSerializer(branch_types, many=True)
         return JsonResponse({"data": serializer.data}, status=200)
+    
+
+@api_view(['POST', 'GET'])
+@transaction.atomic
+def system_branch_details_handler(request):
+    if request.method == 'POST':
+        data = request.data
+        serializer = SystemBranchDetailsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Branch details saved", "data": serializer.data}, status=201)
+        else:
+            return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'GET':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is not None:
+            try:
+                branch_id = int(branch_id)
+                branch_details = System_branch_details.objects.filter(branch_id=branch_id)
+                serializer = SystemBranchDetailsSerializer(branch_details, many=True)
+                return JsonResponse({"data": serializer.data}, status=200)
+            except ValueError:
+                return JsonResponse({"error": "Invalid branch_id"}, status=400)
+        else:
+            branch_details = System_branch_details.objects.all()
+            serializer = SystemBranchDetailsSerializer(branch_details, many=True)
+            return JsonResponse({"data": serializer.data}, status=200)
+        
+
+@api_view(['POST', 'GET'])
+@transaction.atomic
+def system_branch_brand_handler(request):
+    if request.method == 'POST':
+        data = request.data
+        serializer = SystemBranchBrandSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Branch brand details saved", "data": serializer.data}, status=201)
+        else:
+            return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'GET':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is not None:
+            try:
+                branch_id = int(branch_id)
+                branch_brands = System_branch_brand.objects.filter(branch__branch_id=branch_id)
+                serializer = SystemBranchBrandSerializer(branch_brands, many=True)
+                return JsonResponse({"data": serializer.data}, status=200)
+            except ValueError:
+                return JsonResponse({"error": "Invalid branch_id"}, status=400)
+        else:
+            branch_brands = System_branch_brand.objects.all()
+            serializer = SystemBranchBrandSerializer(branch_brands, many=True)
+            return JsonResponse({"data": serializer.data}, status=200)
+        
+@api_view(['POST', 'GET'])
+@transaction.atomic
+def system_branch_contact_handler(request):
+    if request.method == 'POST':
+        data = request.data
+        serializer = SystemBranchContactSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Branch contact details saved", "data": serializer.data}, status=201)
+        else:
+            return JsonResponse(serializer.errors, status=400)
+
+    elif request.method == 'GET':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is not None:
+            try:
+                branch_id = int(branch_id)
+                branch_contacts = System_branch_contact.objects.filter(branch__branch_id=branch_id)
+                serializer = SystemBranchContactSerializer(branch_contacts, many=True)
+                return JsonResponse({"data": serializer.data}, status=200)
+            except ValueError:
+                return JsonResponse({"error": "Invalid branch_id"}, status=400)
+        else:
+            branch_contacts = System_branch_contact.objects.all()
+            serializer = SystemBranchContactSerializer(branch_contacts, many=True)
+            return JsonResponse({"data": serializer.data}, status=200)

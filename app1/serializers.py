@@ -39,7 +39,31 @@ class SystemOtherDetailSerializer(serializers.ModelSerializer):
 
 
 
+
 class SystemBranchTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = System_branch_type
         fields = '__all__'
+
+class SystemBranchDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = System_branch_details
+        fields = '__all__'
+
+class SystemBranchBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = System_branch_brand
+        fields = '__all__'
+
+class SystemBranchContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = System_branch_contact
+        fields = '__all__'
+
+
+
+
+
+
+        
+
