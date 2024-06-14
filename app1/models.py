@@ -12,17 +12,22 @@ class Admin(models.Model):
     def __str__(self):
         return f"{self.name}"
     
+class System_company_type(models.Model):
+    type_name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.type_name
+
 class System_company_detail(models.Model):
     companyid = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     alias = models.CharField(max_length=255, blank=True, null=True)
-    company_type = models.CharField(max_length=255)
+    company_type = models.ForeignKey(System_company_type,on_delete=models.CASCADE)
     company_size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)
     incorporation_agency = models.CharField(max_length=255)
     date = models.DateField()
-    certificate = models.FileField(upload_to='company_certificates/')
-    TAX_certificate = models.FileField(upload_to='tax_certificates/')
+    certificate = models.FileField(upload_to='company_certificates/',blank=True,null=True)
+    TAX_certificate = models.FileField(upload_to='tax_certificates/',blank=True,null=True)
     PAN = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
@@ -37,19 +42,17 @@ class System_company_detail(models.Model):
         return self.name
     
 class System_brand_detail(models.Model):
-    brand_logo = models.ImageField(upload_to='brand_logos/')
-    favicon = models.ImageField(upload_to='favicons/')
-    letter_header = models.ImageField(upload_to='letter_headers/')
-    letter_footer = models.ImageField(upload_to='letter_footers/')
+    brand_logo = models.ImageField(upload_to='brand_logos/',blank=True,null=True)
+    favicon = models.ImageField(upload_to='favicons/',blank=True,null=True)
+    letter_header = models.ImageField(upload_to='letter_headers/',blank=True,null=True)
+    letter_footer = models.ImageField(upload_to='letter_footers/',blank=True,null=True)
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
-
     def __str__(self):
         return f"{self.company_id.name}"
     
 class System_business_detail(models.Model):
     address = models.TextField()
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
-
     def __str__(self):
         return f"{self.company_id.name} - Business Details"
 
@@ -81,6 +84,11 @@ class System_other_detail(models.Model):
 
     def __str__(self):
         return f"{self.name} - Other Details ({self.company_id.name})"
+    
+class System_branch_type(models.Model):
+    type_name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.type_name
     
 class Department_Name(models.Model):
     departmentid = models.BigIntegerField(primary_key=True)
