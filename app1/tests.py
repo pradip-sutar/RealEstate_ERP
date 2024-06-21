@@ -3,6 +3,7 @@ import csv
 import json
 import urllib3
 
+<<<<<<< HEAD
 
 
 file_path = "D:\\GEGDC\\SP815975\\Others\\ActivityLogs.csv"
@@ -86,3 +87,6 @@ with open(csv_file_path2, mode='w', newline='') as file:
     writer.writerows(matched_data)
  
 print(f'CSV file "{csv_file_path2}" has been successfully created with the data.')
+=======
+# Create your tests here.
+>>>>>>> f03eeb3825fb507ec3414d98915f2dedd3f7c74b
