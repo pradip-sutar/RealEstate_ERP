@@ -31,6 +31,7 @@ urlpatterns = [
     path('system_branch_brand_handler/', views.system_branch_brand_handler, name='system_branch_brand_handler'),
     path('system_branch_contact_handler/', views.system_branch_contact_handler, name='system_branch_contact_handler'),
     path('system_bank_details_handler/', views.system_bank_details_handler, name='system_bank_details_handler'),
+    path('customer_handler/', views.customer_handler, name='customer_handler'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

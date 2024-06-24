@@ -226,3 +226,31 @@ class Address(models.Model):
     def __str__(self):
         return f"Address for {self.emp_id.name}"
     
+
+class Customer(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(unique=True)
+    present_address = models.TextField()
+    present_city = models.CharField(max_length=100)
+    present_district = models.CharField(max_length=100)
+    present_country = models.CharField(max_length=100)
+    present_pincode = models.CharField(max_length=20)
+    permanent_address = models.TextField()
+    permanent_city = models.CharField(max_length=100)
+    permanent_district = models.CharField(max_length=100)
+    permanent_country = models.CharField(max_length=100)
+    permanent_pincode = models.CharField(max_length=20)
+    age = models.PositiveIntegerField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    nationality = models.CharField(max_length=100)
+    religion = models.CharField(max_length=100)
+    caste = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
