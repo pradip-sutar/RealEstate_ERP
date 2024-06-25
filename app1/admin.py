@@ -78,7 +78,8 @@ class CustomerAdmin(admin.ModelAdmin):
 class PreProjectNewAdmin(admin.ModelAdmin):
     list_display = [
         'project_name','project_location','ownership_type',
-        'project_segment','project_type','project_area'
+        'project_segment','project_type','project_area','project_description',
+        'approvals','expenses','document_history','generate_agreement','upload_document'
     ]
 
 

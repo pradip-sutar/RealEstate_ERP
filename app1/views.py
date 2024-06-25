@@ -619,6 +619,7 @@ def system_bank_details_handler(request):
         return JsonResponse({"data": serializer.data}, status=200)
     
 @api_view(['GET', 'POST'])
+@transaction.atomic
 def customer_handler(request):
     if request.method == 'GET':
         customers = Customer.objects.all()
@@ -635,6 +636,7 @@ def customer_handler(request):
         
 
 @api_view(['GET', 'POST'])
+@transaction.atomic
 def pre_project_new_handler(request):
     try:
         if request.method == 'GET':
