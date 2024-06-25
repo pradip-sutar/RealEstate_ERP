@@ -10,6 +10,8 @@ from django.http import HttpResponse,HttpRequest,JsonResponse
 from django.db import transaction, IntegrityError
 import re
 import random
+from rest_framework import status
+
 # Create your views here.
 @csrf_exempt
 def admin_view(request,mob):
@@ -630,3 +632,22 @@ def customer_handler(request):
             return JsonResponse({"message": "Customer created successfully", "data": serializer.data}, status=201)
         else:
             return JsonResponse(serializer.errors, status=400)
+        
+
+@api_view(['GET', 'POST'])
+def pre_project_new_handler(request):
+    try:
+        if request.method == 'GET':
+            projects = PreProjectNew.objects.all()
+            serializer = PreProjectNewSerializer(projects, many=True)
+            return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+        elif request.method == 'POST':
+            serializer = PreProjectNewSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"message": "Project created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

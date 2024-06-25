@@ -71,7 +71,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__' 
 
 
-
+class PreProjectNewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PreProjectNew
+        fields = '__all__'
 
 
 
