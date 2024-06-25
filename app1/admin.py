@@ -53,16 +53,34 @@ class TeamManagementAdmin(admin.ModelAdmin):
 
 @admin.register(Emp_company_profile)
 class EmpCompanyProfileAdmin(admin.ModelAdmin):
-    list_display = ['empid', 'name', 'mobileno', 'whatsapp', 'email', 'emergency_no', 'date_of_joining', 'date_of_leaving', 'branch', 'department', 'designation', 'level', 'grade', 'role']
+    list_display = ['empid', 'name', 'mobileno', 'whatsapp', 'email', 'emergency_no',
+                    'date_of_joining', 'date_of_leaving', 'branch', 'department',
+                    'designation', 'level', 'grade', 'role'
+                    ]
 
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ['emp_id', 'present_add', 'present_country', 'present_state', 'present_city', 'present_pincode', 'permanent_add', 'permanent_pincode', 'permanent_city', 'permanent_state', 'permanent_country']
+    list_display = ['emp_id', 'present_add', 'present_country', 'present_state',
+                    'present_city', 'present_pincode', 'permanent_add', 'permanent_pincode',
+                    'permanent_city', 'permanent_state', 'permanent_country'
+                    ]
 
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = [
+        'name', 'phone', 'email', 'present_city', 'present_district',
+        'present_country', 'present_pincode', 'permanent_city',
+        'permanent_district', 'permanent_country', 'permanent_pincode',
+        'age', 'gender', 'nationality', 'religion', 'caste'
+    ]
 
-
-
-
+@admin.register(PreProjectNew)
+class PreProjectNewAdmin(admin.ModelAdmin):
+    list_display = [
+        'project_name','project_location','ownership_type',
+        'project_segment','project_type','project_area','project_description',
+        'approvals','expenses','document_history','generate_agreement','upload_document'
+    ]
 
 
 
