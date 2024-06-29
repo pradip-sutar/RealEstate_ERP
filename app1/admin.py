@@ -51,20 +51,6 @@ class Department_Grade(admin.ModelAdmin):
 class TeamManagementAdmin(admin.ModelAdmin):
     list_display = ['team_leader', 'team_member', 'department_id']
 
-@admin.register(Emp_company_profile)
-class EmpCompanyProfileAdmin(admin.ModelAdmin):
-    list_display = ['empid', 'name', 'mobileno', 'whatsapp', 'email', 'emergency_no',
-                    'date_of_joining', 'date_of_leaving', 'branch', 'department',
-                    'designation', 'level', 'grade', 'role'
-                    ]
-
-@admin.register(Address)
-class AddressAdmin(admin.ModelAdmin):
-    list_display = ['emp_id', 'present_add', 'present_country', 'present_state',
-                    'present_city', 'present_pincode', 'permanent_add', 'permanent_pincode',
-                    'permanent_city', 'permanent_state', 'permanent_country'
-                    ]
-
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = [
