@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'app1'
+    'app1',
+    'Employee_Management',
 ]
 
 MIDDLEWARE = [

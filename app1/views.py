@@ -104,214 +104,6 @@ def create_emp_profile(request):
     return HttpResponse(status=405)
 
 
-@csrf_exempt
-@transaction.atomic
-def department_name_handler(request, departmentid=None):
-    if request.method == 'POST':
-        try:
-            data = JSONParser().parse(request)
-            name = data.get('name')
-            status = data.get('status')
-
-            # Validate required fields
-            if not all([name, status is not None]):
-                return JsonResponse({"error": "Missing required fields"}, status=400)
-
-            # Check if the department name is already taken
-            if Department_Name.objects.filter(name=name).exists():
-                return JsonResponse({"error": "Department name already taken, please choose a different name"}, status=400)
-
-            # Generate a unique department ID
-            while True:
-                departmentid = random.randint(1, 10**10)
-                if not Department_Name.objects.filter(departmentid=departmentid).exists():
-                    break
-
-            department = Department_Name(departmentid=departmentid, name=name, status=status)
-            department.save()
-            
-            return JsonResponse({"message": "Department created successfully", "departmentid": departmentid}, status=201)
-        
-        except ValidationError as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    elif request.method == 'GET':
-        if departmentid is None:
-            departments = Department_Name.objects.all()
-            data = list(departments.values("departmentid", "name", "status"))
-            return JsonResponse(data, safe=False, status=200)
-        
-        try:
-            department = get_object_or_404(Department_Name, pk=departmentid)
-            data = {
-                "departmentid": department.departmentid,
-                "name": department.name,
-                "status": department.status
-            }
-            return JsonResponse(data, status=200)
-        
-        except Department_Name.DoesNotExist:
-            return JsonResponse({"error": "Department does not exist"}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    return HttpResponse(status=405)
-
-@csrf_exempt
-@transaction.atomic
-def department_designation_handler(request, designationid=None):
-    if request.method == 'POST':
-        try:
-            data = JSONParser().parse(request)
-            designation = data.get('designation')
-            dept_name_id = data.get('dept_name_id')
-            roles_rights = data.get('roles_rights')
-
-            # Validate required fields
-            if not all([designation, dept_name_id, roles_rights]):
-                return JsonResponse({"error": "Missing required fields"}, status=400)
-
-            # Check if the department exists
-            try:
-                dept_name = Department_Name.objects.get(pk=dept_name_id)
-            except Department_Name.DoesNotExist:
-                return JsonResponse({"error": "Department does not exist"}, status=404)
-
-            # Create and save the new designation
-            department_designation = Department_Designation(
-                designation=designation,
-                dept_name=dept_name,
-                roles_rights=roles_rights
-            )
-            department_designation.save()
-            
-            return JsonResponse({"message": "Designation created successfully", "designationid": department_designation.id}, status=201)
-        
-        except ValidationError as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    elif request.method == 'GET':
-        if designationid is None:
-            designations = Department_Designation.objects.all()
-            data = list(designations.values("id", "designation", "dept_name_id", "roles_rights"))
-            return JsonResponse(data, safe=False, status=200)
-        
-        try:
-            department_designation = get_object_or_404(Department_Designation, pk=designationid)
-            data = {
-                "designationid": department_designation.id,
-                "designation": department_designation.designation,
-                "dept_name": str(department_designation.dept_name),
-                "roles_rights": department_designation.roles_rights
-            }
-            return JsonResponse(data, status=200)
-        
-        except Department_Designation.DoesNotExist:
-            return JsonResponse({"error": "Designation does not exist"}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    return HttpResponse(status=405)
-
-@csrf_exempt
-@transaction.atomic
-def department_label_handler(request, labelid=None):
-    if request.method == 'POST':
-        try:
-            data = JSONParser().parse(request)
-            designation_id = data.get('designation_id')
-            label_description = data.get('label_description')
-            status = data.get('status')
-
-            # Validate required fields
-            if not all([designation_id, label_description]):
-                return JsonResponse({"error": "Missing required fields"}, status=400)
-
-            designation = get_object_or_404(Department_Designation, pk=designation_id)
-
-            label_obj = Department_Label(designation=designation, label_description=label_description, status=status)
-            label_obj.save()
-            
-            return JsonResponse({"message": "Label created successfully"}, status=201)
-        
-        except ValidationError as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    elif request.method == 'GET':
-        if labelid is None:
-            labels = Department_Label.objects.all()
-            data = list(labels.values("id", "designation_id", "label_description", "status"))
-            return JsonResponse(data, safe=False, status=200)
-        
-        try:
-            label_obj = get_object_or_404(Department_Label, pk=labelid)
-            data = {
-                "designation": label_obj.designation.designation,
-                "label_description": label_obj.label_description,
-                "status": label_obj.status
-            }
-            return JsonResponse(data, status=200)
-        
-        except Department_Label.DoesNotExist:
-            return JsonResponse({"error": "Label does not exist"}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    return HttpResponse(status=405)
-
-@csrf_exempt
-@transaction.atomic
-def department_grade_handler(request, gradeid=None):
-    if request.method == 'POST':
-        try:
-            data = JSONParser().parse(request)
-            label_id = data.get('label_id')
-            grade_description = data.get('grade_description')
-            status = data.get('status')
-
-            # Validate required fields
-            if not all([label_id, grade_description, status]):
-                return JsonResponse({"error": "Missing required fields"}, status=400)
-
-            label = get_object_or_404(Department_Label, pk=label_id)
-
-            grade_obj = Department_Grade(label=label, grade_description=grade_description, status=status)
-            grade_obj.save()
-            
-            return JsonResponse({"message": "Grade created successfully"}, status=201)
-        
-        except ValidationError as e:
-            return JsonResponse({"error": str(e)}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    
-    elif request.method == 'GET':
-        if gradeid is None:
-            grades = Department_Grade.objects.all()
-            data = list(grades.values("id", "label_id", "grade_description", "status"))
-            return JsonResponse(data, safe=False, status=200)
-        
-        try:
-            grade_obj = get_object_or_404(Department_Grade, pk=gradeid)
-            data = {
-                "label": grade_obj.label.label_description,
-                "grade_description": grade_obj.grade_description,
-                "status": grade_obj.status
-            }
-            return JsonResponse(data, status=200)
-        
-        except Department_Grade.DoesNotExist:
-            return JsonResponse({"error": "Grade does not exist"}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": "An error occurred: " + str(e)}, status=500)
-    return HttpResponse(status=405)
-
 @api_view(['POST', 'GET'])
 @transaction.atomic
 def system_company_type_handler(request,type_name=None):
@@ -653,3 +445,55 @@ def pre_project_new_handler(request):
                 return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def department_name_handler(request):
+    if request.method == 'GET':
+        data = Department_Name.objects.all()
+        serializers = DepartmentNameSerializer(data, many=True)
+        return JsonResponse({"data": serializers.data}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        data = request.data
+        try:
+            while True:
+                id = random.randrange(1000000, 99999999)
+                if not Department_Name.objects.filter(departmentid=id).exists():
+                    data['departmentid'] = id
+                    serializers = DepartmentNameSerializer(data=data)
+                    if serializers.is_valid():
+                        serializers.save()
+                        return JsonResponse({"message": "Department created successfully", "data": serializers.data}, status=status.HTTP_201_CREATED)
+                    else:
+                        return JsonResponse(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def department_designation_handler(request):
+    if request.method == 'GET':
+        data = Department_Designation.objects.all()
+        serializers = DepartmentDesignationSerializer(data, many=True)
+        return JsonResponse({"data": serializers.data}, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        data = request.data
+        try:
+            # Check if the designation already exists within the same department
+            if Department_Designation.objects.filter(designation=data.get('designation'), dept_name=data.get('dept_name')).exists():
+                return JsonResponse({"error": "Designation already exists in this department"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            serializers = DepartmentDesignationSerializer(data=data)
+            if serializers.is_valid():
+                serializers.save()
+                return JsonResponse({"message": "Designation created successfully", "data": serializers.data}, status=status.HTTP_201_CREATED)
+            else:
+                return JsonResponse(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

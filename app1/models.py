@@ -157,7 +157,7 @@ class System_bank_details(models.Model):
 
 class Department_Name(models.Model):
     departmentid = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,unique=True)
     status = models.BooleanField()
     def __str__(self):
         return self.name
@@ -191,42 +191,6 @@ class Team_management(models.Model):
     def __str__(self):
         return f"Team for {self.department_id.name}"
     
-class Emp_company_profile(models.Model):
-    empid = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    mobileno = models.IntegerField()
-    whatsapp = models.IntegerField(blank=True, null=True)
-    email = models.EmailField()
-    emergency_no = models.IntegerField()
-    date_of_joining = models.DateField()
-    date_of_leaving = models.DateField(blank=True, null=True)
-    branch = models.CharField(max_length=255)
-    department = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
-    designation = models.CharField(max_length=255)
-    level = models.CharField(max_length=255)
-    grade = models.CharField(max_length=255)
-    role = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-    
-class Address(models.Model):
-    present_add = models.TextField()
-    present_country = models.CharField(max_length=255)
-    present_state = models.CharField(max_length=255)
-    present_city = models.CharField(max_length=255)
-    present_pincode = models.CharField(max_length=20)
-    permanent_add = models.TextField()
-    permanent_pincode = models.CharField(max_length=20)
-    permanent_city = models.CharField(max_length=255)
-    permanent_state = models.CharField(max_length=255)
-    permanent_country = models.CharField(max_length=255)
-    emp_id = models.ForeignKey(Emp_company_profile, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Address for {self.emp_id.name}"
-    
-
 class Customer(models.Model):
     GENDER_CHOICES = [
         ('M', 'Male'),
