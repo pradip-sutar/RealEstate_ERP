@@ -32,7 +32,7 @@ class Address(models.Model):
     permanent_city = models.CharField(max_length=255)
     permanent_state = models.CharField(max_length=255)
     permanent_country = models.CharField(max_length=255)
-    emp_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Address for {self.emp_id.name}"
@@ -70,3 +70,33 @@ class Personal_Profile(models.Model):
     employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.employee_id.name} - {self.nationality}"
+    
+class FamilyProfile(models.Model):
+    details = models.JSONField()
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.details}"
+    
+class EducationProfile(models.Model):
+    details = models.JSONField()
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.details}"
+    
+class Trainig(models.Model):
+    details = models.JSONField()
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.details}"
+    
+class Experience(models.Model):
+    details = models.JSONField()
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.details}"
+    
+class Skill_Level(models.Model):
+    details = models.CharField(max_length=100)
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.details}"

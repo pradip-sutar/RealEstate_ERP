@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from app1.models import *
+from Employee_Management.models import *
 from django.http import HttpResponse,HttpRequest,JsonResponse
 from django.db import transaction, IntegrityError
 import re
@@ -73,7 +74,7 @@ def create_emp_profile(request):
 
             department = get_object_or_404(Department_Name, pk=department_id)
 
-            emp_profile = Emp_company_profile(
+            emp_profile = Company_profile(
                 empid=empid,
                 name=name,
                 mobileno=mobileno,
