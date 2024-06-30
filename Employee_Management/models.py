@@ -35,7 +35,7 @@ class Address(models.Model):
     employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Address for {self.emp_id.name}"
+        return f"Address for {self.employee_id.name}"
     
 class Personal_Profile(models.Model):
     GENDER_CHOICES = [

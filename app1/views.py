@@ -412,6 +412,20 @@ def system_bank_details_handler(request):
         return JsonResponse({"data": serializer.data}, status=200)
     
 @api_view(['GET', 'POST'])
+def system_board_of_directors_handler(request):
+    if request.method == 'POST':
+        serializer = SystemBoardOfDirectorsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        directors = System_Board_of_Directors.objects.all()
+        serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+
+@api_view(['GET', 'POST'])
 @transaction.atomic
 def customer_handler(request):
     if request.method == 'GET':
@@ -447,8 +461,6 @@ def pre_project_new_handler(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
-
 
 @api_view(['GET', 'POST'])
 @transaction.atomic

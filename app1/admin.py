@@ -30,6 +30,10 @@ class SystemSocialDetailsAdmin(admin.ModelAdmin):
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
     list_display = ['name', 'details', 'company_id']
 
+@admin.register(System_Board_of_Directors)
+class SystemBoardOfDirectorsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'designation', 'date_of_join', 'date_of_leave', 'share', 'stakeholder']
+
 @admin.register(Department_Name)
 class Department_Name(admin.ModelAdmin):
     list_display = ['departmentid', 'name', 'status']
