@@ -30,6 +30,13 @@ class SystemSocialDetailsAdmin(admin.ModelAdmin):
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
     list_display = ['name', 'details', 'company_id']
 
+@admin.register(System_bank_details)
+class SystemBankDetailsAdmin(admin.ModelAdmin):
+    list_display = ['bank_name', 'branch_name', 'IFSC', 'account_name', 'account_no', 'account_type']
+    search_fields = ['bank_name', 'branch_name', 'IFSC', 'account_name', 'account_no']
+    list_filter = ['account_type']
+    readonly_fields = ['bank_logo']
+
 @admin.register(Department_Name)
 class Department_Name(admin.ModelAdmin):
     list_display = ['departmentid', 'name', 'status']
