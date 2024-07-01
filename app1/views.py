@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from app1.models import *
+from Employee_Management.models import *
 from django.http import HttpResponse,HttpRequest,JsonResponse
 from django.db import transaction, IntegrityError
 import re
@@ -73,7 +74,7 @@ def create_emp_profile(request):
 
             department = get_object_or_404(Department_Name, pk=department_id)
 
-            emp_profile = Emp_company_profile(
+            emp_profile = Company_profile(
                 empid=empid,
                 name=name,
                 mobileno=mobileno,
@@ -304,85 +305,89 @@ def system_branch_type_handler(request):
 
 @api_view(['POST', 'GET'])
 @transaction.atomic
-def system_branch_details_handler(request):
+def system_branch_handler(request):
     if request.method == 'POST':
         data = request.data
-        serializer = SystemBranchDetailsSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Branch details saved", "data": serializer.data}, status=201)
+
+        # Save branch details
+        branch_details_data = data.get('branch_details', {})
+        branch_details_serializer = SystemBranchDetailsSerializer(data=branch_details_data)
+        if branch_details_serializer.is_valid():
+            branch_details = branch_details_serializer.save()
         else:
-            return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(branch_details_serializer.errors, status=400)
+
+        # Save branch brand
+        branch_brand_data = data.get('branch_brand', {})
+        branch_brand_data['branch'] = branch_details.branch_id
+        branch_brand_serializer = SystemBranchBrandSerializer(data=branch_brand_data)
+        if branch_brand_serializer.is_valid():
+            branch_brand_serializer.save()
+        else:
+            return JsonResponse(branch_brand_serializer.errors, status=400)
+
+        # Save branch contact
+        branch_contact_data = data.get('branch_contact', {})
+        branch_contact_data['branch'] = branch_details.branch_id
+        branch_contact_serializer = SystemBranchContactSerializer(data=branch_contact_data)
+        if branch_contact_serializer.is_valid():
+            branch_contact_serializer.save()
+        else:
+            return JsonResponse(branch_contact_serializer.errors, status=400)
+
+        return JsonResponse({"message": "Branch details, brand, and contact saved successfully"}, status=201)
 
     elif request.method == 'GET':
         branch_id = request.query_params.get('branch_id', None)
         if branch_id is not None:
             try:
                 branch_id = int(branch_id)
-                branch_details = System_branch_details.objects.filter(branch_id=branch_id)
-                serializer = SystemBranchDetailsSerializer(branch_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
             except ValueError:
                 return JsonResponse({"error": "Invalid branch_id"}, status=400)
+
+            # Retrieve branch details
+            try:
+                branch_details = System_branch_details.objects.get(branch_id=branch_id)
+                branch_details_serializer = SystemBranchDetailsSerializer(branch_details)
+            except System_branch_details.DoesNotExist:
+                return JsonResponse({"error": "Branch details not found"}, status=404)
+
+            # Retrieve branch brand
+            try:
+                branch_brand = System_branch_brand.objects.get(branch=branch_details)
+                branch_brand_serializer = SystemBranchBrandSerializer(branch_brand)
+            except System_branch_brand.DoesNotExist:
+                branch_brand_serializer = None
+
+            # Retrieve branch contact
+            try:
+                branch_contact = System_branch_contact.objects.get(branch=branch_details)
+                branch_contact_serializer = SystemBranchContactSerializer(branch_contact)
+            except System_branch_contact.DoesNotExist:
+                branch_contact_serializer = None
+
+            data = {
+                "branch_details": branch_details_serializer.data,
+                "branch_brand": branch_brand_serializer.data if branch_brand_serializer else None,
+                "branch_contact": branch_contact_serializer.data if branch_contact_serializer else None
+            }
+            return JsonResponse({"data": data}, status=200)
+
         else:
+            # Retrieve all branch details
             branch_details = System_branch_details.objects.all()
-            serializer = SystemBranchDetailsSerializer(branch_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
-        
-
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_branch_brand_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemBranchBrandSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Branch brand details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'GET':
-        branch_id = request.query_params.get('branch_id', None)
-        if branch_id is not None:
-            try:
-                branch_id = int(branch_id)
-                branch_brands = System_branch_brand.objects.filter(branch__branch_id=branch_id)
-                serializer = SystemBranchBrandSerializer(branch_brands, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid branch_id"}, status=400)
-        else:
+            branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
             branch_brands = System_branch_brand.objects.all()
-            serializer = SystemBranchBrandSerializer(branch_brands, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
-        
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_branch_contact_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemBranchContactSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Branch contact details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'GET':
-        branch_id = request.query_params.get('branch_id', None)
-        if branch_id is not None:
-            try:
-                branch_id = int(branch_id)
-                branch_contacts = System_branch_contact.objects.filter(branch__branch_id=branch_id)
-                serializer = SystemBranchContactSerializer(branch_contacts, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid branch_id"}, status=400)
-        else:
+            branch_brand_serializer = SystemBranchBrandSerializer(branch_brands, many=True)
             branch_contacts = System_branch_contact.objects.all()
-            serializer = SystemBranchContactSerializer(branch_contacts, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+            branch_contact_serializer = SystemBranchContactSerializer(branch_contacts, many=True)
+
+            data = {
+                "branch_details": branch_details_serializer.data,
+                "branch_brands": branch_brand_serializer.data,
+                "branch_contacts": branch_contact_serializer.data
+            }
+            return JsonResponse({"data": data}, status=200)
         
 @api_view(['POST', 'GET'])
 @transaction.atomic
@@ -410,6 +415,20 @@ def system_bank_details_handler(request):
         serializer = SystemBankDetailsSerializer(bank_details, many=True)
         return JsonResponse({"data": serializer.data}, status=200)
     
+@api_view(['GET', 'POST'])
+def system_board_of_directors_handler(request):
+    if request.method == 'POST':
+        serializer = SystemBoardOfDirectorsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        directors = System_Board_of_Directors.objects.all()
+        serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+
 @api_view(['GET', 'POST'])
 @transaction.atomic
 def customer_handler(request):
@@ -446,8 +465,6 @@ def pre_project_new_handler(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
-
 
 @api_view(['GET', 'POST'])
 @transaction.atomic

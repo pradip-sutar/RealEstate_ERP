@@ -65,6 +65,11 @@ class SystemBankDetailsSerializer(serializers.ModelSerializer):
         model = System_bank_details
         fields = '__all__'
 
+class SystemBoardOfDirectorsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = System_Board_of_Directors
+        fields = '__all__'
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer

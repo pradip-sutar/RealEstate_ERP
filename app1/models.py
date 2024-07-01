@@ -155,6 +155,16 @@ class System_bank_details(models.Model):
     def __str__(self):
         return f"{self.bank_name} - {self.branch_name}"
 
+class System_Board_of_Directors(models.Model):
+    name = models.CharField(max_length=255)
+    designation = models.CharField(max_length=255)
+    date_of_join = models.DateField()
+    date_of_leave = models.DateField(null=True, blank=True)
+    share = models.FloatField()
+    stakeholder = models.BooleanField()
+    def __str__(self):
+        return self.name
+
 class Department_Name(models.Model):
     departmentid = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255,unique=True)
