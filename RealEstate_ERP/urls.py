@@ -8,7 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('app1.urls')),
     path('api/',include('Employee_Management.urls')),
-    path('api/',include('Team_Management.urls'))
+    path('api/',include('Team_Management.urls')),
+    path('api/',include('Pre_Project.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

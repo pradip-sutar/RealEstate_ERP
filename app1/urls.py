@@ -23,7 +23,6 @@ urlpatterns = [
     path('system_bank_details_handler/', views.system_bank_details_handler, name='system_bank_details_handler'),
     path('system_board_of_directors_handler/', views.system_board_of_directors_handler, name='board_of_directors_handler'),
     path('customer_handler/', views.customer_handler, name='customer_handler'),
-    path('pre_project_new_handler/', views.pre_project_new_handler, name='pre_project_new_handler'),
     path('department_name_handler/', views.department_name_handler, name='department_handler'),
     path('department_designation_handler/', views.department_designation_handler, name='department_designation_handler '),
 

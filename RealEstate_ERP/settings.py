@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'app1',
     'Employee_Management',
-    'Team_Management'
+    'Team_Management',
+    'Pre_Project'
 ]
 
 MIDDLEWARE = [
