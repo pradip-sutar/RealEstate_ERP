@@ -53,9 +53,9 @@ class Department_Grade(admin.ModelAdmin):
     list_display = ['label', 'grade_description', 'status']
 
 
-@admin.register(Team_management)
-class TeamManagementAdmin(admin.ModelAdmin):
-    list_display = ['team_leader', 'team_member', 'department_id']
+# @admin.register(Team_management)
+# class TeamManagementAdmin(admin.ModelAdmin):
+#     list_display = ['team_leader', 'team_member', 'department_id']
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):

@@ -109,7 +109,7 @@ def create_emp_profile(request):
 @transaction.atomic
 def system_company_type_handler(request,type_name=None):
     if request.method == 'POST':
-        data = request.data['type_name']
+        data = request.data
         if not System_company_type.objects.filter(type_name=data).exists():
             data = request.data
             serializer = SystemCompanyTypeSerializer(data=data)
@@ -459,7 +459,7 @@ def pre_project_new_handler(request):
             serializer = PreProjectNewSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse({"message": "Project created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+                return JsonResponse({"message": "Pre-Project created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:

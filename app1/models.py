@@ -193,13 +193,13 @@ class Department_Grade(models.Model):
     def __str__(self):
         return self.grade_description
     
-class Team_management(models.Model):
-    team_leader = models.CharField(max_length=255)
-    team_member = models.BigIntegerField()
-    department_id = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
+# class Team_management(models.Model):
+#     team_leader = models.CharField(max_length=255)
+#     team_member = models.BigIntegerField()
+#     department_id = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f"Team for {self.department_id.name}"
+#     def __str__(self):
+#         return f"Team for {self.department_id.name}"
     
 class Customer(models.Model):
     GENDER_CHOICES = [
