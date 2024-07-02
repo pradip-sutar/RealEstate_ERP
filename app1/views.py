@@ -394,7 +394,6 @@ def system_branch_handler(request):
 def system_bank_details_handler(request):
     if request.method == 'POST':
         data = request.data
-        print(data)
         serializer = SystemBankDetailsSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
