@@ -44,3 +44,15 @@ class ProductApprovalBodyAdmin(admin.ModelAdmin):
 @admin.register(Project_Tax)
 class ProjectTaxAdmin(admin.ModelAdmin):
     list_display = ['name', 'amount', 'description', 'status']
+
+@admin.register(Project_Product)
+class ProjectProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'location', 'segment', 'type', 'variance', 'nos', 'area', 'cost', 'amenity']
+
+@admin.register(Project_add_Payment)
+class ProjectAddPaymentAdmin(admin.ModelAdmin):
+    list_display = ['title', 'value', 'description']
+
+@admin.register(Project_add_Amenity)
+class ProjectAddAmenityAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description', 'image']

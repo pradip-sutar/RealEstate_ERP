@@ -13,5 +13,8 @@ urlpatterns = [
     path('product_ownerships_handler/', views.product_ownership_list, name='product_ownership_list_handler'),
     path('product_approval_bodies_handler/', views.product_approval_body_list, name='product_approval_body_list_handler'),
     path('project_taxes_handler/', views.project_tax_list, name='project_tax_list_handler'),
+    path('project_products_handler/', views.project_product_list, name='project_product_list_handler'),
+    path('project_add_payments_handler/', views.project_add_payment_list_handler, name='project_add_payment_list_handler'),
+    path('project_add_amenities_handler/', views.project_add_amenity_list_handler, name='project_add_amenity_list_handler'),
 
 ]

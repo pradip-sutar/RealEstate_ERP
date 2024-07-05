@@ -56,3 +56,18 @@ class ProjectTaxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project_Tax
         fields = '__all__'
+
+class ProjectProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_Product
+        fields = '__all__'
+
+class ProjectAddPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Payment
+        fields = '__all__'
+
+class ProjectAddAmenitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Amenity
+        fields = '__all__'

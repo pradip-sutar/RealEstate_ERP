@@ -172,3 +172,47 @@ def project_tax_list(request):
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET', 'POST'])
+def project_product_list(request):
+    if request.method == 'GET':
+        products = Project_Product.objects.all()
+        serializer = ProjectProductSerializer(products, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        serializer = ProjectProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+    
+
+@api_view(['GET', 'POST'])
+def project_add_payment_list_handler(request):
+    if request.method == 'GET':
+        payments = Project_add_Payment.objects.all()
+        serializer = ProjectAddPaymentSerializer(payments, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        serializer = ProjectAddPaymentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+    
+@api_view(['GET', 'POST'])
+def project_add_amenity_list_handler(request):
+    if request.method == 'GET':
+        amenities = Project_add_Amenity.objects.all()
+        serializer = ProjectAddAmenitySerializer(amenities, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        serializer = ProjectAddAmenitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)

@@ -73,3 +73,36 @@ class Project_Tax(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Project_Product(models.Model):
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    segment = models.ForeignKey(Project_Nearby_Segment, on_delete=models.CASCADE)
+    type = models.ForeignKey(Project_Product_Type, on_delete=models.CASCADE)
+    variance = models.CharField(max_length=255)
+    nos = models.IntegerField()
+    area = models.DecimalField(max_digits=10, decimal_places=2)
+    layout_image = models.ImageField(upload_to='layout_images/')
+    cost = models.DecimalField(max_digits=15, decimal_places=2)
+    amenity = models.ForeignKey(Project_Amenity_Master, on_delete=models.CASCADE)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class Project_add_Payment(models.Model):
+    title = models.CharField(max_length=255)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.title
+    
+class Project_add_Amenity(models.Model):
+    title = models.ForeignKey(Project_Amenity_Master, on_delete=models.CASCADE)
+    description = models.TextField()
+    image = models.ImageField(upload_to='amenities/')
+
+    def __str__(self):
+        return self.title.name
