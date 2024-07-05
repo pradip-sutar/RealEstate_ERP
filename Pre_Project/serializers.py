@@ -6,3 +6,9 @@ class PreProjectNewSerializer(serializers.ModelSerializer):
     class Meta:
         model = PreProjectNew
         fields = '__all__'
+
+    
+class ConfirmProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Confirm_Project
+        fields = '__all__'

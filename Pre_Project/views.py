@@ -27,3 +27,28 @@ def pre_project_new_handler(request):
                 return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def confirm_project_handler(request, id=None):
+    try:
+        if request.method == 'POST' and id:
+            pre_project_data = PreProjectNew.objects.get(id=id)
+            pre_project_serializer = PreProjectNewSerializer(pre_project_data)
+            confirm_project_serializer = ConfirmProjectSerializer(data=pre_project_serializer.data)
+            
+            if confirm_project_serializer.is_valid():
+                confirm_project_serializer.save()
+                pre_project_data.delete()
+                return JsonResponse(confirm_project_serializer.data, safe=False)
+            return JsonResponse(confirm_project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        elif request.method == 'GET' and id:
+            pre_project_data = PreProjectNew.objects.get(id=id)
+            serializer = PreProjectNewSerializer(pre_project_data)
+            return JsonResponse(serializer.data, safe=False)
+        
+    except PreProjectNew.DoesNotExist:
+        return JsonResponse({"message": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
