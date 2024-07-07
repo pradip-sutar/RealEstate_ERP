@@ -9,15 +9,21 @@ from rest_framework import status
 # Create your views here.
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @transaction.atomic
 def pre_project_new_handler(request):
     try:
         if request.method == 'GET':
-            projects = PreProjectNew.objects.all()
-            serializer = PreProjectNewSerializer(projects, many=True)
-            return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
-
+            id = request.query_params.get('id',None)
+            if id:
+                project = PreProjectNew.objects.get(id=id)
+                serializer = PreProjectNewSerializer(project)
+                return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+            else:
+                projects = PreProjectNew.objects.all()
+                serializer = PreProjectNewSerializer(projects, many=True)
+                return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+                
         elif request.method == 'POST':
             serializer = PreProjectNewSerializer(data=request.data)
             if serializer.is_valid():
@@ -25,10 +31,24 @@ def pre_project_new_handler(request):
                 return JsonResponse({"message": "Pre-Project created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == 'DELETE':
+            body_id = request.data
+            id = body_id['id']
+            if id:
+                try:
+                    project = PreProjectNew.objects.get(id=id)
+                    project.delete()
+                    return JsonResponse({'message': 'Pre-Project deleted'}, status=status.HTTP_200_OK)
+                except PreProjectNew.DoesNotExist:
+                    return JsonResponse({'error': 'Pre-Project not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return JsonResponse({'error': 'ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
+
 @api_view(['GET', 'POST'])
 @transaction.atomic
 def confirm_project_handler(request, id=None):
@@ -38,7 +58,6 @@ def confirm_project_handler(request, id=None):
             
             pre_project_serializer = PreProjectNewSerializer(pre_project_data)
             serialized_data = pre_project_serializer.data
-            print(serialized_data)
             serialized_data.pop('generate_agreement', None)
             serialized_data.pop('upload_document', None)
 
@@ -56,12 +75,17 @@ def confirm_project_handler(request, id=None):
                 return JsonResponse(confirm_project_serializer.data, safe=False)
             return JsonResponse(confirm_project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        elif request.method == 'GET' and id:
-            pre_project_data = PreProjectNew.objects.get(id=id)
-            serializer = PreProjectNewSerializer(pre_project_data)
-            return JsonResponse(serializer.data, safe=False)
-        
-    except PreProjectNew.DoesNotExist:
+        elif request.method == 'GET':
+            if id:
+                pre_project_data = Confirm_Project.objects.get(id=id)
+                serializer = ConfirmProjectSerializer(pre_project_data)
+                return JsonResponse(serializer.data, safe=False)
+            else:
+                pre_projects = Confirm_Project.objects.all()
+                serializer = ConfirmProjectSerializer(pre_projects, many=True)
+                return JsonResponse({"data": serializer.data}, safe=False)
+
+    except Confirm_Project.DoesNotExist:
         return JsonResponse({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
