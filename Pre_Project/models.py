@@ -58,8 +58,8 @@ class Confirm_Project(models.Model):
     approvals = models.JSONField()  # To store multiple approval entries
     expenses = models.JSONField()  # To store multiple expense entries
     document_history = models.JSONField()  # To store multiple document history entries
-    generate_agreement = models.FileField(upload_to='pre_projects_agreements/',blank=True,null=True)
-    upload_document = models.FileField(upload_to='pre_projects_documents/',blank=True,null=True)
+    generate_agreement = models.FileField(upload_to='confirm_project_agreements/',blank=True,null=True)
+    upload_document = models.FileField(upload_to='confirm_projects_documents/',blank=True,null=True)
     def __str__(self):
         return self.project_name
     
