@@ -1,25 +1,25 @@
-./app1/__pycache__
-./app1/migrations
+app1/__pycache__
+app1/migrations
 
 
-./Employee_Management/__pycache__
-./Employee_Management/migrations
+Employee_Management/__pycache__
+Employee_Management/migrations
 
 
-./Pre_Project/__pycache__
-./Pre_Project/migrations
+Pre_Project/__pycache__
+Pre_Project/migrations
 
 
-./Projects/__pycache__
-./Projects/migrations
+Projects/__pycache__
+Projects/migrations
 
 
-./Team_Management/__pycache__
-./Team_Management/migrations
+Team_Management/__pycache__
+Team_Management/migrations
 
 
-./db.sqlite3
+db.sqlite3
 
-./media
+media
 
-./ERPenv
+ERPenv
