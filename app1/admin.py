@@ -10,6 +10,10 @@ class UserAdmin(admin.ModelAdmin):
 class SystemCompanyDetailsAdmin(admin.ModelAdmin):
      list_display = ['companyid', 'name', 'alias', 'company_size', 'incorporation_no', 'incorporation_agency', 'date', 'PAN', 'country', 'state', 'city', 'pincode', 'address', 'registered_office_details', 'email', 'mobileno', 'whatsappno','certificate','TAX_certificate']
 
+@admin.register(System_branch_details)
+class SystemBranchDetailsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'branch_id', 'branch_type', 'country', 'state', 'city', 'email', 'phone']
+
 @admin.register(System_brand_detail)
 class SystemBrandDetailsAdmin(admin.ModelAdmin):
     list_display = ['company_id', 'brand_logo', 'favicon', 'letter_header', 'letter_footer']
