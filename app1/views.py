@@ -104,30 +104,6 @@ def create_emp_profile(request):
 
     return HttpResponse(status=405)
 
-
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_company_type_handler(request,type_name=None):
-    if request.method == 'POST':
-        data = request.data
-        if not System_company_type.objects.filter(type_name=data).exists():
-            data = request.data
-            serializer = SystemCompanyTypeSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse(serializer.data, status=201)
-        else:
-            return JsonResponse({"error": "company_type already exists"}, status=400)
-        
-    if request.method == 'GET':
-        if type_name is None:
-            system_admin_handler = System_company_type.objects.all()
-            serializer = SystemCompanyTypeSerializer(system_admin_handler, many=True)
-            return JsonResponse(serializer.data,safe=False, status=200)
-        else:
-            system_admin_handler = System_company_type.objects.get(type_name=type_name)
-            serializer = SystemCompanyTypeSerializer(system_admin_handler, many=False)
-            return JsonResponse(serializer.data, safe=False, status=200)
         
 @api_view(['POST', 'GET'])
 @transaction.atomic

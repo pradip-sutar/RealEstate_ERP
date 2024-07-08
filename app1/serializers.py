@@ -2,11 +2,6 @@ from rest_framework import serializers
 from app1.models import *
 
 
-class SystemCompanyTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = System_company_type
-        fields = "__all__"
-
 class SystemCompanyDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = System_company_detail

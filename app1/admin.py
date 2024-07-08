@@ -8,7 +8,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(System_company_detail)
 class SystemCompanyDetailsAdmin(admin.ModelAdmin):
-     list_display = ['companyid', 'name', 'alias', 'company_type', 'company_size', 'incorporation_no', 'incorporation_agency', 'date', 'PAN', 'country', 'state', 'city', 'pincode', 'address', 'registered_office_details', 'email', 'mobileno', 'whatsappno','certificate','TAX_certificate']
+     list_display = ['companyid', 'name', 'alias', 'company_size', 'incorporation_no', 'incorporation_agency', 'date', 'PAN', 'country', 'state', 'city', 'pincode', 'address', 'registered_office_details', 'email', 'mobileno', 'whatsappno','certificate','TAX_certificate']
 
 @admin.register(System_brand_detail)
 class SystemBrandDetailsAdmin(admin.ModelAdmin):

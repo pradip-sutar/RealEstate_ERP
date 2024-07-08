@@ -8,8 +8,6 @@ urlpatterns = [
     
     path('user/<int:mob>/', views.admin_view),
     path('admin-login/', views.admin_login),
-    path('system_company_type_handler/', views.system_company_type_handler, name='create_system_company_type_handler'),
-    path('system_company_type_handler/<str:type_name>/', views.system_company_type_handler, name='get_system_company_type_handler'),
     path('system_company_details_handler/', views.system_company_details_handler, name='create_system_company_details_handler'),
     path('system_company_details_handler/<int:id>/', views.system_company_details_handler, name='get_system_company_details_handler'),
     path('system_company_brand_handler/', views.system_company_brand_handler, name='create_system_company_brand_handler'),

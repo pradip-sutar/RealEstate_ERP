@@ -11,17 +11,11 @@ class Admin(models.Model):
     token = models.CharField(max_length=128)
     def __str__(self):
         return f"{self.name}"
-    
-class System_company_type(models.Model):
-    type_name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.type_name
 
 class System_company_detail(models.Model):
     companyid = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     alias = models.CharField(max_length=255, blank=True, null=True)
-    company_type = models.ForeignKey(System_company_type,on_delete=models.CASCADE)
     company_size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)
     incorporation_agency = models.CharField(max_length=255)
