@@ -18,6 +18,10 @@ class SystemBrandDetailsAdmin(admin.ModelAdmin):
 class SystemBusinessDetailsAdmin(admin.ModelAdmin):
     list_display = ['company_id', 'address']
 
+@admin.register(System_branch_type)
+class SystemBranchTypeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'type_name']
+
 @admin.register(System_contact_detail)
 class SystemContactDetailsAdmin(admin.ModelAdmin):
     list_display = ['name', 'designation', 'role', 'email', 'mobileno', 'whatsapp', 'company_id']
