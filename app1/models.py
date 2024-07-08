@@ -65,7 +65,7 @@ class System_contact_detail(models.Model):
 class System_social_detail(models.Model):
     name = models.CharField(max_length=255)
     URL = models.URLField()
-    icon = models.ImageField(upload_to='social_icons/')
+    icon = models.ImageField(upload_to='social_icons/',blank=True, null=True)
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -109,8 +109,8 @@ class System_branch_details(models.Model):
         return f"{self.name} ({self.branch_id})"
     
 class System_branch_brand(models.Model):
-    letter_header = models.FileField(upload_to='letter_headers/')
-    letter_footer = models.FileField(upload_to='letter_footers/')
+    letter_header = models.FileField(upload_to='letter_headers/',null=True, blank=True)
+    letter_footer = models.FileField(upload_to='letter_footers/',null=True, blank=True)
     branch = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
     def __str__(self):
         return f"Brand for Branch ID: {self.branch.branch_id}"
