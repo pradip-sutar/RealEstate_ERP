@@ -375,38 +375,22 @@ def system_branch_handler(request):
                 "branch_contact": branch_contact_serializer.data if branch_contact_serializer else None
             }
             return JsonResponse({"data": data}, status=200)
+
         else:
-            try:
-                # Retrieve all branch details
-                branch_details = System_branch_details.objects.all()
-                all_data = []
+            # Retrieve all branch details
+            branch_details = System_branch_details.objects.all()
+            branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
+            branch_brands = System_branch_brand.objects.all()
+            branch_brand_serializer = SystemBranchBrandSerializer(branch_brands, many=True)
+            branch_contacts = System_branch_contact.objects.all()
+            branch_contact_serializer = SystemBranchContactSerializer(branch_contacts, many=True)
 
-                for branch in branch_details:
-                    branch_serializer = SystemBranchDetailsSerializer(branch)
-
-                    # Retrieve brands and contacts related to the current branch
-                    brands = System_branch_brand.objects.filter(branch=branch)
-                    contacts = System_branch_contact.objects.filter(branch=branch)
-
-                    if not brands.exists():
-                        brands = [None]
-                    if not contacts.exists():
-                        contacts = [None]
-
-                    for brand in brands:
-                        for contact in contacts:
-                            branch_data = {
-                                "branch_details": branch_serializer.data,
-                                "branch_brand": SystemBranchBrandSerializer(brand).data if brand else None,
-                                "branch_contact": SystemBranchContactSerializer(contact).data if contact else None
-                            }
-                            all_data.append(branch_data)
-
-                return JsonResponse({"data": all_data}, status=200)
-
-            except Exception as e:
-                return JsonResponse({"error": str(e)}, status=500)
-
+            data = {
+                "branch_details": branch_details_serializer.data,
+                "branch_brands": branch_brand_serializer.data,
+                "branch_contacts": branch_contact_serializer.data
+            }
+            return JsonResponse({"data": data}, status=200)
         
 @api_view(['POST', 'GET'])
 @transaction.atomic
