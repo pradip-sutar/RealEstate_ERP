@@ -105,162 +105,189 @@ def create_emp_profile(request):
     return HttpResponse(status=405)
 
         
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_company_details_handler(request,id=None):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemCompanyDetailsSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Company details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST', 'GET'])
+# @transaction.atomic
+# def system_company_details_handler(request,id=None):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemCompanyDetailsSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Company details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
         
-    if request.method == 'GET':
-        if id is None:
-            system_admin_handler = System_company_detail.objects.all()
-            serializer = SystemCompanyDetailsSerializer(system_admin_handler, many=True)
-            return JsonResponse(serializer.data,safe=False, status=200)
-        else:
-            system_admin_handler = System_company_detail.objects.get(companyid=id)
-            serializer = SystemCompanyDetailsSerializer(system_admin_handler, many=False)
-            return JsonResponse(serializer.data, safe=False, status=200)
+#     if request.method == 'GET':
+#         if id is None:
+#             system_admin_handler = System_company_detail.objects.all()
+#             serializer = SystemCompanyDetailsSerializer(system_admin_handler, many=True)
+#             return JsonResponse(serializer.data,safe=False, status=200)
+#         else:
+#             system_admin_handler = System_company_detail.objects.get(companyid=id)
+#             serializer = SystemCompanyDetailsSerializer(system_admin_handler, many=False)
+#             return JsonResponse(serializer.data, safe=False, status=200)
         
-@api_view(['POST','GET'])
-@transaction.atomic
-def system_company_brand_handler(request,id=None):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemCompanyBrandSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Company brand details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST','GET'])
+# @transaction.atomic
+# def system_company_brand_handler(request,id=None):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemCompanyBrandSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Company brand details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
         
-    elif request.method == 'GET':
-        if id is not None:
-            try:
-                company_id = int(id)
-                brand_details = System_brand_detail.objects.filter(company_id=company_id)
-                serializer = SystemCompanyBrandSerializer(brand_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid company_id"}, status=400)
-        else:
-            brand_details = System_brand_detail.objects.all()
-            serializer = SystemCompanyBrandSerializer(brand_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+#     elif request.method == 'GET':
+#         if id is not None:
+#             try:
+#                 company_id = int(id)
+#                 brand_details = System_brand_detail.objects.filter(company_id=company_id)
+#                 serializer = SystemCompanyBrandSerializer(brand_details, many=True)
+#                 return JsonResponse({"data": serializer.data}, status=200)
+#             except ValueError:
+#                 return JsonResponse({"error": "Invalid company_id"}, status=400)
+#         else:
+#             brand_details = System_brand_detail.objects.all()
+#             serializer = SystemCompanyBrandSerializer(brand_details, many=True)
+#             return JsonResponse({"data": serializer.data}, status=200)
     
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_business_details_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemBusinessDetailSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Business details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST', 'GET'])
+# @transaction.atomic
+# def system_business_details_handler(request):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemBusinessDetailSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Business details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
 
-    elif request.method == 'GET':
-        company_id = request.query_params.get('company_id', None)
-        if company_id is not None:
-            try:
-                company_id = int(company_id)
-                business_details = System_business_detail.objects.filter(company_id=company_id)
-                serializer = SystemBusinessDetailSerializer(business_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid company_id"}, status=400)
-        else:
-            business_details = System_business_detail.objects.all()
-            serializer = SystemBusinessDetailSerializer(business_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+#     elif request.method == 'GET':
+#         company_id = request.query_params.get('company_id', None)
+#         if company_id is not None:
+#             try:
+#                 company_id = int(company_id)
+#                 business_details = System_business_detail.objects.filter(company_id=company_id)
+#                 serializer = SystemBusinessDetailSerializer(business_details, many=True)
+#                 return JsonResponse({"data": serializer.data}, status=200)
+#             except ValueError:
+#                 return JsonResponse({"error": "Invalid company_id"}, status=400)
+#         else:
+#             business_details = System_business_detail.objects.all()
+#             serializer = SystemBusinessDetailSerializer(business_details, many=True)
+#             return JsonResponse({"data": serializer.data}, status=200)
         
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_contact_details_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemContactDetailSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Contact details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST', 'GET'])
+# @transaction.atomic
+# def system_contact_details_handler(request):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemContactDetailSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Contact details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
 
-    elif request.method == 'GET':
-        company_id = request.query_params.get('company_id', None)
-        if company_id is not None:
-            try:
-                company_id = int(company_id)
-                contact_details = System_contact_detail.objects.filter(company_id=company_id)
-                serializer = SystemContactDetailSerializer(contact_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid company_id"}, status=400)
-        else:
-            contact_details = System_contact_detail.objects.all()
-            serializer = SystemContactDetailSerializer(contact_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+#     elif request.method == 'GET':
+#         company_id = request.query_params.get('company_id', None)
+#         if company_id is not None:
+#             try:
+#                 company_id = int(company_id)
+#                 contact_details = System_contact_detail.objects.filter(company_id=company_id)
+#                 serializer = SystemContactDetailSerializer(contact_details, many=True)
+#                 return JsonResponse({"data": serializer.data}, status=200)
+#             except ValueError:
+#                 return JsonResponse({"error": "Invalid company_id"}, status=400)
+#         else:
+#             contact_details = System_contact_detail.objects.all()
+#             serializer = SystemContactDetailSerializer(contact_details, many=True)
+#             return JsonResponse({"data": serializer.data}, status=200)
         
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_social_details_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemSocialDetailSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Social details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST', 'GET'])
+# @transaction.atomic
+# def system_social_details_handler(request):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemSocialDetailSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Social details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
 
-    elif request.method == 'GET':
-        company_id = request.query_params.get('company_id', None)
-        if company_id is not None:
-            try:
-                company_id = int(company_id)
-                social_details = System_social_detail.objects.filter(company_id=company_id)
-                serializer = SystemSocialDetailSerializer(social_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid company_id"}, status=400)
-        else:
-            social_details = System_social_detail.objects.all()
-            serializer = SystemSocialDetailSerializer(social_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+#     elif request.method == 'GET':
+#         company_id = request.query_params.get('company_id', None)
+#         if company_id is not None:
+#             try:
+#                 company_id = int(company_id)
+#                 social_details = System_social_detail.objects.filter(company_id=company_id)
+#                 serializer = SystemSocialDetailSerializer(social_details, many=True)
+#                 return JsonResponse({"data": serializer.data}, status=200)
+#             except ValueError:
+#                 return JsonResponse({"error": "Invalid company_id"}, status=400)
+#         else:
+#             social_details = System_social_detail.objects.all()
+#             serializer = SystemSocialDetailSerializer(social_details, many=True)
+#             return JsonResponse({"data": serializer.data}, status=200)
         
-@api_view(['POST', 'GET'])
-@transaction.atomic
-def system_other_details_handler(request):
-    if request.method == 'POST':
-        data = request.data
-        serializer = SystemOtherDetailSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Other details saved", "data": serializer.data}, status=201)
-        else:
-            return JsonResponse(serializer.errors, status=400)
+# @api_view(['POST', 'GET'])
+# @transaction.atomic
+# def system_other_details_handler(request):
+#     if request.method == 'POST':
+#         data = request.data
+#         serializer = SystemOtherDetailSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Other details saved", "data": serializer.data}, status=201)
+#         else:
+#             return JsonResponse(serializer.errors, status=400)
 
-    elif request.method == 'GET':
-        company_id = request.query_params.get('company_id', None)
-        if company_id is not None:
-            try:
-                company_id = int(company_id)
-                other_details = System_other_detail.objects.filter(company_id=company_id)
-                serializer = SystemOtherDetailSerializer(other_details, many=True)
-                return JsonResponse({"data": serializer.data}, status=200)
-            except ValueError:
-                return JsonResponse({"error": "Invalid company_id"}, status=400)
-        else:
-            other_details = System_other_detail.objects.all()
-            serializer = SystemOtherDetailSerializer(other_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+#     elif request.method == 'GET':
+#         company_id = request.query_params.get('company_id', None)
+#         if company_id is not None:
+#             try:
+#                 company_id = int(company_id)
+#                 other_details = System_other_detail.objects.filter(company_id=company_id)
+#                 serializer = SystemOtherDetailSerializer(other_details, many=True)
+#                 return JsonResponse({"data": serializer.data}, status=200)
+#             except ValueError:
+#                 return JsonResponse({"error": "Invalid company_id"}, status=400)
+#         else:
+#             other_details = System_other_detail.objects.all()
+#             serializer = SystemOtherDetailSerializer(other_details, many=True)
+#             return JsonResponse({"data": serializer.data}, status=200)
         
+@api_view(['POST'])
+@transaction.atomic
+def system_company_details_handler(request):
+    response_data = {}
+    model_map = {
+        'company_detail': (System_company_detail, SystemCompanyDetailsSerializer),
+        'brand_detail': (System_brand_detail, SystemCompanyBrandSerializer),
+        'business_detail': (System_business_detail, SystemBusinessDetailSerializer),
+        'contact_detail': (System_contact_detail, SystemContactDetailSerializer),
+        'social_detail': (System_social_detail, SystemSocialDetailSerializer),
+        'other_detail': (System_other_detail, SystemOtherDetailSerializer),
+    }
+
+    try:
+        for key, (model_class, serializer_class) in model_map.items():
+            if key in request.data:
+                serializer = serializer_class(data=request.data[key])
+                if serializer.is_valid():
+                    serializer.save()
+                    response_data[key] = {"message": f"{key.replace('_', ' ').capitalize()} created successfully", "data": serializer.data}
+                else:
+                    response_data[key] = {"errors": serializer.errors}
+
+        return JsonResponse(response_data, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['POST', 'GET'])
 @transaction.atomic
 def system_branch_type_handler(request):

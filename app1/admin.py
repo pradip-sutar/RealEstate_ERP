@@ -32,11 +32,11 @@ class SystemContactDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_social_detail)
 class SystemSocialDetailsAdmin(admin.ModelAdmin):
-    list_display = ['name', 'URL', 'icon', 'company_id']
+    list_display = ['id', 'details', 'company_id']
 
 @admin.register(System_other_detail)
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
-    list_display = ['name', 'details', 'company_id']
+    list_display = ['id', 'details', 'company_id']
 
 @admin.register(System_bank_details)
 class SystemBankDetailsAdmin(admin.ModelAdmin):

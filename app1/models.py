@@ -20,8 +20,8 @@ class System_company_detail(models.Model):
     incorporation_no = models.CharField(max_length=255)
     incorporation_agency = models.CharField(max_length=255)
     date = models.DateField()
-    certificate = models.FileField(upload_to='company_certificates/',blank=True,null=True)
-    TAX_certificate = models.FileField(upload_to='tax_certificates/',blank=True,null=True)
+    certificate = models.FileField(upload_to='company_certificates/', blank=True, null=True)
+    TAX_certificate = models.FileField(upload_to='tax_certificates/', blank=True, null=True)
     PAN = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
@@ -32,21 +32,24 @@ class System_company_detail(models.Model):
     email = models.EmailField()
     mobileno = models.CharField(max_length=15)
     whatsappno = models.CharField(max_length=15, blank=True, null=True)
+
     def __str__(self):
         return self.name
-    
+
 class System_brand_detail(models.Model):
-    brand_logo = models.ImageField(upload_to='brand_logos/',blank=True,null=True)
-    favicon = models.ImageField(upload_to='favicons/',blank=True,null=True)
-    letter_header = models.ImageField(upload_to='letter_headers/',blank=True,null=True)
-    letter_footer = models.ImageField(upload_to='letter_footers/',blank=True,null=True)
+    brand_logo = models.ImageField(upload_to='brand_logos/', blank=True, null=True)
+    favicon = models.ImageField(upload_to='favicons/', blank=True, null=True)
+    letter_header = models.ImageField(upload_to='letter_headers/', blank=True, null=True)
+    letter_footer = models.ImageField(upload_to='letter_footers/', blank=True, null=True)
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
+
     def __str__(self):
         return f"{self.company_id.name}"
-    
+
 class System_business_detail(models.Model):
     address = models.TextField()
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
+
     def __str__(self):
         return f"{self.company_id.name} - Business Details"
 
@@ -63,21 +66,18 @@ class System_contact_detail(models.Model):
         return f"{self.name} ({self.company_id.name})"
 
 class System_social_detail(models.Model):
-    name = models.CharField(max_length=255)
-    URL = models.URLField()
-    icon = models.ImageField(upload_to='social_icons/',blank=True, null=True)
+    details = models.JSONField()  # Changed to JSONField
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} - Social Details ({self.company_id.name})"
+        return f"Social Details ({self.company_id.name})"
 
 class System_other_detail(models.Model):
-    name = models.CharField(max_length=255)
-    details = models.TextField()
+    details = models.JSONField()  # Changed to JSONField
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} - Other Details ({self.company_id.name})"
+        return f"Other Details ({self.company_id.name})"
     
 class System_branch_type(models.Model):
     type_name = models.CharField(max_length=100)
