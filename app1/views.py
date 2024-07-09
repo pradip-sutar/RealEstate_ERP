@@ -260,33 +260,56 @@ def create_emp_profile(request):
 #             other_details = System_other_detail.objects.all()
 #             serializer = SystemOtherDetailSerializer(other_details, many=True)
 #             return JsonResponse({"data": serializer.data}, status=200)
-        
-@api_view(['POST'])
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+@parser_classes([MultiPartParser, FormParser])
+@csrf_exempt
+@api_view(['POST', 'GET'])
+def create_brand_detail(request):
+    if request.method == 'POST':
+        serializer = SystemCompanyBrandSerializer(data=request.data)
+        if serializer.is_valid():
+            # Save the serialized data
+            serializer.save()
+            print(serializer.data)
+
+            # Return a success response with serialized data
+            return JsonResponse(serializer.data, status=201)  # 201 Created
+        else:
+            # Return error response with validation errors
+            return JsonResponse(serializer.errors, status=400)  # 400 Bad Request
+
+    # Handle other HTTP methods if needed
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+@api_view(['POST','GET','DELETE'])
 @transaction.atomic
 def system_company_details_handler(request):
-    response_data = {}
-    model_map = {
-        'company_detail': (System_company_detail, SystemCompanyDetailsSerializer),
-        'brand_detail': (System_brand_detail, SystemCompanyBrandSerializer),
-        'business_detail': (System_business_detail, SystemBusinessDetailSerializer),
-        'contact_detail': (System_contact_detail, SystemContactDetailSerializer),
-        'social_detail': (System_social_detail, SystemSocialDetailSerializer),
-        'other_detail': (System_other_detail, SystemOtherDetailSerializer),
-    }
+    if request.method == 'POST':
+        response_data = {}
+        model_map = {
+            'company_detail': (System_company_detail, SystemCompanyDetailsSerializer),
+            'brand_detail': (System_brand_detail, SystemCompanyBrandSerializer),
+            'business_detail': (System_business_detail, SystemBusinessDetailSerializer),
+            'contact_detail': (System_contact_detail, SystemContactDetailSerializer),
+            'social_detail': (System_social_detail, SystemSocialDetailSerializer),
+            'other_detail': (System_other_detail, SystemOtherDetailSerializer),
+        }
 
-    try:
-        for key, (model_class, serializer_class) in model_map.items():
-            if key in request.data:
-                serializer = serializer_class(data=request.data[key])
-                if serializer.is_valid():
-                    serializer.save()
-                    response_data[key] = {"message": f"{key.replace('_', ' ').capitalize()} created successfully", "data": serializer.data}
-                else:
-                    response_data[key] = {"errors": serializer.errors}
+        try:
+            for key, (model_class, serializer_class) in model_map.items():
+                if key in request.data:
+                    serializer = serializer_class(data=request.data[key])
+                    if serializer.is_valid():
+                        serializer.save()
+                        response_data[key] = {"message": f"{key.replace('_', ' ').capitalize()} created successfully", "data": serializer.data}
+                    else:
+                        response_data[key] = {"errors": serializer.errors}
 
-        return JsonResponse(response_data, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse(response_data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST', 'GET'])
 @transaction.atomic

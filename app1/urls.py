@@ -25,6 +25,13 @@ urlpatterns = [
     path('department_name_handler/', views.department_name_handler, name='department_handler'),
     path('department_designation_handler/', views.department_designation_handler, name='department_designation_handler '),
 
+
+
+    path('create_brand_detail/', views.create_brand_detail, name='create_brand_detail '),
+
+
+    
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
