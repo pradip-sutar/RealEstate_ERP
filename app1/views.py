@@ -392,13 +392,44 @@ def system_branch_handler(request):
                     contacts = System_branch_contact.objects.filter(branch=branch)
                     contact_serializer = SystemBranchContactSerializer(contacts, many=True)
 
-                    # Append all data into a dictionary
-                    branch_data = {
-                        "branch_details": branch_serializer.data,
-                        "branch_brands": brand_serializer.data if brand_serializer.data else None,
-                        "branch_contacts": contact_serializer.data if contact_serializer.data else None
-                    }
-                    all_data.append(branch_data)
+                    # If there are no brands or contacts, add a single entry with null values
+                    if not brands.exists() and not contacts.exists():
+                        branch_data = {
+                            "branch_details": branch_serializer.data,
+                            "branch_brand": None,
+                            "branch_contact": None
+                        }
+                        all_data.append(branch_data)
+                    else:
+                        # If there are brands and contacts, loop through them and create separate dictionaries
+                        for brand in brand_serializer.data:
+                            for contact in contact_serializer.data:
+                                branch_data = {
+                                    "branch_details": branch_serializer.data,
+                                    "branch_brand": brand if brand_serializer.data else None,
+                                    "branch_contact": contact if contact_serializer.data else None
+                                }
+                                all_data.append(branch_data)
+
+                        # Handle cases where there are brands but no contacts
+                        if brands.exists() and not contacts.exists():
+                            for brand in brand_serializer.data:
+                                branch_data = {
+                                    "branch_details": branch_serializer.data,
+                                    "branch_brand": brand,
+                                    "branch_contact": None
+                                }
+                                all_data.append(branch_data)
+
+                        # Handle cases where there are contacts but no brands
+                        if not brands.exists() and contacts.exists():
+                            for contact in contact_serializer.data:
+                                branch_data = {
+                                    "branch_details": branch_serializer.data,
+                                    "branch_brand": None,
+                                    "branch_contact": contact
+                                }
+                                all_data.append(branch_data)
 
                 return JsonResponse({"data": all_data}, status=200)
 
