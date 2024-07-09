@@ -14,6 +14,17 @@ class SystemCompanyDetailsAdmin(admin.ModelAdmin):
 class SystemBranchDetailsAdmin(admin.ModelAdmin):
     list_display = ['name', 'branch_id', 'branch_type', 'country', 'state', 'city', 'email', 'phone']
 
+@admin.register(System_branch_brand)
+class SystemBranchBrandAdmin(admin.ModelAdmin):
+    list_display = ['branch', 'letter_header', 'letter_footer']
+    search_fields = ['branch__name']
+
+@admin.register(System_branch_contact)
+class SystemBranchContactAdmin(admin.ModelAdmin):
+    list_display = ['name', 'designation', 'role', 'email', 'phone', 'whatsapp', 'branch']
+    search_fields = ['name', 'designation', 'role', 'email', 'branch__name']
+    list_filter = ['branch']
+
 @admin.register(System_brand_detail)
 class SystemBrandDetailsAdmin(admin.ModelAdmin):
     list_display = ['company_id', 'brand_logo', 'favicon', 'letter_header', 'letter_footer']
