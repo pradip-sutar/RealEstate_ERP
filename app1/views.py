@@ -375,22 +375,36 @@ def system_branch_handler(request):
                 "branch_contact": branch_contact_serializer.data if branch_contact_serializer else None
             }
             return JsonResponse({"data": data}, status=200)
-
         else:
-            # Retrieve all branch details
-            branch_details = System_branch_details.objects.all()
-            branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
-            branch_brands = System_branch_brand.objects.all()
-            branch_brand_serializer = SystemBranchBrandSerializer(branch_brands, many=True)
-            branch_contacts = System_branch_contact.objects.all()
-            branch_contact_serializer = SystemBranchContactSerializer(branch_contacts, many=True)
+            try:
+                # Retrieve all branch details
+                branch_details = System_branch_details.objects.all()
+                all_data = []
 
-            data = {
-                "branch_details": branch_details_serializer.data,
-                "branch_brands": branch_brand_serializer.data,
-                "branch_contacts": branch_contact_serializer.data
-            }
-            return JsonResponse({"data": data}, status=200)
+                for branch in branch_details:
+                    branch_serializer = SystemBranchDetailsSerializer(branch)
+
+                    # Retrieve brands related to the current branch
+                    brands = System_branch_brand.objects.filter(branch=branch)
+                    brand_serializer = SystemBranchBrandSerializer(brands, many=True)
+
+                    # Retrieve contacts related to the current branch
+                    contacts = System_branch_contact.objects.filter(branch=branch)
+                    contact_serializer = SystemBranchContactSerializer(contacts, many=True)
+
+                    # Append all data into a dictionary
+                    branch_data = {
+                        "branch_details": branch_serializer.data,
+                        "branch_brands": brand_serializer.data if brand_serializer.data else None,
+                        "branch_contacts": contact_serializer.data if contact_serializer.data else None
+                    }
+                    all_data.append(branch_data)
+
+                return JsonResponse({"data": all_data}, status=200)
+
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+
         
 @api_view(['POST', 'GET'])
 @transaction.atomic
