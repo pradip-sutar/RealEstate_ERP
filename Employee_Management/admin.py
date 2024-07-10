@@ -58,6 +58,7 @@ class BankOthersAdmin(admin.ModelAdmin):
         'account_type', 
         'account_name', 
         'account_no', 
+        'proof_image',
         'epfo_no', 
         'epfo_state', 
         'epfo_branch', 
