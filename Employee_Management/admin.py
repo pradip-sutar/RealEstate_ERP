@@ -46,3 +46,25 @@ class ExperienceAdmin(admin.ModelAdmin):
 class SkillLevelAdmin(admin.ModelAdmin):
     list_display = ['employee_id', 'details']
     search_fields = ['employee_id__name']  # Adjust the field according to your Company_profile model
+
+
+@admin.register(Bank_Others)
+class BankOthersAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'bank_name', 
+        'branch_name', 
+        'IFSC', 
+        'account_type', 
+        'account_name', 
+        'account_no', 
+        'epfo_no', 
+        'epfo_state', 
+        'epfo_branch', 
+        'insurance_no', 
+        'insurance_provider', 
+        'insurance_state', 
+        'insurance_branch'
+    ]
+
+

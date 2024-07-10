@@ -100,3 +100,25 @@ class Skill_Level(models.Model):
     employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
+
+
+
+
+class Bank_Others(models.Model):
+    bank_name = models.CharField(max_length=255)
+    branch_name = models.CharField(max_length=255)
+    IFSC = models.CharField(max_length=11)
+    account_type = models.CharField(max_length=50)
+    account_name = models.CharField(max_length=255)
+    account_no = models.CharField(max_length=20)
+    proof_image = models.ImageField(upload_to='bank_proof_images/')
+    epfo_no = models.CharField(max_length=20, blank=True, null=True)
+    epfo_state = models.CharField(max_length=255, blank=True, null=True)
+    epfo_branch = models.CharField(max_length=255, blank=True, null=True)
+    insurance_no = models.CharField(max_length=20, blank=True, null=True)
+    insurance_provider = models.CharField(max_length=255, blank=True, null=True)
+    insurance_state = models.CharField(max_length=255, blank=True, null=True)
+    insurance_branch = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.bank_name

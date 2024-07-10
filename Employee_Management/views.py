@@ -141,3 +141,24 @@ def employee_management_handler(request):
                 all_data.append(data)
 
             return JsonResponse(all_data, status=status.HTTP_200_OK, safe=False)
+        
+
+@api_view(['GET', 'POST'])
+def bank_others_view(request):
+    if request.method == 'GET':
+        try:
+            bank_others = Bank_Others.objects.all()
+            serializer = BankOthersSerializer(bank_others, many=True)
+            return JsonResponse({'data': serializer.data},safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    elif request.method == 'POST':
+        try:
+            serializer = BankOthersSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

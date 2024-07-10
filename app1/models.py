@@ -21,7 +21,7 @@ class System_company_detail(models.Model):
     incorporation_agency = models.CharField(max_length=255)
     date = models.DateField()
     certificate = models.FileField(upload_to='company_certificates/', blank=True, null=True)
-    TAX_certificate = models.FileField(upload_to='tax_certificates/', blank=True, null=True)
+    TAX_certificate = models.CharField(max_length=255)
     PAN = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
@@ -44,7 +44,7 @@ class System_brand_detail(models.Model):
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.company_id.name}"
+        return f"{self.company_id}"
 
 class System_business_detail(models.Model):
     address = models.TextField()

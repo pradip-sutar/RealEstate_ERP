@@ -287,29 +287,135 @@ def create_brand_detail(request):
 @transaction.atomic
 def system_company_details_handler(request):
     if request.method == 'POST':
-        response_data = {}
-        model_map = {
-            'company_detail': (System_company_detail, SystemCompanyDetailsSerializer),
-            'brand_detail': (System_brand_detail, SystemCompanyBrandSerializer),
-            'business_detail': (System_business_detail, SystemBusinessDetailSerializer),
-            'contact_detail': (System_contact_detail, SystemContactDetailSerializer),
-            'social_detail': (System_social_detail, SystemSocialDetailSerializer),
-            'other_detail': (System_other_detail, SystemOtherDetailSerializer),
-        }
+        data = request.data
+        print(data)
+        # Extract Company Detail
+        company_data = {}
+        for key, value in data.items():
+            if key.startswith('company_detail'):
+                sub_key = key.split('.', 1)[1]  # Get everything after 'company_detail.'
+                company_data[sub_key] = value
+        
+        # Save Company Detail
+        company_serializer = SystemCompanyDetailsSerializer(data=company_data)
+        if company_serializer.is_valid():
+            company_detail = company_serializer.save()
+        else:
+            return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            for key, (model_class, serializer_class) in model_map.items():
-                if key in request.data:
-                    serializer = serializer_class(data=request.data[key])
-                    if serializer.is_valid():
-                        serializer.save()
-                        response_data[key] = {"message": f"{key.replace('_', ' ').capitalize()} created successfully", "data": serializer.data}
-                    else:
-                        response_data[key] = {"errors": serializer.errors}
+        #Extract Brand Detail
+        brand_data = {}
+        for key, value in data.items():
+            if key.startswith('brand_detail'):
+                sub_key = key.split('.', 1)[1]  # Get everything after 'brand_detail.'
+                brand_data[sub_key] = value
+        brand_data['company_id'] = company_detail.companyid
+        
+        # Save Brand Detail
+        brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
+        if brand_serializer.is_valid():
+            brand_serializer.save()
+            return JsonResponse(brand_serializer.data, status=status.HTTP_201_CREATED,safe=False)
+        else:
+            return JsonResponse(brand_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            return JsonResponse(response_data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Extract Business Detail
+        # business_data = {}
+        # for key, value in data.items():
+        #     if key.startswith('business_detail'):
+        #         sub_key = key.split('.', 1)[1]  # Get everything after 'business_detail.'
+        #         business_data[sub_key] = value
+        # business_data['company_id'] = company_detail
+        
+        # # Save Business Detail
+        # business_serializer = SystemBusinessDetailSerializer(data=business_data)
+        # if business_serializer.is_valid():
+        #     business_serializer.save()
+        # else:
+        #     return JsonResponse(business_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # # Extract Contact Detail
+        # contact_data = {}
+        # for key, value in data.items():
+        #     if key.startswith('contact_detail'):
+        #         sub_key = key.split('.', 1)[1]  # Get everything after 'contact_detail.'
+        #         contact_data[sub_key] = value
+        # contact_data['company_id'] = company_detail.id
+        
+        # # Save Contact Detail
+        # contact_serializer = SystemContactDetailSerializer(data=contact_data)
+        # if contact_serializer.is_valid():
+        #     contact_serializer.save()
+        # else:
+        #     return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # # Extract Social Detail
+        # social_data = []
+        # for key, value in data.items():
+        #     if key.startswith('social_detail'):
+        #         sub_key = key.split('.', 1)[1]  # Get everything after 'social_detail.details.'
+        #         detail_key, detail_field = sub_key.split('.', 1)  # Split into 'index' and 'field'
+        #         index = int(detail_key)  # Convert 'index' to integer
+        #         while len(social_data) <= index:
+        #             social_data.append({})
+        #         social_data[index][detail_field] = value
+        
+        # # Save Social Detail
+        # for detail in social_data:
+        #     detail['company_id'] = company_detail.id
+        #     social_serializer = SystemSocialDetailSerializer(data=detail)
+        #     if social_serializer.is_valid():
+        #         social_serializer.save()
+        #     else:
+        #         return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # # Extract Other Detail
+        # other_data = []
+        # for key, value in data.items():
+        #     if key.startswith('other_detail'):
+        #         sub_key = key.split('.', 1)[1]  # Get everything after 'other_detail.details.'
+        #         detail_key, detail_field = sub_key.split('.', 1)  # Split into 'index' and 'field'
+        #         index = int(detail_key)  # Convert 'index' to integer
+        #         while len(other_data) <= index:
+        #             other_data.append({})
+        #         other_data[index][detail_field] = value
+        
+        # # Save Other Detail
+        # for detail in other_data:
+        #     detail['company_id'] = company_detail.id
+        #     other_serializer = SystemOtherDetailSerializer(data=detail)
+        #     if other_serializer.is_valid():
+        #         other_serializer.save()
+        #     else:
+        #         return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
+
+    # return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_400_BAD_REQUEST)
+        # response_data = {}
+        # model_map = {
+        #     'company_detail': (System_company_detail, SystemCompanyDetailsSerializer),
+        #     'brand_detail': (System_brand_detail, SystemCompanyBrandSerializer),
+        #     'business_detail': (System_business_detail, SystemBusinessDetailSerializer),
+        #     'contact_detail': (System_contact_detail, SystemContactDetailSerializer),
+        #     'social_detail': (System_social_detail, SystemSocialDetailSerializer),
+        #     'other_detail': (System_other_detail, SystemOtherDetailSerializer),
+        # }
+        # print(model_map)
+
+        # try:
+        #     for key, (model_class, serializer_class) in model_map.items():
+        #         if key in request.data:
+        #             serializer = serializer_class(data=request.data[key])
+        #             if serializer.is_valid():
+        #                 # serializer.save()
+        #                 response_data[key] = {"message": f"{key.replace('_', ' ').capitalize()} created successfully", "data": serializer.data}
+        #             else:
+        #                 response_data[key] = {"errors": serializer.errors}
+
+        #     return JsonResponse(response_data, status=status.HTTP_201_CREATED)
+        # except Exception as e:
+        #     return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST', 'GET'])
 @transaction.atomic

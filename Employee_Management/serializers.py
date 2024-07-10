@@ -40,3 +40,8 @@ class SkillLevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill_Level
         fields = '__all__'
+
+class BankOthersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bank_Others
+        fields = '__all__'
