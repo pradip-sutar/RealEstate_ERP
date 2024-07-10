@@ -1,5 +1,6 @@
 from django.db import models
-from app1.models import Department_Name
+from Department.models import *
+from app1.models import *
 
 # Create your models here.
 class Company_profile(models.Model):
@@ -122,3 +123,35 @@ class Bank_Others(models.Model):
 
     def __str__(self):
         return self.bank_name
+    
+
+class Employee_Salary(models.Model):
+    joining_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    ctc = models.DecimalField(max_digits=10, decimal_places=2)
+    joining_letter = models.FileField(upload_to='joining_letters/', blank=True, null=True)
+    joining_date = models.DateField()
+    department = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
+    designation = models.ForeignKey(Department_Designation, on_delete=models.CASCADE)
+    level = models.ForeignKey(Department_Label, on_delete=models.CASCADE)
+    grade = models.ForeignKey(Department_Grade, on_delete=models.CASCADE)
+    branch = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
+    increment_date = models.DateField(blank=True, null=True)
+    promotion_date = models.DateField(blank=True, null=True)
+    increased_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    increased_ctc = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    promotion_letter = models.FileField(upload_to='promotion_letters/', blank=True, null=True)
+    transfer_date = models.DateField(blank=True, null=True)
+    transfer_letter = models.FileField(upload_to='transfer_letters/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Employee Salary ({self.department} - {self.designation})"
+    
+class Employee_Document(models.Model):
+    files = models.FileField(upload_to='employee_documents/')
+    name = models.CharField(max_length=255)
+    document_no = models.CharField(max_length=100)
+    validity = models.DateField()
+    issued_by = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

@@ -68,4 +68,14 @@ class BankOthersAdmin(admin.ModelAdmin):
         'insurance_branch'
     ]
 
+@admin.register(Employee_Salary)
+class EmployeeSalaryAdmin(admin.ModelAdmin):
+    list_display = [
+        'joining_salary', 'ctc', 'joining_date', 'department', 'designation', 'level', 'grade', 
+        'branch', 'increment_date', 'promotion_date', 'increased_salary', 
+        'increased_ctc', 'transfer_date'
+    ]
 
+@admin.register(Employee_Document)
+class EmployeeDocumentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'document_no', 'validity', 'issued_by']

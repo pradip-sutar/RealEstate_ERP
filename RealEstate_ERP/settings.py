@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     'Employee_Management',
     'Team_Management',
     'Pre_Project',
-    'Projects'
+    'Projects',
+    'Department'
 ]
 
 MIDDLEWARE = [

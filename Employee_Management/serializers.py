@@ -45,3 +45,14 @@ class BankOthersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bank_Others
         fields = '__all__'
+
+
+class EmployeeSalarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee_Salary
+        fields = '__all__'
+    
+class EmployeeDocumentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee_Document
+        fields = '__all__'

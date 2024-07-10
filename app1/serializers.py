@@ -75,12 +75,3 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 
-class DepartmentNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department_Name
-        fields = '__all__'
-
-class DepartmentDesignationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department_Designation
-        fields = '__all__'

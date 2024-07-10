@@ -162,3 +162,33 @@ def bank_others_view(request):
             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+@api_view(['GET', 'POST'])
+def employee_salary_handler(request):
+    if request.method == 'GET':
+        employee_salaries = Employee_Salary.objects.all()
+        serializer = EmployeeSalarySerializer(employee_salaries, many=True)
+        return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer = EmployeeSalarySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(['GET', 'POST'])
+def employee_document_handler(request):
+    if request.method == 'GET':
+        employee_documents = Employee_Document.objects.all()
+        serializer = EmployeeDocumentSerializer(employee_documents, many=True)
+        return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer = EmployeeDocumentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -43,11 +43,11 @@ class SystemContactDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_social_detail)
 class SystemSocialDetailsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'details', 'company_id']
+    list_display = ['id', 'name','icon']
 
 @admin.register(System_other_detail)
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'details', 'company_id']
+    list_display = ['id', 'name', 'desc','company_id']
 
 @admin.register(System_bank_details)
 class SystemBankDetailsAdmin(admin.ModelAdmin):
@@ -55,21 +55,7 @@ class SystemBankDetailsAdmin(admin.ModelAdmin):
     search_fields = ['bank_name', 'branch_name', 'IFSC', 'account_name', 'account_no']
     list_filter = ['account_type']
 
-@admin.register(Department_Name)
-class Department_Name(admin.ModelAdmin):
-    list_display = ['departmentid', 'name', 'status']
 
-@admin.register(Department_Designation)
-class Department_Designation(admin.ModelAdmin):
-    list_display = ['designation', 'dept_name', 'roles_rights']
-
-@admin.register(Department_Label)
-class Department_Label(admin.ModelAdmin):
-    list_display = ['designation', 'label_description', 'status']
-
-@admin.register(Department_Grade)
-class Department_Grade(admin.ModelAdmin):
-    list_display = ['label', 'grade_description', 'status']
 
 
 # @admin.register(Team_management)

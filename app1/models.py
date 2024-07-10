@@ -66,14 +66,17 @@ class System_contact_detail(models.Model):
         return f"{self.name} ({self.company_id.name})"
 
 class System_social_detail(models.Model):
-    details = models.JSONField()  # Changed to JSONField
+    name = models.CharField(max_length=255)  # Changed to JSONField
+    # url = models.URLField(max_length=255)  
+    icon = models.ImageField(upload_to='social_icon/', blank=True, null=True) 
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Social Details ({self.company_id.name})"
 
 class System_other_detail(models.Model):
-    details = models.JSONField()  # Changed to JSONField
+    name = models.CharField(max_length=255)  # Changed to JSONField
+    desc = models.TextField()
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -159,33 +162,7 @@ class System_Board_of_Directors(models.Model):
     def __str__(self):
         return self.name
 
-class Department_Name(models.Model):
-    departmentid = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=255,unique=True)
-    status = models.BooleanField()
-    def __str__(self):
-        return self.name
-    
-class Department_Designation(models.Model):
-    designation = models.CharField(max_length=255)
-    dept_name = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
-    roles_rights = models.CharField(max_length=20)
-    def __str__(self):
-        return self.designation
-    
-class Department_Label(models.Model):
-    designation = models.ForeignKey(Department_Designation,on_delete=models.CASCADE)
-    label_description = models.TextField()
-    status = models.CharField(max_length=20)
-    def __str__(self):
-        return self.label_description
-    
-class Department_Grade(models.Model):
-    label = models.ForeignKey(Department_Label,on_delete=models.CASCADE)
-    grade_description = models.TextField()
-    status = models.CharField(max_length=20)
-    def __str__(self):
-        return self.grade_description
+
     
 # class Team_management(models.Model):
 #     team_leader = models.CharField(max_length=255)
