@@ -10,7 +10,7 @@ class Project_Type(models.Model):
 class Project_Payment_Schedule(models.Model):
     stages = models.CharField(max_length=255)
     percentage = models.DecimalField(max_digits=5, decimal_places=2)
-    date = models.DateField()
+    date = models.CharField(max_length=100)
 
     def __str__(self):
         return self.stages
