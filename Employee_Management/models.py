@@ -150,7 +150,7 @@ class Employee_Document(models.Model):
     files = models.FileField(upload_to='employee_documents/')
     name = models.CharField(max_length=255)
     document_no = models.CharField(max_length=100)
-    validity = models.DateField()
+    validity = models.CharField(max_length=100)
     issued_by = models.CharField(max_length=255)
 
     def __str__(self):
