@@ -19,7 +19,7 @@ class System_company_detail(models.Model):
     company_size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)
     incorporation_agency = models.CharField(max_length=255)
-    date = models.DateField()
+    date = models.CharField(max_length=100)
     certificate = models.FileField(upload_to='company_certificates/', blank=True, null=True)
     TAX_certificate = models.CharField(max_length=255)
     PAN = models.CharField(max_length=255)
@@ -95,7 +95,7 @@ class System_branch_details(models.Model):
     size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)
     incorporation_age = models.CharField(max_length=255)
-    incorporation_date = models.DateField()
+    incorporation_date = models.CharField(max_length=100)
     incorporation_certificate = models.FileField(upload_to='incorporation_certificates/',blank=True,null=True)
     tax_certificate_details = models.TextField()
     PAN = models.CharField(max_length=10)
@@ -155,8 +155,8 @@ class System_bank_details(models.Model):
 class System_Board_of_Directors(models.Model):
     name = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
-    date_of_join = models.DateField()
-    date_of_leave = models.DateField(null=True, blank=True)
+    date_of_join = models.CharField(max_length=100)
+    date_of_leave = models.CharField(max_length=100)
     share = models.FloatField()
     stakeholder = models.BooleanField()
     def __str__(self):
