@@ -263,6 +263,7 @@ def system_branch_handler(request):
             'contact_whatsapp': request.data.get('contact_whatsapp'),
             'contact_branch_id': request.data.get('contact_branch_id')
         }
+        print(branch_details_data,branch_brand_data,branch_contact_data)
         if System_branch_details.objects.filter(branch_id=branch_details_data['branch_id']):
             return JsonResponse({'error': 'Branch ID already exists'}, status=status.HTTP_400_BAD_REQUEST)
         # Serializing and validating the data
@@ -309,7 +310,7 @@ def system_branch_handler(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        
+
 @api_view(['POST', 'GET'])
 @transaction.atomic
 def system_bank_details_handler(request):
