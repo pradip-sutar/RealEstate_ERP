@@ -78,4 +78,4 @@ class EmployeeSalaryAdmin(admin.ModelAdmin):
 
 @admin.register(Employee_Document)
 class EmployeeDocumentAdmin(admin.ModelAdmin):
-    list_display = ['name', 'document_no', 'validity', 'issued_by']
+    list_display = ['name', 'document_no', 'validity', 'issued_by','files']

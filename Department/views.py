@@ -56,3 +56,32 @@ def department_designation_handler(request):
                 return JsonResponse(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET', 'POST'])
+def department_label_handler(request):
+    if request.method == 'GET':
+        labels = Department_Label.objects.all()
+        serializer = DepartmentLabelSerializer(labels, many=True)
+        return JsonResponse(serializer.data,safe=False)
+    
+    elif request.method == 'POST':
+        serializer = DepartmentLabelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def department_grade_handler(request):
+    if request.method == 'GET':
+        grades = Department_Grade.objects.all()
+        serializer = DepartmentGradeSerializer(grades, many=True)
+        return JsonResponse(serializer.data,safe=False)
+    
+    elif request.method == 'POST':
+        serializer = DepartmentGradeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

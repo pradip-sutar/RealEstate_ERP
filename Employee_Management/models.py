@@ -147,7 +147,7 @@ class Employee_Salary(models.Model):
         return f"Employee Salary ({self.department} - {self.designation})"
     
 class Employee_Document(models.Model):
-    files = models.FileField(upload_to='employee_documents/')
+    files = models.FileField(upload_to='employee_documents/',blank=True,null=True)
     name = models.CharField(max_length=255)
     document_no = models.CharField(max_length=100)
     validity = models.CharField(max_length=100)

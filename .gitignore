@@ -18,6 +18,9 @@ Team_Management/__pycache__
 Team_Management/migrations
 
 
+Department/__pycache__
+Department/migrations
+
 db.sqlite3
 
 media
