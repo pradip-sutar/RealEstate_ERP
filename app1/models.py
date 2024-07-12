@@ -156,7 +156,7 @@ class System_Board_of_Directors(models.Model):
     name = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
     date_of_join = models.CharField(max_length=100)
-    date_of_leave = models.CharField(max_length=100)
+    date_of_leave = models.CharField(max_length=100, blank=True, null=True)
     share = models.FloatField()
     stakeholder = models.BooleanField()
     def __str__(self):
