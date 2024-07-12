@@ -43,6 +43,7 @@ def department_designation_handler(request):
     
     elif request.method == 'POST':
         data = request.data
+        print(data)
         try:
             # Check if the designation already exists within the same department
             if Department_Designation.objects.filter(designation=data.get('designation'), dept_name=data.get('dept_name')).exists():

@@ -4,7 +4,7 @@ from . models import *
 # Register your models here.
 @admin.register(Department_Name)
 class Department_Name(admin.ModelAdmin):
-    list_display = ['departmentid', 'name', 'status']
+    list_display = ['id', 'name', 'status']
 
 @admin.register(Department_Designation)
 class Department_Designation(admin.ModelAdmin):

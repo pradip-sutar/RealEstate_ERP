@@ -263,23 +263,21 @@ def system_branch_handler(request):
             'contact_whatsapp': request.data.get('contact_whatsapp'),
             'contact_branch_id': request.data.get('contact_branch_id')
         }
-
+        # if 
         # Serializing and validating the data
         branch_details_serializer = SystemBranchDetailsSerializer(data=branch_details_data)
         branch_brand_serializer = SystemBranchBrandSerializer(data=branch_brand_data)
         branch_contact_serializer = SystemBranchContactSerializer(data=branch_contact_data)
-
         # Check validity and handle response
         branch_details_valid = branch_details_serializer.is_valid()
         branch_brand_valid = branch_brand_serializer.is_valid()
         branch_contact_valid = branch_contact_serializer.is_valid()
 
-        if branch_details_valid and branch_brand_valid and branch_contact_valid:
-            # Save the branch details first
+        if branch_details_valid:
             branch_details = branch_details_serializer.save()
-            # Update branch_brand and branch_contact with the saved branch instance
-            branch_brand_serializer.save(branch=branch_details)
-            branch_contact_serializer.save(branch=branch_details)
+        if branch_brand_valid and branch_contact_valid:
+            brand_details = branch_brand_serializer.save()
+            contact_details = branch_contact_serializer.save()
             
             return JsonResponse({
                 'branch_details': branch_details_serializer.data,
@@ -291,7 +289,7 @@ def system_branch_handler(request):
             errors = {
                 'branch_details_errors': branch_details_serializer.errors if not branch_details_valid else None,
                 'branch_brand_errors': branch_brand_serializer.errors if not branch_brand_valid else None,
-                'branch_contact_errors': branch_contact_serializer.errors if not branch_contact_valid else None
+                # 'branch_contact_errors': branch_contact_serializer.errors if not branch_contact_valid else None
             }
             return JsonResponse(errors, status=status.HTTP_400_BAD_REQUEST)
 

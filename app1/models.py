@@ -109,7 +109,7 @@ class System_branch_details(models.Model):
     branch_phone = models.CharField(max_length=15)
     branch_whatsapp = models.CharField(max_length=15, blank=True, null=True)
     def __str__(self):
-        return f"{self.name} ({self.branch_id})"
+        return f"{self.branch_name} ({self.branch_id})"
     
 class System_branch_brand(models.Model):
     letter_header = models.FileField(upload_to='letter_headers/',null=True, blank=True)
