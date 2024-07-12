@@ -135,12 +135,12 @@ class Employee_Salary(models.Model):
     level = models.ForeignKey(Department_Label, on_delete=models.CASCADE)
     grade = models.ForeignKey(Department_Grade, on_delete=models.CASCADE)
     branch = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
-    increment_date = models.CharField(max_length=100)
-    promotion_date = models.CharField(max_length=100)
+    increment_date = models.CharField(max_length=100, blank=True, null=True)
+    promotion_date = models.CharField(max_length=100, blank=True, null=True)
     increased_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     increased_ctc = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     promotion_letter = models.FileField(upload_to='promotion_letters/', blank=True, null=True)
-    transfer_date = models.CharField(max_length=100)
+    transfer_date = models.CharField(max_length=100, blank=True, null=True)
     transfer_letter = models.FileField(upload_to='transfer_letters/', blank=True, null=True)
 
     def __str__(self):

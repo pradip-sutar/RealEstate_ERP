@@ -21,8 +21,8 @@ def department_name_handler(request):
         try:
             while True:
                 id = random.randrange(1000000, 99999999)
-                if not Department_Name.objects.filter(departmentid=id).exists():
-                    data['departmentid'] = id
+                if not Department_Name.objects.filter(id=id).exists():
+                    data['id'] = id
                     serializers = DepartmentNameSerializer(data=data)
                     if serializers.is_valid():
                         serializers.save()

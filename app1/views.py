@@ -247,7 +247,7 @@ def system_branch_handler(request):
             'branch_phone': request.data.get('branch_phone'),
             'branch_whatsapp': request.data.get('branch_whatsapp')
         }
-
+        
         branch_brand_data = {
             'letter_header': request.data.get('letter_header'),
             'letter_footer': request.data.get('letter_footer'),
@@ -263,21 +263,19 @@ def system_branch_handler(request):
             'contact_whatsapp': request.data.get('contact_whatsapp'),
             'contact_branch_id': request.data.get('contact_branch_id')
         }
-        # if 
+        if System_branch_details.objects.filter(branch_id=branch_details_data['branch_id']):
+            return JsonResponse({'error': 'Branch ID already exists'}, status=status.HTTP_400_BAD_REQUEST)
         # Serializing and validating the data
         branch_details_serializer = SystemBranchDetailsSerializer(data=branch_details_data)
         branch_brand_serializer = SystemBranchBrandSerializer(data=branch_brand_data)
         branch_contact_serializer = SystemBranchContactSerializer(data=branch_contact_data)
         # Check validity and handle response
-        branch_details_valid = branch_details_serializer.is_valid()
-        branch_brand_valid = branch_brand_serializer.is_valid()
-        branch_contact_valid = branch_contact_serializer.is_valid()
-
-        if branch_details_valid:
-            branch_details = branch_details_serializer.save()
-        if branch_brand_valid and branch_contact_valid:
-            brand_details = branch_brand_serializer.save()
-            contact_details = branch_contact_serializer.save()
+        if branch_details_serializer.is_valid():
+            branch_details_serializer.save()
+        if branch_brand_serializer.is_valid():
+            branch_brand_serializer.save()
+        if branch_contact_serializer.is_valid():
+            branch_contact_serializer.save()
             
             return JsonResponse({
                 'branch_details': branch_details_serializer.data,
@@ -287,9 +285,9 @@ def system_branch_handler(request):
         else:
             # Collecting all the errors from the serializers
             errors = {
-                'branch_details_errors': branch_details_serializer.errors if not branch_details_valid else None,
-                'branch_brand_errors': branch_brand_serializer.errors if not branch_brand_valid else None,
-                # 'branch_contact_errors': branch_contact_serializer.errors if not branch_contact_valid else None
+                'branch_details_errors': branch_details_serializer.errors,
+                'branch_brand_errors': branch_brand_serializer.errors,
+                'branch_contact_errors': branch_contact_serializer.errors
             }
             return JsonResponse(errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -310,6 +308,7 @@ def system_branch_handler(request):
             }, safe=False)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
         
 @api_view(['POST', 'GET'])
 @transaction.atomic
