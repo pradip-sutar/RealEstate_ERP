@@ -201,6 +201,10 @@ def system_company_details_handler(request):
             return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
+    elif request.method == 'GET':
+        company_details = System_company_detail.objects.all()
+        serializer = SystemCompanyDetailsSerializer(company_details, many=True)
+        return JsonResponse({"data": serializer.data}, status=200)
 
 @api_view(['POST', 'GET'])
 @transaction.atomic

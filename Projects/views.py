@@ -14,8 +14,8 @@ def project_type_handler(request):
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = ProjectTypeSerializer(data=data)
+        print(request.data)
+        serializer = ProjectTypeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
