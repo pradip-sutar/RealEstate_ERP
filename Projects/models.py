@@ -1,5 +1,5 @@
 from django.db import models
-
+from Pre_Project.models import *
 # Create your models here.
 class Project_Type(models.Model):
     name = models.CharField(max_length=50)
@@ -95,6 +95,7 @@ class Project_add_Payment(models.Model):
     title = models.CharField(max_length=255)
     value = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title

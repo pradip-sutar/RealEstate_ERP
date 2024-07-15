@@ -51,7 +51,7 @@ class ProjectProductAdmin(admin.ModelAdmin):
 
 @admin.register(Project_add_Payment)
 class ProjectAddPaymentAdmin(admin.ModelAdmin):
-    list_display = ['id','title', 'value', 'description']
+    list_display = ['id','title', 'value', 'description','confirm_project_id']
 
 @admin.register(Project_add_Amenity)
 class ProjectAddAmenityAdmin(admin.ModelAdmin):

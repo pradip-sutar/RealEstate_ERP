@@ -187,6 +187,7 @@ def employee_document_handler(request):
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
+        print(request.data)
         serializer = EmployeeDocumentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
