@@ -6,8 +6,8 @@ from django.conf import settings
 
 urlpatterns = [
     
-    path('user/<int:mob>/', views.admin_view),
-    path('admin-login/', views.admin_login),
+    path('admin_view/<int:mob>/', views.admin_view),
+    path('admin_login/', views.admin_login),
     path('system_company_details_handler/', views.system_company_details_handler, name='system_company_details_handler'),
     path('system_branch_type_handler/', views.system_branch_type_handler, name='system_branch_type_handler'),
     path('system_branch_handler/', views.system_branch_handler, name='system_branch_handler'),

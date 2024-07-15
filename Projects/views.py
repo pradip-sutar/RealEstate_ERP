@@ -192,7 +192,13 @@ def project_product_list(request):
 @api_view(['GET', 'POST'])
 def project_add_payment_list_handler(request):
     if request.method == 'GET':
-        payments = Project_add_Payment.objects.all()
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        print(confirm_project_id)
+        if confirm_project_id:
+            payments = Project_add_Payment.objects.filter(confirm_project_id=confirm_project_id)
+        else:
+            payments = Project_add_Payment.objects.all()
+        
         serializer = ProjectAddPaymentSerializer(payments, many=True)
         return JsonResponse(serializer.data, safe=False)
 
@@ -201,6 +207,7 @@ def project_add_payment_list_handler(request):
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
+        
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
     
 @api_view(['GET', 'POST'])
