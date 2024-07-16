@@ -8,7 +8,7 @@ import random
 from django.http import JsonResponse
 
 # Create your views here.
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT'])
 @transaction.atomic
 def department_name_handler(request):
     if request.method == 'GET':
@@ -23,12 +23,29 @@ def department_name_handler(request):
                 id = random.randrange(1000000, 99999999)
                 if not Department_Name.objects.filter(id=id).exists():
                     data['id'] = id
-                    serializers = DepartmentNameSerializer(data=data)
-                    if serializers.is_valid():
-                        serializers.save()
-                        return JsonResponse({"message": "Department created successfully", "data": serializers.data}, status=status.HTTP_201_CREATED)
-                    else:
-                        return JsonResponse(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+                    break
+            
+            serializer = DepartmentNameSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"message": "Department created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    elif request.method == 'PUT':
+        data = request.data
+        try:
+            department = Department_Name.objects.get(id=data.get('id'))
+            serializer = DepartmentNameSerializer(department, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse({"message": "Department updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Department_Name.DoesNotExist:
+            return JsonResponse({"error": "Department not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
