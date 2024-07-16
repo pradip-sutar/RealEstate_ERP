@@ -104,6 +104,6 @@ class Project_add_Amenity(models.Model):
     title = models.ForeignKey(Project_Amenity_Master, on_delete=models.CASCADE)
     description = models.TextField()
     image = models.ImageField(upload_to='amenities/')
-
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
     def __str__(self):
         return self.title.name
