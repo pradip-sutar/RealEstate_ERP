@@ -56,3 +56,28 @@ class ProjectAddPaymentAdmin(admin.ModelAdmin):
 @admin.register(Project_add_Amenity)
 class ProjectAddAmenityAdmin(admin.ModelAdmin):
     list_display = ['id','title', 'description', 'image']
+
+@admin.register(Project_add_Tax)
+class ProjectAddTaxAdmin(admin.ModelAdmin):
+    list_display = ['name', 'tax_amount', 'confirm_project_id']
+    search_fields = ['name', 'confirm_project_id__name']
+    list_filter = ['confirm_project_id']
+
+@admin.register(Project_add_PaidAmenity)
+class ProjectAddPaidAmenityAdmin(admin.ModelAdmin):
+    list_display = ['title', 'cost', 'confirm_project_id']
+    search_fields = ['title', 'confirm_project_id__name']
+    list_filter = ['confirm_project_id']
+
+@admin.register(Project_add_Price)
+class ProjectAddPriceAdmin(admin.ModelAdmin):
+    list_display = ['name', 'purchase', 'base', 'market', 'total', 'confirm_project_id']
+    search_fields = ['name', 'purchase', 'confirm_project_id__name']
+    list_filter = ['confirm_project_id']
+
+@admin.register(Project_add_Inventory)
+class ProjectAddInventoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'quantity', 'build', 'total', 'carpet', 'sold', 'available', 'confirm_project_id']
+    search_fields = ['name', 'category', 'confirm_project_id__name']
+    list_filter = ['confirm_project_id']
+

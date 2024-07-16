@@ -71,3 +71,28 @@ class ProjectAddAmenitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Project_add_Amenity
         fields = '__all__'
+
+class ProjectAddCommissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Commission
+        fields = '__all__'
+
+class ProjectAddTaxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Tax
+        fields = '__all__'
+
+class ProjectAddPaidAmenitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_PaidAmenity
+        fields = '__all__'
+
+class ProjectAddPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Price
+        fields = '__all__'
+
+class ProjectAddInventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project_add_Inventory
+        fields = '__all__'

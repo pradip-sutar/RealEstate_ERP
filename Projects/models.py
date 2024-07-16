@@ -86,6 +86,7 @@ class Project_Product(models.Model):
     cost = models.DecimalField(max_digits=15, decimal_places=2)
     amenity = models.ForeignKey(Project_Amenity_Master, on_delete=models.CASCADE)
     description = models.TextField()
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -107,3 +108,49 @@ class Project_add_Amenity(models.Model):
     confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
     def __str__(self):
         return self.title.name
+    
+class Project_add_Commission(models.Model):
+    commission = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.commission
+    
+class Project_add_Tax(models.Model):
+    name = models.CharField(max_length=255)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+    
+class Project_add_PaidAmenity(models.Model):
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='Paid_amenities/')
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.title
+    
+class Project_add_Price(models.Model):
+    name = models.CharField(max_length=255)
+    purchase = models.CharField(max_length=255)
+    base = models.DecimalField(max_digits=10, decimal_places=2)
+    market = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name
+    
+
+class Project_add_Inventory(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    build = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    carpet = models.IntegerField()
+    sold = models.DecimalField(max_digits=10, decimal_places=2)
+    available = models.IntegerField()
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.name

@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import Project_Type
 from .serializers import *
 from rest_framework.decorators import api_view
+from django.db import transaction
 
 @api_view(['GET', 'POST'])
 def project_type_handler(request):
@@ -223,3 +224,89 @@ def project_add_amenity_list_handler(request):
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+    
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def project_add_commission_handler(request):
+    if request.method == 'GET':
+        commissions = Project_add_Commission.objects.all()
+        serializer = ProjectAddCommissionSerializer(commissions, many=True)
+        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = ProjectAddCommissionSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Commission added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def project_add_tax_handler(request):
+    if request.method == 'GET':
+        taxes = Project_add_Tax.objects.all()
+        serializer = ProjectAddTaxSerializer(taxes, many=True)
+        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = ProjectAddTaxSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Tax added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def project_add_paid_amenity_handler(request):
+    if request.method == 'GET':
+        paid_amenities = Project_add_PaidAmenity.objects.all()
+        serializer = ProjectAddPaidAmenitySerializer(paid_amenities, many=True)
+        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = ProjectAddPaidAmenitySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Paid amenity added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def project_add_price_handler(request):
+    if request.method == 'GET':
+        prices = Project_add_Price.objects.all()
+        serializer = ProjectAddPriceSerializer(prices, many=True)
+        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = ProjectAddPriceSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Price added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+@transaction.atomic
+def project_add_inventory_handler(request):
+    if request.method == 'GET':
+        inventories = Project_add_Inventory.objects.all()
+        serializer = ProjectAddInventorySerializer(inventories, many=True)
+        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+        data = request.data
+        serializer = ProjectAddInventorySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({"message": "Inventory added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
