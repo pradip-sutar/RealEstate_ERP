@@ -230,9 +230,14 @@ def project_add_amenity_list_handler(request):
 @transaction.atomic
 def project_add_commission_handler(request):
     if request.method == 'GET':
-        commissions = Project_add_Commission.objects.all()
-        serializer = ProjectAddCommissionSerializer(commissions, many=True)
-        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            commission = Project_add_Commission.objects.filter(confirm_project_id=confirm_project_id)
+        else:
+            commission = Project_add_Commission.objects.all()
+        
+        serializer = ProjectAddCommissionSerializer(commission, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
         data = request.data

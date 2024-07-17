@@ -57,6 +57,10 @@ class ProjectAddPaymentAdmin(admin.ModelAdmin):
 class ProjectAddAmenityAdmin(admin.ModelAdmin):
     list_display = ['id','title', 'description', 'image']
 
+@admin.register(Project_add_Commission)
+class ProjectAddAmenityAdmin(admin.ModelAdmin):
+    list_display = ['id','commission', 'amount', 'confirm_project_id']
+
 @admin.register(Project_add_Tax)
 class ProjectAddTaxAdmin(admin.ModelAdmin):
     list_display = ['name', 'tax_amount', 'confirm_project_id']
