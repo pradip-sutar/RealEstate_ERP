@@ -183,6 +183,7 @@ def project_product_list(request):
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
+        print(request.data)
         serializer = ProjectProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
