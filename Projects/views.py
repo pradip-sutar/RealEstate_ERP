@@ -178,11 +178,17 @@ def project_tax_list(request):
 @api_view(['GET', 'POST'])
 def project_product_list(request):
     if request.method == 'GET':
-        products = Project_Product.objects.all()
-        serializer = ProjectProductSerializer(products, many=True)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        print(confirm_project_id)
+        if confirm_project_id:
+            product_details = Project_Product.objects.filter(confirm_project_id=confirm_project_id)
+        else:
+            product_details = Project_Product.objects.all()
+        serializer = ProjectProductSerializer(product_details, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
+        print(request.data)
         serializer = ProjectProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -214,10 +220,15 @@ def project_add_payment_list_handler(request):
 @api_view(['GET', 'POST'])
 def project_add_amenity_list_handler(request):
     if request.method == 'GET':
-        amenities = Project_add_Amenity.objects.all()
-        serializer = ProjectAddAmenitySerializer(amenities, many=True)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            commission = Project_add_Amenity.objects.filter(confirm_project_id=confirm_project_id)
+        else:
+            commission = Project_add_Amenity.objects.all()
+        
+        serializer = ProjectAddAmenitySerializer(commission, many=True)
         return JsonResponse(serializer.data, safe=False)
-
+    
     elif request.method == 'POST':
         serializer = ProjectAddAmenitySerializer(data=request.data)
         if serializer.is_valid():
@@ -269,9 +280,13 @@ def project_add_tax_handler(request):
 @transaction.atomic
 def project_add_paid_amenity_handler(request):
     if request.method == 'GET':
-        paid_amenities = Project_add_PaidAmenity.objects.all()
-        serializer = ProjectAddPaidAmenitySerializer(paid_amenities, many=True)
-        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            paidamenity = Project_add_PaidAmenity.objects.filter(confirm_project_id=confirm_project_id)
+        else:
+            paidamenity = Project_add_PaidAmenity.objects.all()
+        serializer = ProjectAddPaidAmenitySerializer(paidamenity, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
         data = request.data
