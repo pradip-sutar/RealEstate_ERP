@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'Pre_Project',
     'Projects',
     'Department',
-    'Project_Products'
+    'Project_Products',
+    'Enquiry_Bucket'
 ]
 
 MIDDLEWARE = [
