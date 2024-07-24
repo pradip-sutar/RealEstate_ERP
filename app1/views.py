@@ -7,23 +7,28 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from Department.models import *
 from Employee_Management.models import *
-from django.http import HttpResponse,HttpRequest,JsonResponse
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.db import transaction, IntegrityError
 import re
 import random
 from rest_framework import status
 
 # Create your views here.
+
+
 @csrf_exempt
-def admin_view(request,mob):
+def admin_view(request, mob):
     if request.method == 'GET':
         # parse = JSONParser().parse(request)
         # mob = parse.get('mobileno')
         data = Admin.objects.filter(mob=mob)
-        final_data = [(i.name,i.mob,i.designation,i.department, i.designation,i.email) for i in data]
-        return JsonResponse({"data":final_data})
-    
+        final_data = [(i.name, i.mob, i.designation, i.department,
+                       i.designation, i.email) for i in data]
+        return JsonResponse({"data": final_data})
+
 # @csrf_exempt
+
+
 def admin_login(request):
     try:
         if request.method == 'POST':
@@ -38,7 +43,8 @@ def admin_login(request):
             else:
                 return JsonResponse({"message": "Invalid email/mobile format"}, status=400)
             if data.exists():
-                final_data = [(i.name, i.mob, i.designation, i.department, i.email, i.token) for i in data]
+                final_data = [(i.name, i.mob, i.designation,
+                               i.department, i.email, i.token) for i in data]
                 return JsonResponse({"message": "Login successful", "data": final_data})
             else:
                 return JsonResponse({"message": "Invalid credentials"}, status=400)
@@ -46,7 +52,7 @@ def admin_login(request):
             return JsonResponse({"message": "Only POST requests are allowed"}, status=405)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-    
+
 
 @csrf_exempt
 @transaction.atomic
@@ -105,19 +111,19 @@ def create_emp_profile(request):
     return HttpResponse(status=405)
 
 
-@api_view(['POST','GET','DELETE'])
+@api_view(['POST', 'GET', 'DELETE'])
 @transaction.atomic
 def system_company_details_handler(request):
     if request.method == 'POST':
         data = request.data
-        print(data)
         # Extract Company Detail
         company_data = {}
         for key, value in data.items():
             if key.startswith('company_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'company_detail.'
+                # Get everything after 'company_detail.'
+                sub_key = key.split('.', 1)[1]
                 company_data[sub_key] = value
-        
+
         # Save Company Detail
         company_serializer = SystemCompanyDetailsSerializer(data=company_data)
         if company_serializer.is_valid():
@@ -125,14 +131,15 @@ def system_company_details_handler(request):
         else:
             return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        #Extract Brand Detail
+        # Extract Brand Detail
         brand_data = {}
         for key, value in data.items():
             if key.startswith('brand_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'brand_detail.'
+                # Get everything after 'brand_detail.'
+                sub_key = key.split('.', 1)[1]
                 brand_data[sub_key] = value
         brand_data['company_id'] = company_detail.companyid
-        
+
         # Save Brand Detail
         brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
         if brand_serializer.is_valid():
@@ -144,12 +151,14 @@ def system_company_details_handler(request):
         business_data = {}
         for key, value in data.items():
             if key.startswith('business_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'business_detail.'
+                # Get everything after 'business_detail.'
+                sub_key = key.split('.', 1)[1]
                 business_data[sub_key] = value
         business_data['company_id'] = company_detail.companyid
-        
+
         # Save Business Detail
-        business_serializer = SystemBusinessDetailSerializer(data=business_data)
+        business_serializer = SystemBusinessDetailSerializer(
+            data=business_data)
         if business_serializer.is_valid():
             business_serializer.save()
         else:
@@ -159,10 +168,11 @@ def system_company_details_handler(request):
         contact_data = {}
         for key, value in data.items():
             if key.startswith('contact_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'contact_detail.'
+                # Get everything after 'contact_detail.'
+                sub_key = key.split('.', 1)[1]
                 contact_data[sub_key] = value
         contact_data['company_id'] = company_detail.companyid
-        
+
         # Save Contact Detail
         contact_serializer = SystemContactDetailSerializer(data=contact_data)
         if contact_serializer.is_valid():
@@ -170,29 +180,31 @@ def system_company_details_handler(request):
         else:
             return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        #Extract Social Detail
-        social_data={}
+        # Extract Social Detail
+        social_data = {}
         for key, value in data.items():
             if key.startswith('social_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'contact_detail.'
+                # Get everything after 'contact_detail.'
+                sub_key = key.split('.', 1)[1]
                 social_data[sub_key] = value
         social_data['company_id'] = company_detail.companyid
-        
+
         # Save Contact Detail
         social_serializer = SystemSocialDetailSerializer(data=social_data)
         if social_serializer.is_valid():
             social_serializer.save()
         else:
             return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
     #     # Extract Other Detail
         other_data = {}
         for key, value in data.items():
             if key.startswith('other_detail'):
-                sub_key = key.split('.', 1)[1]  # Get everything after 'contact_detail.'
+                # Get everything after 'contact_detail.'
+                sub_key = key.split('.', 1)[1]
                 other_data[sub_key] = value
         other_data['company_id'] = company_detail.companyid
-        
+
         # Save Other Detail
         other_serializer = SystemOtherDetailSerializer(data=other_data)
         if other_serializer.is_valid():
@@ -201,10 +213,45 @@ def system_company_details_handler(request):
             return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
+
     elif request.method == 'GET':
-        company_details = System_company_detail.objects.all()
-        serializer = SystemCompanyDetailsSerializer(company_details, many=True)
-        return JsonResponse({"data": serializer.data}, status=200)
+        comapny_id = request.query_params.get('company_id', None)
+        if comapny_id is not None:
+            company_details = System_company_detail.objects.filter(
+                companyid=comapny_id)
+            brand_details = System_brand_detail.objects.filter(
+                company_id=comapny_id)
+            contact_details = System_contact_detail.objects.filter(
+                company_id=comapny_id)
+            business_details = System_business_detail.objects.filter(
+                company_id=comapny_id)
+            social_detail = System_social_detail.objects.filter(
+                company_id=comapny_id)
+            other_detail = System_other_detail.objects.filter(
+                company_id=comapny_id)
+            details_serializer = SystemCompanyDetailsSerializer(
+                company_details, many=True)
+            brand_serializer = SystemCompanyBrandSerializer(
+                brand_details, many=True)
+            contact_serializer = SystemContactDetailSerializer(
+                contact_details, many=True)
+            business_serializer = SystemBusinessDetailSerializer(
+                business_details, many=True)
+            social_serializer = SystemSocialDetailSerializer(
+                social_detail, many=True)
+            other_serializer = SystemOtherDetailSerializer(
+                other_detail, many=True)
+            return JsonResponse({
+                "data": {"details": details_serializer.data, "brand_info": brand_serializer.data,
+                         "contact_info": contact_serializer.data, "business_details": business_serializer.data,
+                         "social_detail": social_serializer.data, "other_detail": other_serializer.data}
+            }, status=200)
+        else:
+            company_details = System_company_detail.objects.all()
+            serializer = SystemCompanyDetailsSerializer(
+                company_details, many=True)
+            return JsonResponse({"data": serializer.data}, status=200)
+
 
 @api_view(['POST', 'GET'])
 @transaction.atomic
@@ -222,7 +269,7 @@ def system_branch_type_handler(request):
         branch_types = System_branch_type.objects.all()
         serializer = SystemBranchTypeSerializer(branch_types, many=True)
         return JsonResponse({"data": serializer.data}, status=200)
-    
+
 
 @api_view(['POST', 'GET'])
 @transaction.atomic
@@ -251,7 +298,7 @@ def system_branch_handler(request):
             'branch_phone': request.data.get('branch_phone'),
             'branch_whatsapp': request.data.get('branch_whatsapp')
         }
-        
+
         branch_brand_data = {
             'letter_header': request.data.get('letter_header'),
             'letter_footer': request.data.get('letter_footer'),
@@ -267,13 +314,16 @@ def system_branch_handler(request):
             'contact_whatsapp': request.data.get('contact_whatsapp'),
             'contact_branch_id': request.data.get('contact_branch_id')
         }
-        print(branch_details_data,branch_brand_data,branch_contact_data)
+        print(branch_details_data, branch_brand_data, branch_contact_data)
         if System_branch_details.objects.filter(branch_id=branch_details_data['branch_id']):
             return JsonResponse({'error': 'Branch ID already exists'}, status=status.HTTP_400_BAD_REQUEST)
         # Serializing and validating the data
-        branch_details_serializer = SystemBranchDetailsSerializer(data=branch_details_data)
-        branch_brand_serializer = SystemBranchBrandSerializer(data=branch_brand_data)
-        branch_contact_serializer = SystemBranchContactSerializer(data=branch_contact_data)
+        branch_details_serializer = SystemBranchDetailsSerializer(
+            data=branch_details_data)
+        branch_brand_serializer = SystemBranchBrandSerializer(
+            data=branch_brand_data)
+        branch_contact_serializer = SystemBranchContactSerializer(
+            data=branch_contact_data)
         # Check validity and handle response
         if branch_details_serializer.is_valid():
             branch_details_serializer.save()
@@ -281,7 +331,7 @@ def system_branch_handler(request):
             branch_brand_serializer.save()
         if branch_contact_serializer.is_valid():
             branch_contact_serializer.save()
-            
+
             return JsonResponse({
                 'branch_details': branch_details_serializer.data,
                 'branch_brand': branch_brand_serializer.data,
@@ -302,9 +352,12 @@ def system_branch_handler(request):
             branch_brand = System_branch_brand.objects.all()
             branch_contact = System_branch_contact.objects.all()
 
-            branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
-            branch_brand_serializer = SystemBranchBrandSerializer(branch_brand, many=True)
-            branch_contact_serializer = SystemBranchContactSerializer(branch_contact, many=True)
+            branch_details_serializer = SystemBranchDetailsSerializer(
+                branch_details, many=True)
+            branch_brand_serializer = SystemBranchBrandSerializer(
+                branch_brand, many=True)
+            branch_contact_serializer = SystemBranchContactSerializer(
+                branch_contact, many=True)
 
             return JsonResponse({
                 'branch_details': branch_details_serializer.data,
@@ -313,7 +366,7 @@ def system_branch_handler(request):
             }, safe=False)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 @api_view(['POST', 'GET'])
 @transaction.atomic
@@ -330,7 +383,7 @@ def system_bank_details_handler(request):
     elif request.method == 'GET':
         bank_name = request.query_params.get('bank_name', None)
         branch_name = request.query_params.get('branch_name', None)
-        
+
         filters = {}
         if bank_name:
             filters['bank_name__icontains'] = bank_name
@@ -340,7 +393,8 @@ def system_bank_details_handler(request):
         bank_details = System_bank_details.objects.filter(**filters)
         serializer = SystemBankDetailsSerializer(bank_details, many=True)
         return JsonResponse({"data": serializer.data}, status=200)
-    
+
+
 @api_view(['GET', 'POST'])
 def system_board_of_directors_handler(request):
     if request.method == 'POST':
@@ -354,6 +408,7 @@ def system_board_of_directors_handler(request):
         directors = System_Board_of_Directors.objects.all()
         serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+
 
 @api_view(['GET', 'POST'])
 @transaction.atomic
@@ -370,5 +425,3 @@ def customer_handler(request):
             return JsonResponse({"message": "Customer created successfully", "data": serializer.data}, status=201)
         else:
             return JsonResponse(serializer.errors, status=400)
-        
-    

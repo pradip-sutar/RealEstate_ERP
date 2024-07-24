@@ -72,26 +72,26 @@ WSGI_APPLICATION = 'RealEstate_ERP.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-    # 'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'knrintegrity_RealEstate_CRM',
-        'USER': 'knrintegrity_RealEstate',
-        'PASSWORD': 'Realestate@2024',
-        'HOST': '103.131.196.204',   # Set to 'localhost' for local development
-        'PORT': '',   # Set to '' for default port
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'knrintegrity_RealEstate_CRM',
+#         'USER': 'knrintegrity_RealEstate',
+#         'PASSWORD': 'Realestate@2024',
+#         'HOST': '103.131.196.204',   # Set to 'localhost' for local development
+#         'PORT': '',   # Set to '' for default port
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
