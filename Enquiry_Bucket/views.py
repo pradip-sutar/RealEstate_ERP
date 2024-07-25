@@ -272,6 +272,45 @@ def lead_enquiry_status_handler(request):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST', 'PUT'])
+def lead_activity_status_handler(request):
+    if request.method == 'GET':
+        obj_id = request.query_params.get('id', None)
+        if obj_id:
+            try:
+                obj = Lead_Activity_Status.objects.get(id=obj_id)
+            except Lead_Activity_Status.DoesNotExist:
+                return Response({'message': 'The activity status does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            serializer = LeadActivityStatusSerializer(obj)
+            return Response(serializer.data)
+        else:
+            objs = Lead_Activity_Status.objects.all()
+            serializer = LeadActivityStatusSerializer(objs, many=True)
+            return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = LeadActivityStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PUT':
+        obj_id = request.query_params.get('id', None)
+        if not obj_id:
+            return Response({'message': 'activity status ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            obj = Lead_Activity_Status.objects.get(id=obj_id)
+        except Lead_Activity_Status.DoesNotExist:
+            return Response({'message': 'The activity status does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = LeadActivityStatusSerializer(obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'POST', 'PUT'])
 def customer_form_handler(request):

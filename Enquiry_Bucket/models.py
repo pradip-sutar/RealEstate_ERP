@@ -50,6 +50,13 @@ class Lead_Enquiry_Status(models.Model):
 
     def __str__(self):
         return self.lead_status
+    
+class Lead_Activity_Status(models.Model):
+    lead_status = models.CharField(max_length=255)
+    status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.lead_status
 
 class Customer_Form(models.Model):
     name = models.CharField(max_length=255)

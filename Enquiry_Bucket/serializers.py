@@ -36,6 +36,11 @@ class LeadEnquiryStatusSerializer(serializers.ModelSerializer):
         model = Lead_Enquiry_Status
         fields = '__all__'
 
+class LeadActivityStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lead_Activity_Status
+        fields = '__all__'
+
 class CustomerFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer_Form

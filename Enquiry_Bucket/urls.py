@@ -9,5 +9,6 @@ urlpatterns = [
     path('enquiry_type_handler/', views.enquiry_type_handler),
     path('lead_enquiry_stage_handler/', views.lead_enquiry_stage_handler),
     path('lead_enquiry_status_handler/', views.lead_enquiry_status_handler),
+    path('lead_activity_status_handler/', views.lead_activity_status_handler),
     path('customer_form_handler/', views.customer_form_handler),
 ]
