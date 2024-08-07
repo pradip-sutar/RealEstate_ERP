@@ -2,6 +2,10 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
+from rest_framework.authtoken.models import Token
+
+admin.site.register(Token)
+
 @admin.register(Admin)
 class UserAdmin(admin.ModelAdmin):
     list_display = ['name','department','designation','email','mob','password','token']

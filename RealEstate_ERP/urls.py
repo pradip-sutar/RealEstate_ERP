@@ -3,9 +3,13 @@ from django.urls import path, include
 from app1 import views
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework.authtoken.views import obtain_auth_token
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path('user_creation/', views.user_creation, name='api_token_auth'),
     path('api/',include('app1.urls')),
     path('api/',include('Employee_Management.urls')),
     path('api/',include('Team_Management.urls')),

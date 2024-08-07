@@ -26,7 +26,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Django REST Framework Token Authentication
+    'rest_framework.authtoken',
+
     'corsheaders',
+
+    # Project Application
     'app1',
     'Employee_Management',
     'Team_Management',
@@ -111,6 +117,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',  # Add this line
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # All views will require authentication by default
+    ),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
