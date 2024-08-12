@@ -12,11 +12,13 @@ urlpatterns = [
     path('user_creation/', views.user_creation, name='api_token_auth'),
     path('api/',include('app1.urls')),
     path('api/',include('Employee_Management.urls')),
+    path('api/',include('Agent_Management.urls')),
     path('api/',include('Team_Management.urls')),
     path('api/',include('Pre_Project.urls')),
     path('api/',include('Projects.urls')),
     path('api/',include('Department.urls')),
     path('api/',include('Enquiry_Bucket.urls')),
+    path('api/',include('Roles_Rights.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
