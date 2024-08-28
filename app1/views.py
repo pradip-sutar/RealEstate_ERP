@@ -174,43 +174,43 @@ def system_company_details_handler(request):
 
         return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 
-    # elif request.method == 'GET':
-    #     comapny_id = request.query_params.get('company_id', None)
-    #     if comapny_id is not None:
-    #         company_details = System_company_detail.objects.filter(
-    #             companyid=comapny_id)
-    #         brand_details = System_brand_detail.objects.filter(
-    #             company_id=comapny_id)
-    #         contact_details = System_contact_detail.objects.filter(
-    #             company_id=comapny_id)
-    #         business_details = System_business_detail.objects.filter(
-    #             company_id=comapny_id)
-    #         social_detail = System_social_detail.objects.filter(
-    #             company_id=comapny_id)
-    #         other_detail = System_other_detail.objects.filter(
-    #             company_id=comapny_id)
-    #         details_serializer = SystemCompanyDetailsSerializer(
-    #             company_details, many=True)
-    #         brand_serializer = SystemCompanyBrandSerializer(
-    #             brand_details, many=True)
-    #         contact_serializer = SystemContactDetailSerializer(
-    #             contact_details, many=True)
-    #         business_serializer = SystemBusinessDetailSerializer(
-    #             business_details, many=True)
-    #         social_serializer = SystemSocialDetailSerializer(
-    #             social_detail, many=True)
-    #         other_serializer = SystemOtherDetailSerializer(
-    #             other_detail, many=True)
-    #         return JsonResponse({
-    #             "data": {"details": details_serializer.data, "brand_info": brand_serializer.data,
-    #                      "contact_info": contact_serializer.data, "business_details": business_serializer.data,
-    #                      "social_detail": social_serializer.data, "other_detail": other_serializer.data}
-    #         }, status=200)
-    #     else:
-    #         company_details = System_company_detail.objects.all()
-    #         serializer = SystemCompanyDetailsSerializer(
-    #             company_details, many=True)
-    #         return JsonResponse({"data": serializer.data}, status=200)
+    elif request.method == 'GET':
+        comapny_id = request.query_params.get('company_id', None)
+        if comapny_id is not None:
+            company_details = System_company_detail.objects.filter(
+                companyid=comapny_id)
+            brand_details = System_brand_detail.objects.filter(
+                company_id=comapny_id)
+            contact_details = System_contact_detail.objects.filter(
+                company_id=comapny_id)
+            business_details = System_business_detail.objects.filter(
+                company_id=comapny_id)
+            social_detail = System_social_detail.objects.filter(
+                company_id=comapny_id)
+            other_detail = System_other_detail.objects.filter(
+                company_id=comapny_id)
+            details_serializer = SystemCompanyDetailsSerializer(
+                company_details, many=True)
+            brand_serializer = SystemCompanyBrandSerializer(
+                brand_details, many=True)
+            contact_serializer = SystemContactDetailSerializer(
+                contact_details, many=True)
+            business_serializer = SystemBusinessDetailSerializer(
+                business_details, many=True)
+            social_serializer = SystemSocialDetailSerializer(
+                social_detail, many=True)
+            other_serializer = SystemOtherDetailSerializer(
+                other_detail, many=True)
+            return JsonResponse({
+                "data": {"details": details_serializer.data, "brand_info": brand_serializer.data,
+                         "contact_info": contact_serializer.data, "business_details": business_serializer.data,
+                         "social_detail": social_serializer.data, "other_detail": other_serializer.data}
+            }, status=200)
+        else:
+            company_details = System_company_detail.objects.all()
+            serializer = SystemCompanyDetailsSerializer(
+                company_details, many=True)
+            return JsonResponse({"data": serializer.data}, status=200)
 
 
 @api_view(['POST', 'GET'])
