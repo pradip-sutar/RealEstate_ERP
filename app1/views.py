@@ -115,48 +115,30 @@ def create_emp_profile(request):
 @transaction.atomic
 def system_company_details_handler(request):
     if request.method == 'POST':
-        data = request.data
-        # Extract Company Detail
-        company_data = {}
-        for key, value in data.items():
-            if key.startswith('company_detail'):
-                # Get everything after 'company_detail.'
-                sub_key = key.split('.', 1)[1]
-                company_data[sub_key] = value
+        company_data = request.data.get('company_detail')
+        brand_data = request.data.get('brand_data')
+        business_data = request.data.get('business_data')
+        contact_data = request.data.get('contact_data')
+        social_data = request.data.get('social_data')
+        other_data = request.data.get('other_data')
 
         # Save Company Detail
         company_serializer = SystemCompanyDetailsSerializer(data=company_data)
         if company_serializer.is_valid():
-            company_detail = company_serializer.save()
+            companyid = company_serializer.save()
         else:
             return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Extract Brand Detail
-        brand_data = {}
-        for key, value in data.items():
-            if key.startswith('brand_detail'):
-                # Get everything after 'brand_detail.'
-                sub_key = key.split('.', 1)[1]
-                brand_data[sub_key] = value
-        brand_data['company_id'] = company_detail.companyid
-
         # Save Brand Detail
+        brand_data['company_id'] = companyid.companyid
         brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
         if brand_serializer.is_valid():
             brand_serializer.save()
         else:
             return JsonResponse(brand_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Extract Business Detail
-        business_data = {}
-        for key, value in data.items():
-            if key.startswith('business_detail'):
-                # Get everything after 'business_detail.'
-                sub_key = key.split('.', 1)[1]
-                business_data[sub_key] = value
-        business_data['company_id'] = company_detail.companyid
-
         # Save Business Detail
+        business_data['company_id'] = companyid.companyid
         business_serializer = SystemBusinessDetailSerializer(
             data=business_data)
         if business_serializer.is_valid():
@@ -164,48 +146,26 @@ def system_company_details_handler(request):
         else:
             return JsonResponse(business_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Extract Contact Detail
-        contact_data = {}
-        for key, value in data.items():
-            if key.startswith('contact_detail'):
-                # Get everything after 'contact_detail.'
-                sub_key = key.split('.', 1)[1]
-                contact_data[sub_key] = value
-        contact_data['company_id'] = company_detail.companyid
-
         # Save Contact Detail
+        contact_data['company_id'] = companyid.companyid
         contact_serializer = SystemContactDetailSerializer(data=contact_data)
         if contact_serializer.is_valid():
             contact_serializer.save()
         else:
             return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Extract Social Detail
-        social_data = {}
-        for key, value in data.items():
-            if key.startswith('social_detail'):
-                # Get everything after 'contact_detail.'
-                sub_key = key.split('.', 1)[1]
-                social_data[sub_key] = value
-        social_data['company_id'] = company_detail.companyid
 
         # Save Contact Detail
+        social_data['company_id'] = companyid.companyid
         social_serializer = SystemSocialDetailSerializer(data=social_data)
         if social_serializer.is_valid():
             social_serializer.save()
         else:
             return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #     # Extract Other Detail
-        other_data = {}
-        for key, value in data.items():
-            if key.startswith('other_detail'):
-                # Get everything after 'contact_detail.'
-                sub_key = key.split('.', 1)[1]
-                other_data[sub_key] = value
-        other_data['company_id'] = company_detail.companyid
 
         # Save Other Detail
+        other_data['company_id'] = companyid.companyid
         other_serializer = SystemOtherDetailSerializer(data=other_data)
         if other_serializer.is_valid():
             other_serializer.save()
@@ -214,43 +174,43 @@ def system_company_details_handler(request):
 
         return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 
-    elif request.method == 'GET':
-        comapny_id = request.query_params.get('company_id', None)
-        if comapny_id is not None:
-            company_details = System_company_detail.objects.filter(
-                companyid=comapny_id)
-            brand_details = System_brand_detail.objects.filter(
-                company_id=comapny_id)
-            contact_details = System_contact_detail.objects.filter(
-                company_id=comapny_id)
-            business_details = System_business_detail.objects.filter(
-                company_id=comapny_id)
-            social_detail = System_social_detail.objects.filter(
-                company_id=comapny_id)
-            other_detail = System_other_detail.objects.filter(
-                company_id=comapny_id)
-            details_serializer = SystemCompanyDetailsSerializer(
-                company_details, many=True)
-            brand_serializer = SystemCompanyBrandSerializer(
-                brand_details, many=True)
-            contact_serializer = SystemContactDetailSerializer(
-                contact_details, many=True)
-            business_serializer = SystemBusinessDetailSerializer(
-                business_details, many=True)
-            social_serializer = SystemSocialDetailSerializer(
-                social_detail, many=True)
-            other_serializer = SystemOtherDetailSerializer(
-                other_detail, many=True)
-            return JsonResponse({
-                "data": {"details": details_serializer.data, "brand_info": brand_serializer.data,
-                         "contact_info": contact_serializer.data, "business_details": business_serializer.data,
-                         "social_detail": social_serializer.data, "other_detail": other_serializer.data}
-            }, status=200)
-        else:
-            company_details = System_company_detail.objects.all()
-            serializer = SystemCompanyDetailsSerializer(
-                company_details, many=True)
-            return JsonResponse({"data": serializer.data}, status=200)
+    # elif request.method == 'GET':
+    #     comapny_id = request.query_params.get('company_id', None)
+    #     if comapny_id is not None:
+    #         company_details = System_company_detail.objects.filter(
+    #             companyid=comapny_id)
+    #         brand_details = System_brand_detail.objects.filter(
+    #             company_id=comapny_id)
+    #         contact_details = System_contact_detail.objects.filter(
+    #             company_id=comapny_id)
+    #         business_details = System_business_detail.objects.filter(
+    #             company_id=comapny_id)
+    #         social_detail = System_social_detail.objects.filter(
+    #             company_id=comapny_id)
+    #         other_detail = System_other_detail.objects.filter(
+    #             company_id=comapny_id)
+    #         details_serializer = SystemCompanyDetailsSerializer(
+    #             company_details, many=True)
+    #         brand_serializer = SystemCompanyBrandSerializer(
+    #             brand_details, many=True)
+    #         contact_serializer = SystemContactDetailSerializer(
+    #             contact_details, many=True)
+    #         business_serializer = SystemBusinessDetailSerializer(
+    #             business_details, many=True)
+    #         social_serializer = SystemSocialDetailSerializer(
+    #             social_detail, many=True)
+    #         other_serializer = SystemOtherDetailSerializer(
+    #             other_detail, many=True)
+    #         return JsonResponse({
+    #             "data": {"details": details_serializer.data, "brand_info": brand_serializer.data,
+    #                      "contact_info": contact_serializer.data, "business_details": business_serializer.data,
+    #                      "social_detail": social_serializer.data, "other_detail": other_serializer.data}
+    #         }, status=200)
+    #     else:
+    #         company_details = System_company_detail.objects.all()
+    #         serializer = SystemCompanyDetailsSerializer(
+    #             company_details, many=True)
+    #         return JsonResponse({"data": serializer.data}, status=200)
 
 
 @api_view(['POST', 'GET'])
