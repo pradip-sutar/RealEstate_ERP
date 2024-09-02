@@ -178,7 +178,6 @@ def project_tax_list(request):
 
 @api_view(['GET', 'POST'])
 def project_product_list(request):
-    permission_classes = [IsAuthenticated]
     if request.method == 'GET':
         confirm_project_id = request.query_params.get('confirm_project_id', None)
         print(confirm_project_id)
