@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'Projects',
     'Department',
     'Project_Products',
-    'Enquiry_Bucket'
+    'Enquiry_Bucket',
+    'Roles_Rights',
+    'Agent_Management'
 ]
 
 MIDDLEWARE = [
@@ -118,14 +120,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',  # Add this line
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # All views will require authentication by default
-    ),
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',  # Add this line
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',  # All views will require authentication by default
+#     ),
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
