@@ -50,7 +50,7 @@ def department_name_handler(request):
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT', 'PATCH'])
 @transaction.atomic
 def department_designation_handler(request):
     if request.method == 'GET':
@@ -62,10 +62,8 @@ def department_designation_handler(request):
         data = request.data
         print(data)
         try:
-            # Check if the designation already exists within the same department
             if Department_Designation.objects.filter(designation=data.get('designation'), dept_name=data.get('dept_name')).exists():
                 return JsonResponse({"error": "Designation already exists in this department"}, status=status.HTTP_400_BAD_REQUEST)
-            
             serializers = DepartmentDesignationSerializer(data=data)
             if serializers.is_valid():
                 serializers.save()
@@ -75,6 +73,29 @@ def department_designation_handler(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    elif request.method in ['PUT', 'PATCH']:
+        data = request.data
+        designation_id = data.get('id')  # Assuming the designation ID is passed in the request body
+
+        try:
+            designation_instance = Department_Designation.objects.get(id=designation_id)
+            if 'designation' in data and Department_Designation.objects.filter(
+                designation=data.get('designation'), 
+                dept_name=data.get('dept_name')
+            ).exclude(id=designation_id).exists():
+                return JsonResponse({"error": "Designation already exists in this department"}, status=status.HTTP_400_BAD_REQUEST)
+
+            serializers = DepartmentDesignationSerializer(designation_instance, data=data, partial=(request.method == 'PATCH'))
+            
+            if serializers.is_valid():
+                serializers.save()
+                return JsonResponse({"message": "Designation updated successfully", "data": serializers.data}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Department_Designation.DoesNotExist:
+            return JsonResponse({"error": "Designation not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'POST'])
 def department_label_handler(request):
