@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import module_handler
+from .views import *
 
 urlpatterns = [
-    path('module_handler/', module_handler, name='module_handler'),
+    path('roles_handler/', roles_handler, name='module_handler'),
 ]
