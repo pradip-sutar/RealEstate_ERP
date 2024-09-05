@@ -6,6 +6,11 @@ class Roles(models.Model):
         return self.name
     
 class Rights(models.Model):
-    name = models.CharField(max_length=255)
+    roles = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    view = models.BooleanField(default=False)
+    write = models.BooleanField(default=False)
+    edit = models.BooleanField(default=False)
+    delete = models.BooleanField(default=False)
+    ischecked = models.BooleanField(default=False)
     def __str__(self):
         return self.name
