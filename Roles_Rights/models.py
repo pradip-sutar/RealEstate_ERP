@@ -11,6 +11,6 @@ class Rights(models.Model):
     write = models.BooleanField(default=False)
     edit = models.BooleanField(default=False)
     delete = models.BooleanField(default=False)
-    ischecked = models.BooleanField(default=False)
+    # ischecked = models.BooleanField(default=False)
     def __str__(self):
         return self.name

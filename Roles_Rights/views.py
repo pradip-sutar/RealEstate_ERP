@@ -58,12 +58,28 @@ def rights_handler(request):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        print(request.data)
-        serializer = RightsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        rights = request.data['rights']
+        response_data = []  
+        errors = []
+
+        for right in rights:
+            data = {
+                'roles': int(right['role']),
+                'view': right['permissions']['view'],
+                'write': right['permissions']['write'],
+                'edit': right['permissions']['edit'],
+                'delete': right['permissions']['delete']
+            }
+
+            serializer = RightsSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                response_data.append(serializer.data)  # Append each serialized data
+            else:
+                errors.append(serializer.errors)  # Collect errors
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'PUT':
         if rights_id:
