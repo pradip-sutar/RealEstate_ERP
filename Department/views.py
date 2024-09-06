@@ -124,3 +124,42 @@ def department_grade_handler(request):
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST'])
+def department_role_rights_handler(request):
+    if request.method == 'GET':
+        department_roles = Department_Roles_Rights.objects.all()
+        serializer = DepartmentRolesRightsSerializer(department_roles, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    
+    elif request.method == 'POST':
+        department_data = request.data.get('departmentRoles', {})
+        department_id = department_data.get('department_id')
+        roles = department_data.get('roles', [])
+
+        try:
+            department = Department_Name.objects.get(id=department_id)
+        except Department_Name.DoesNotExist:
+            return JsonResponse({"error": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        for role in roles:
+            role_id = role.get('roleId')
+            role_name = role.get('role_name') or role.get('roleName')
+            
+            try:
+                role_obj = Roles.objects.get(id=role_id)
+            except Roles.DoesNotExist:
+                return JsonResponse({"error": f"Role with ID {role_id} not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            role_data = {
+                'role_id': role_obj.id,
+                'role_name': role_name,
+                'department_id': department.id
+            }
+            serializer = DepartmentRolesRightsSerializer(data=role_data)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return JsonResponse({"message": "Roles saved successfully."}, status=status.HTTP_201_CREATED)

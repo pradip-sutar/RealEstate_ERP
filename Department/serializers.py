@@ -21,3 +21,8 @@ class DepartmentGradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department_Grade
         fields = '__all__'
+
+class DepartmentRolesRightsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department_Roles_Rights
+        fields = '__all__'

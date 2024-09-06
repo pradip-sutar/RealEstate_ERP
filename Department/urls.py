@@ -10,8 +10,9 @@ urlpatterns = [
     path('department_designation_handler/', views.department_designation_handler, name='department_designation_handler '),
     path('department_label_handler/', views.department_label_handler, name='department_label_handler'),
     path('department_grade_handler/', views.department_grade_handler, name='department_grade_handler'),
+    path('department_role_rights_handler/', views.department_role_rights_handler, name='department_role_rights_handler'),
 
-]
+]   
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
