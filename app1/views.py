@@ -121,6 +121,7 @@ def system_company_details_handler(request):
         contact_data = request.data.get('contact_data')
         social_data = request.data.get('social_data')
         other_data = request.data.get('other_data')
+        print(request.data)
         print(company_data, brand_data, business_data, contact_data, social_data, other_data)
         # Save Company Detail
         company_serializer = SystemCompanyDetailsSerializer(data=company_data)
