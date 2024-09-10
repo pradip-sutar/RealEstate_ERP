@@ -126,7 +126,7 @@ def department_grade_handler(request):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET', 'POST'])
-def department_role_rights_handler(request):
+def department_role_handler(request):
     if request.method == 'GET':
         department_roles = Department_Roles_Rights.objects.all()
         serializer = DepartmentRolesRightsSerializer(department_roles, many=True)

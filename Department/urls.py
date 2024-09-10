@@ -10,7 +10,7 @@ urlpatterns = [
     path('department_designation_handler/', views.department_designation_handler, name='department_designation_handler '),
     path('department_label_handler/', views.department_label_handler, name='department_label_handler'),
     path('department_grade_handler/', views.department_grade_handler, name='department_grade_handler'),
-    path('department_role_rights_handler/', views.department_role_rights_handler, name='department_role_rights_handler'),
+    path('department_role_handler/', views.department_role_handler, name='department_role_handler'),
 
 ]   
 
