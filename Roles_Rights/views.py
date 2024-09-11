@@ -53,9 +53,16 @@ def rights_handler(request):
             except Rights.DoesNotExist:
                 return Response({'error': 'Rights not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            modules = Rights.objects.all()
-            serializer = RightsSerializer(modules, many=True)
-        return Response(serializer.data)
+            roles = Roles.objects.all()
+            latest_modules = []
+            for role in roles:
+                try:
+                    latest_right = Rights.objects.filter(roles_id=role).latest('id')
+                    latest_modules.append(latest_right)
+                except Rights.DoesNotExist:
+                    continue
+            serializer = RightsSerializer(latest_modules, many=True)
+            return Response(serializer.data)
 
     elif request.method == 'POST':
         rights = request.data['rights']

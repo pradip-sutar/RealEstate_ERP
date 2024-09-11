@@ -11,6 +11,7 @@ urlpatterns = [
     path('department_label_handler/', views.department_label_handler, name='department_label_handler'),
     path('department_grade_handler/', views.department_grade_handler, name='department_grade_handler'),
     path('department_role_handler/', views.department_role_handler, name='department_role_handler'),
+    path('designation_rights_handler/', views.designation_rights_handler, name='designation_rights_handler'),
 
 ]   
 

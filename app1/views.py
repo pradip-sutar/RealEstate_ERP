@@ -122,11 +122,12 @@ def system_company_details_handler(request):
                 if key.startswith(prefix):
                     # Extract the field inside the brackets, e.g. company_detail[companyid] -> companyid
                     field_name = key.split('[')[1][:-1]
-                    prefix_data[field_name] = value[0]  # Assuming value is in list form like ['100']
+                    prefix_data[field_name] = value  # Assuming value is in list form like ['100']
             return prefix_data
 
         # Extract and organize the data based on the prefix
         company_data = organize_data(request.data, 'company_detail')
+        print(company_data)
         brand_data = organize_data(request.data, 'brand_detail')
         business_data = organize_data(request.data, 'business_detail')
         contact_data = organize_data(request.data, 'contact_detail')

@@ -139,7 +139,6 @@ def department_role_handler(request):
         print(roles)
         try:
             department_instance = Department_Name.objects.get(id=department_id)
-            print(department_instance.id)
             
             for role in roles:
                 role_id = role.get('roleId')
@@ -172,3 +171,39 @@ def department_role_handler(request):
         
         return JsonResponse({"message": "Roles and rights saved/updated successfully."}, status=status.HTTP_201_CREATED)
 
+@api_view(['GET', 'POST'])
+def designation_rights_handler(request):
+    if request.method == 'GET':
+        department_id = request.query_params.get('departmentId',None)
+        if department_id:
+            department_roles = Department_Roles_Rights.objects.filter(department_id=department_id)
+            serializer = DepartmentRolesRightsSerializer(department_roles, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            department_roles = Department_Roles_Rights.objects.all()
+            serializer = DepartmentRolesRightsSerializer(department_roles, many=True)
+            return JsonResponse(serializer.data, safe=False)
+
+    
+    elif request.method == 'POST':
+        department_data = request.data.get('departmentRights', {})
+        department_id = department_data.get('department_id')
+        roles = department_data.get('roles', [])
+        try:
+            for role in roles:
+                role_id = role.get('roleId')
+                department_instance = Department_Roles_Rights.objects.filter(department_id=department_id,role_id=role_id)
+                print(department_instance)
+                for i in department_instance:
+                    i.view = role.get('view')
+                    i.write = role.get('write')
+                    i.edit = role.get('edit')
+                    i.delete = role.get('delete')
+                    i.save()    
+                
+        except Department_Name.DoesNotExist:
+            return JsonResponse({"error": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Roles.DoesNotExist:
+            return JsonResponse({"error": "Role not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        return JsonResponse({"message": "Roles and rights saved/updated successfully."}, status=status.HTTP_201_CREATED)
