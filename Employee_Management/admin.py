@@ -29,7 +29,7 @@ class FamilyProfileAdmin(admin.ModelAdmin):
 
 @admin.register(EducationProfile)
 class EducationProfileAdmin(admin.ModelAdmin):
-    list_display = ['employee_id', 'details']
+    list_display = ['employee_id', 'details','marklist','certificate']
     search_fields = ['employee_id__name']  # Adjust the field according to your Company_profile model
 
 @admin.register(Trainig)
@@ -39,7 +39,7 @@ class TrainigAdmin(admin.ModelAdmin):
 
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
-    list_display = ['employee_id', 'details']
+    list_display = ['employee_id', 'details','experience_letter','Joining_letter']
     search_fields = ['employee_id__name']  # Adjust the field according to your Company_profile model
 
 @admin.register(Skill_Level)

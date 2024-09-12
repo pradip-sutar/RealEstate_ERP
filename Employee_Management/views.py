@@ -11,7 +11,8 @@ from django.db import transaction
 @api_view(['GET', 'POST'])
 def employee_management_handler(request):
     if request.method == 'POST':
-        company_data = request.data.get('company_profile')
+        print(request.data)
+        company_data = request.data['company_profile']
         address_data = request.data.get('address')
         personal_profile_data = request.data.get('personal_profile')
         family_profile_data = request.data.get('family_profile')
@@ -54,6 +55,17 @@ def employee_management_handler(request):
         # Education profile
         education_profile_data['employee_id'] = company.empid
         education_profile_serializer = EducationProfileSerializer(data=education_profile_data)
+        for data in education_profile_data:
+            details = data.get('details')
+            certificate = data.get('certificate')
+            marklist = data.get('marklist')
+            
+            EducationProfile.objects.create(
+                details=details,
+                certificate=certificate,
+                marklist=marklist,
+                employee_id=empid.id 
+            )
         if education_profile_serializer.is_valid():
             education_profile_serializer.save()
         else:
@@ -70,6 +82,18 @@ def employee_management_handler(request):
         # Experience
         experience_data['employee_id'] = company.empid
         experience_serializer = ExperienceSerializer(data=experience_data)
+        for data in experience_data:
+            details=details,
+            experience_letter = data.get('experience_letter')
+            Joining_letter = data.get('joining_letter')
+
+            Experience.objects.create(
+                details=details,
+                Joining_letter=Joining_letter,
+                experience_letter=experience_letter,
+                employee_id=empid.id
+
+            )
         if experience_serializer.is_valid():
             experience_serializer.save()
         else:
@@ -97,9 +121,9 @@ def employee_management_handler(request):
             address_serializer = AddressSerializer(Address.objects.get(employee_id=company.empid))
             personal_profile_serializer = PersonalProfileSerializer(Personal_Profile.objects.get(employee_id=company.empid))
             family_profile_serializer = FamilyProfileSerializer(FamilyProfile.objects.get(employee_id=company.empid))
-            education_profile_serializer = EducationProfileSerializer(EducationProfile.objects.get(employee_id=company.empid))
+            education_profile_serializer = EducationProfileSerializer(EducationProfile.objects.filter(employee_id=company.empid))
             training_serializer = TrainigSerializer(Trainig.objects.get(employee_id=company.empid))
-            experience_serializer = ExperienceSerializer(Experience.objects.get(employee_id=company.empid))
+            experience_serializer = ExperienceSerializer(Experience.objects.filter(employee_id=company.empid))
             skill_level_serializer = SkillLevelSerializer(Skill_Level.objects.get(employee_id=company.empid))
 
             data = {
@@ -122,17 +146,22 @@ def employee_management_handler(request):
                 address_serializer = AddressSerializer(Address.objects.get(employee_id=company.empid))
                 personal_profile_serializer = PersonalProfileSerializer(Personal_Profile.objects.get(employee_id=company.empid))
                 family_profile_serializer = FamilyProfileSerializer(FamilyProfile.objects.get(employee_id=company.empid))
-                education_profile_serializer = EducationProfileSerializer(EducationProfile.objects.get(employee_id=company.empid))
+                education_profile_serializer = (EducationProfile.objects.filter(employee_id=company.empid))
                 training_serializer = TrainigSerializer(Trainig.objects.get(employee_id=company.empid))
                 experience_serializer = ExperienceSerializer(Experience.objects.get(employee_id=company.empid))
                 skill_level_serializer = SkillLevelSerializer(Skill_Level.objects.get(employee_id=company.empid))
+                
+                education_data = []
+                for i in education_profile_serializer:
+                    data = EducationProfileSerializer(i)
+                    education_data.append(data.data)
 
                 data = {
                     "company_profile": company_serializer.data,
                     "address": address_serializer.data,
                     "personal_profile": personal_profile_serializer.data,
                     "family_profile": family_profile_serializer.data,
-                    "education_profile": education_profile_serializer.data,
+                    "education_profile": (education_data),
                     "training": training_serializer.data,
                     "experience": experience_serializer.data,
                     "skill_level": skill_level_serializer.data

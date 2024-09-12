@@ -5,6 +5,7 @@ from app1.models import *
 # Create your models here.
 class Company_profile(models.Model):
     empid = models.IntegerField(primary_key=True)
+    photo= models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     name = models.CharField(max_length=255)
     mobileno = models.IntegerField()
     whatsapp = models.IntegerField(blank=True, null=True)
@@ -80,6 +81,8 @@ class FamilyProfile(models.Model):
     
 class EducationProfile(models.Model):
     details = models.JSONField()
+    certificate=models.ImageField(upload_to='media/profile_pics/certificates', null=True, blank=True)
+    marklist=models.ImageField(upload_to='media/profile_pics/certificates', null=True, blank=True)
     employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
@@ -92,6 +95,8 @@ class Trainig(models.Model):
     
 class Experience(models.Model):
     details = models.JSONField()
+    experience_letter=models.ImageField(upload_to='media/profile_pics/certificates', null=True, blank=True)
+    Joining_letter=models.ImageField(upload_to='media/profile_pics/certificates', null=True, blank=True)
     employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
