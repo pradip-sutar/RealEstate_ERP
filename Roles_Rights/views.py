@@ -58,6 +58,7 @@ def rights_handler(request):
             for role in roles:
                 try:
                     latest_right = Rights.objects.filter(roles_id=role).latest('id')
+                    print(type(latest_right))
                     latest_modules.append(latest_right)
                 except Rights.DoesNotExist:
                     continue
@@ -71,7 +72,8 @@ def rights_handler(request):
 
         for right in rights:
             data = {
-                'roles': int(right['role']),
+                'roles_id': int(right['role']),
+                'roles_name': (right['name']),
                 'view': right['permissions']['view'],
                 'write': right['permissions']['write'],
                 'edit': right['permissions']['edit'],

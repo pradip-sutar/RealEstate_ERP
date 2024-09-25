@@ -127,12 +127,17 @@ def system_company_details_handler(request):
 
         # Extract and organize the data based on the prefix
         company_data = organize_data(request.data, 'company_detail')
-        print(company_data)
+        print("company data ..................",company_data)
         brand_data = organize_data(request.data, 'brand_detail')
+        print("brand data ..................",brand_data)
         business_data = organize_data(request.data, 'business_detail')
+        print("business data ..................",business_data)
         contact_data = organize_data(request.data, 'contact_detail')
+        print("contact data ..................",contact_data)
         social_data = organize_data(request.data, 'social_detail')
+        print("social data ..................",social_data)
         other_data = organize_data(request.data, 'other_detail')
+        print("other data ..................",other_data)
 
         try:
             # Save Company Detail

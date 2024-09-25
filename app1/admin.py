@@ -12,7 +12,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(System_company_detail)
 class SystemCompanyDetailsAdmin(admin.ModelAdmin):
-     list_display = ['companyid', 'name', 'alias', 'company_size', 'incorporation_no', 'incorporation_agency', 'date', 'PAN', 'country', 'state', 'city', 'pincode', 'address', 'registered_office_details', 'email', 'mobileno', 'whatsappno','certificate','TAX_certificate']
+     list_display = ['companyid', 'name', 'alias', 'company_size', 'incorporation_no', 'incorporation_certificate', 'incorporation_date', 'PAN', 'country', 'state', 'city', 'pincode', 'address', 'registered_office_details', 'email', 'mobileno', 'whatsappno','TAX_certificate']
 
 @admin.register(System_branch_details)
 class SystemBranchDetailsAdmin(admin.ModelAdmin):

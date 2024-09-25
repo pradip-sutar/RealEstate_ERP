@@ -7,4 +7,4 @@ class ModuleAdmin(admin.ModelAdmin):
 
 @admin.register(Rights)
 class RightsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'roles','view', 'write', 'edit', 'delete']
+    list_display = ['id', 'roles_id','roles_name','view', 'write', 'edit', 'delete']
