@@ -76,6 +76,8 @@ class EmployeeSalaryAdmin(admin.ModelAdmin):
         'increased_ctc', 'transfer_date'
     ]
 
-@admin.register(Employee_Document)
-class EmployeeDocumentAdmin(admin.ModelAdmin):
-    list_display = ['name', 'document_no', 'validity', 'issued_by','files']
+
+@admin.register(EmployeeKYC)
+class EmployeeKYCAdmin(admin.ModelAdmin):
+    list_display = ('employee_id','document_name', 'issued_from', 'issue_date', 'document_number', 'validity', 'upload','Status')
+    search_fields = ('document_name', 'issued_from', 'document_number')

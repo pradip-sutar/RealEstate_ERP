@@ -5,179 +5,175 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.db import transaction
+from rest_framework.response import Response
+from collections import defaultdict
 # Create your views here.
 
+
+
+
+from .models import *
+from .serializers import *
+
+# GET and POST method for handling employee data
+@api_view(['POST', 'GET', 'DELETE'])
 @transaction.atomic
-@api_view(['GET', 'POST'])
-def employee_management_handler(request):
+def employee_data(request):
     if request.method == 'POST':
-        print(request.data)
-        company_data = request.data['company_profile']
-        address_data = request.data.get('address')
-        personal_profile_data = request.data.get('personal_profile')
-        family_profile_data = request.data.get('family_profile')
-        education_profile_data = request.data.get('education_profile')
-        training_data = request.data.get('training')
-        experience_data = request.data.get('experience')
-        skill_level_data = request.data.get('skill_level')
+        # Helper function to split and organize the data by prefix
+        def organized_data(data, prefix):
+            prefix_data = {}
+            for key, value in data.items():
+                if key.startswith(prefix):
+                    # Extract the field inside the brackets, e.g. company_detail[empid] -> empid
+                    field_name = key.split('[')[1][:-1]
+                    prefix_data[field_name] = value  # Assuming value is in list form like ['100']
+            return prefix_data
 
-        # Company profile
-        company_serializer = CompanyProfileSerializer(data=company_data)
-        if company_serializer.is_valid():
-            company = company_serializer.save()
-        else:
-            return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Extract and organize the data based on the prefix
+        company_data = organized_data(request.data, 'company_data')
+        # print("company data ..................",company_data)
+        Adress_data= organized_data(request.data, 'Adress_data')
+        # print("adress data ..................",Adress_data)
+        personal_data = organized_data(request.data, 'personal_data')
+        # print("business data ..................",business_data)
+        family_data = organized_data(request.data, 'family_data')
+        # print("contact data ..................",contact_data)
+        education_data = organized_data(request.data, 'education_data')
+        # print("education data ..................",education_data)
+        training_data = organized_data(request.data, 'training_data')
+        # print("training data ..................",training_data)
+        Experience_data = organized_data(request.data, 'Experience_data')
+    
+        skills_data = organized_data(request.data, 'skills_data')
 
-        # Address
-        address_data['employee_id'] = company.empid
-        address_serializer = AddressSerializer(data=address_data)
-        if address_serializer.is_valid():
-            address_serializer.save()
-        else:
-            return JsonResponse(address_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Personal profile
-        personal_profile_data['employee_id'] = company.empid
-        personal_profile_serializer = PersonalProfileSerializer(data=personal_profile_data)
-        if personal_profile_serializer.is_valid():
-            personal_profile_serializer.save()
-        else:
-            return JsonResponse(personal_profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Save Company Detail
+            company_serializer = CompanyProfileSerializer(data=company_data)
+            if company_serializer.is_valid():
+                emmployee_instance = company_serializer.save()  # Save and get the instance
+            else:
+                return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Family profile
-        family_profile_data['employee_id'] = company.empid
-        family_profile_serializer = FamilyProfileSerializer(data=family_profile_data)
-        if family_profile_serializer.is_valid():
-            family_profile_serializer.save()
-        else:
-            return JsonResponse(family_profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Attach employee_id to the related details before saving them
+            Adress_data['employee_id'] = emmployee_instance.empid
+            personal_data['employee_id'] = emmployee_instance.empid
+            family_data['employee_id'] = emmployee_instance.empid
+            education_data['employee_id'] = emmployee_instance.empid
+            training_data['employee_id'] = emmployee_instance.empid
+            Experience_data['employee_id'] = emmployee_instance.empid
+            skills_data['employee_id'] = emmployee_instance.empid
 
-        # Education profile
-        education_profile_data['employee_id'] = company.empid
-        education_profile_serializer = EducationProfileSerializer(data=education_profile_data)
-        for data in education_profile_data:
-            details = data.get('details')
-            certificate = data.get('certificate')
-            marklist = data.get('marklist')
+
+
+            # Save Address Detail
+            Adress_serializer = AddressSerializer(data=Adress_data)
+            if Adress_serializer.is_valid():
+                Adress_serializer.save()
+            else:
+                return JsonResponse(Adress_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            #  Save personal Detail
+            personal_serializer = PersonalProfileSerializer(data=personal_data)
+            if personal_serializer.is_valid():
+                personal_serializer.save()
+            else:
+                return JsonResponse(personal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            #  Save family Detail
+            family_serializer = FamilyProfileSerializer(data=family_data)
+            if family_serializer.is_valid():
+                family_serializer.save()
+            else:
+                return JsonResponse(family_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            #  Save education_data Detail
+            education_serializer = EducationProfileSerializer(data=education_data)
+            if education_serializer.is_valid():
+                education_serializer.save()
+            else:
+                return JsonResponse(education_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            #  Save training Detail
+            training_serializer = TrainigSerializer(data=training_data)
+            if training_serializer.is_valid():
+                training_serializer.save()
+            else:
+                return JsonResponse(training_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
-            EducationProfile.objects.create(
-                details=details,
-                certificate=certificate,
-                marklist=marklist,
-                employee_id=empid.id 
-            )
-        if education_profile_serializer.is_valid():
-            education_profile_serializer.save()
-        else:
-            return JsonResponse(education_profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            #  Save experience Detail
+            experience_serializer = ExperienceSerializer(data=training_data)
+            if experience_serializer.is_valid():
+                experience_serializer.save()
+            else:
+                return JsonResponse(experience_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            #  Save skills Detail
+            skills_serializer = SkillLevelSerializer(data=training_data)
+            if skills_serializer.is_valid():
+                skills_serializer.save()
+            else:
+                return JsonResponse(skills_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Training
-        training_data['employee_id'] = company.empid
-        training_serializer = TrainigSerializer(data=training_data)
-        if training_serializer.is_valid():
-            training_serializer.save()
-        else:
-            return JsonResponse(training_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 
-        # Experience
-        experience_data['employee_id'] = company.empid
-        experience_serializer = ExperienceSerializer(data=experience_data)
-        for data in experience_data:
-            details=details,
-            experience_letter = data.get('experience_letter')
-            Joining_letter = data.get('joining_letter')
-
-            Experience.objects.create(
-                details=details,
-                Joining_letter=Joining_letter,
-                experience_letter=experience_letter,
-                employee_id=empid.id
-
-            )
-        if experience_serializer.is_valid():
-            experience_serializer.save()
-        else:
-            return JsonResponse(experience_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # Skill level
-        skill_level_data['employee_id'] = company.empid
-        skill_level_serializer = SkillLevelSerializer(data=skill_level_data)
-        if skill_level_serializer.is_valid():
-            skill_level_serializer.save()
-        else:
-            return JsonResponse(skill_level_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        return JsonResponse({"message": "Employee data created successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     elif request.method == 'GET':
-        empid = request.query_params.get('empid', None)
-        if empid:
-            try:
-                company = Company_profile.objects.get(empid=empid)
-            except Company_profile.DoesNotExist:
-                return JsonResponse({"error": "Employee not found"}, status=status.HTTP_404_NOT_FOUND)
+        employee_id = request.query_params.get('employee_id', None)
+    
+        if employee_id is not None:
+            # Fetch the details based on employee_id
+            company_data = Company_profile.objects.filter(empid=employee_id)
+            Adress_data = Address.objects.filter(employee_id=employee_id)
+            personal_data = Personal_Profile.objects.filter(employee_id=employee_id)
+            family_data = FamilyProfile.objects.filter(employee_id=employee_id)
+            education_data = EducationProfile.objects.filter(employee_id=employee_id)
+            training_data = Trainig.objects.filter(employee_id=employee_id)
+            Experience_data = Experience.objects.filter(employee_id=employee_id)
+            skills_data = Skill_Level.objects.filter(employee_id=employee_id)
 
-            company_serializer = CompanyProfileSerializer(company)
-            address_serializer = AddressSerializer(Address.objects.get(employee_id=company.empid))
-            personal_profile_serializer = PersonalProfileSerializer(Personal_Profile.objects.get(employee_id=company.empid))
-            family_profile_serializer = FamilyProfileSerializer(FamilyProfile.objects.get(employee_id=company.empid))
-            education_profile_serializer = EducationProfileSerializer(EducationProfile.objects.filter(employee_id=company.empid))
-            training_serializer = TrainigSerializer(Trainig.objects.get(employee_id=company.empid))
-            experience_serializer = ExperienceSerializer(Experience.objects.filter(employee_id=company.empid))
-            skill_level_serializer = SkillLevelSerializer(Skill_Level.objects.get(employee_id=company.empid))
+            # Serialize the data
+            company_serializer = CompanyProfileSerializer(company_data, many=True)
+            address_serializer = AddressSerializer(Adress_data, many=True)
+            personal_serializer = PersonalProfileSerializer(personal_data, many=True)
+            family_serializer = FamilyProfileSerializer(family_data, many=True)
+            education_serializer = EducationProfileSerializer(education_data, many=True)  # corrected this line
+            training_serializer = TrainigSerializer(training_data, many=True)
+            experience_serializer = ExperienceSerializer(Experience_data, many=True)
+            skills_serializer = SkillLevelSerializer(skills_data, many=True)
 
-            data = {
-                "company_profile": company_serializer.data,
-                "address": address_serializer.data,
-                "personal_profile": personal_profile_serializer.data,
-                "family_profile": family_profile_serializer.data,
-                "education_profile": education_profile_serializer.data,
-                "training": training_serializer.data,
-                "experience": experience_serializer.data,
-                "skill_level": skill_level_serializer.data
-            }
-
-            return JsonResponse(data, status=status.HTTP_200_OK, safe=False)
-        else:
-            employees = Company_profile.objects.all()
-            all_data = []
-            for company in employees:
-                company_serializer = CompanyProfileSerializer(company)
-                address_serializer = AddressSerializer(Address.objects.get(employee_id=company.empid))
-                personal_profile_serializer = PersonalProfileSerializer(Personal_Profile.objects.get(employee_id=company.empid))
-                family_profile_serializer = FamilyProfileSerializer(FamilyProfile.objects.get(employee_id=company.empid))
-                education_profile_serializer = (EducationProfile.objects.filter(employee_id=company.empid))
-                training_serializer = TrainigSerializer(Trainig.objects.get(employee_id=company.empid))
-                experience_serializer = ExperienceSerializer(Experience.objects.get(employee_id=company.empid))
-                skill_level_serializer = SkillLevelSerializer(Skill_Level.objects.get(employee_id=company.empid))
-                
-                education_data = []
-                for i in education_profile_serializer:
-                    data = EducationProfileSerializer(i)
-                    education_data.append(data.data)
-
-                data = {
-                    "company_profile": company_serializer.data,
-                    "address": address_serializer.data,
-                    "personal_profile": personal_profile_serializer.data,
-                    "family_profile": family_profile_serializer.data,
-                    "education_profile": (education_data),
-                    "training": training_serializer.data,
-                    "experience": experience_serializer.data,
-                    "skill_level": skill_level_serializer.data
+            # Return the serialized data
+            return JsonResponse({
+                "data": {
+                    "company_data": company_serializer.data,
+                    "address_data": address_serializer.data,
+                    "personal_data": personal_serializer.data,
+                    "family_data": family_serializer.data,
+                    "education_details": education_serializer.data,
+                    "training_details": training_serializer.data,
+                    "experience_data": experience_serializer.data,
+                    "skills_data": skills_serializer.data
                 }
+            }, status=200)
 
-                all_data.append(data)
+        else:
+            # Fetch all company details if no employee_id is provided
+            company_details = Company_profile.objects.all()
+            company_serializer = CompanyProfileSerializer(company_details, many=True)  # corrected here
 
-            return JsonResponse(all_data, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse({"data": company_serializer.data}, status=200)
+
         
 
 @api_view(['GET', 'POST'])
 def bank_others_view(request):
     if request.method == 'GET':
         try:
-            bank_others = Bank_Others.objects.all()
-            serializer = BankOthersSerializer(bank_others, many=True)
+            bank_trainings = Bank_Others.objects.all()
+            serializer = BankOthersSerializer(bank_trainings, many=True)
             return JsonResponse({'data': serializer.data},safe=False)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -195,10 +191,11 @@ def bank_others_view(request):
 
 @api_view(['GET', 'POST'])
 def employee_salary_handler(request):
+    
     if request.method == 'GET':
         employee_salaries = Employee_Salary.objects.all()
         serializer = EmployeeSalarySerializer(employee_salaries, many=True)
-        return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+        return JsonResponse({'data':serializer.data}, safe=False, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
         serializer = EmployeeSalarySerializer(data=request.data)
@@ -208,17 +205,156 @@ def employee_salary_handler(request):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+#KYC
+
 @api_view(['GET', 'POST'])
-def employee_document_handler(request):
+def employee_kyc_list(request):
     if request.method == 'GET':
-        employee_documents = Employee_Document.objects.all()
-        serializer = EmployeeDocumentSerializer(employee_documents, many=True)
-        return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
-    
+        documents = EmployeeKYC.objects.all()
+        serializer = EmployeeKYCDocumentSerializer(documents, many=True)
+        return Response(serializer.data)
+
     elif request.method == 'POST':
-        print(request.data)
-        serializer = EmployeeDocumentSerializer(data=request.data)
+        # Retrieve employee ID from request
+        employee_id = request.data['employee_id']  # Retrieve the employee ID
+
+        if not employee_id:
+            return Response({"error": "Employee ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the employee exists
+        try:
+            employee = Company_profile.objects.get(empid=employee_id)  # Ensure the Employee model is used here
+        except Company_profile.DoesNotExist:
+            return Response({"error": "Employee does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Initialize lists for valid documents and errors
+        valid_kyc_documents = []
+        errors = []
+
+        # Check how many KYC documents are being sent (use a prefix 'document_name' in the request data)
+        document_count = len([key for key in request.data if key.startswith('document_name')])
+
+        if document_count == 0:
+            return Response({"error": "No KYC documents provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        for i in range(document_count):
+            # Gather data for each KYC document dynamically
+            kyc_data = {
+                'employee_id': employee.empid,  # The employee ID (same for all KYC docs)
+                'document_name': request.data.get(f'document_name[{i}]'),
+                'issued_from': request.data.get(f'issued_from[{i}]'),
+                'issue_date': request.data.get(f'issue_date[{i}]'),
+                'document_number': request.data.get(f'document_number[{i}]'),
+                'validity': request.data.get(f'validity[{i}]'),
+                'upload': request.FILES.get(f'upload[{i}]')  # Make sure you are passing files properly
+            }
+
+            # print(kyc_data)
+            # Use the serializer to validate the data
+            serializer = EmployeeKYCDocumentSerializer(data=kyc_data)
+            if serializer.is_valid():
+                serializer.save()
+                # valid_kyc_documents.append(serializer.validated_data)
+            else:
+                # Add validation errors for each invalid KYC document
+                errors.append({f"Document {i}": serializer.errors})
+
+        # If no valid documents and there are errors, return the errors
+        if errors:
+            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        # If there are valid documents, save them in bulk
+        if valid_kyc_documents:
+            EmployeeKYC.objects.bulk_create(
+                [EmployeeKYC(employee=employee, **data) for data in valid_kyc_documents]
+            )
+
+        return Response({"message": "All KYC documents created successfully."}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def employee_kyc_detail(request, employee_id):
+    try:
+        # Fetch the KYC record for the given employee_id
+        document = EmployeeKYC.objects.filter(employee_id=employee_id)
+    except EmployeeKYC.DoesNotExist:
+        return Response({"error": "KYC record not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        # Serialize and return the KYC record
+        serializer = EmployeeKYCDocumentSerializer(document, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        # Update the KYC record
+        serializer = EmployeeKYCDocumentSerializer(document, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        # Delete the KYC record
+        document.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+@api_view(['GET'])
+def get_unique_employee_kyc(request):
+    documents = EmployeeKYC.objects.all()
+    
+    # Use a set to keep track of unique employees (by employee_id)
+    unique_employees = set()
+    serialized_data = []
+    
+    for document in documents:
+        employee_info = (document.employee_id.empid, document.employee_id.name)
+        
+        if employee_info not in unique_employees:
+            unique_employees.add(employee_info)
+            serialized_data.append({
+                'employee_id': document.employee_id.empid,
+                'employee_name': document.employee_id.name,
+                'Status': document.Status
+            })
+
+    return Response(serialized_data)
+
+
+
+@api_view(['POST'])
+def update_status(request):
+    # Get employee_id from the request data
+    employee_id = request.data.get('employee_id')
+    if not employee_id:
+        return Response({"error": "Employee ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Fetch all documents with the given employee_id
+        documents = EmployeeKYC.objects.filter(employee_id=employee_id)
+        if not documents.exists():
+            return Response({"error": "No documents found for this employee"}, status=status.HTTP_404_NOT_FOUND)
+    except EmployeeKYC.DoesNotExist:
+        return Response({"error": "Document not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Extract the new status from the request data
+    new_status = request.data.get('Status')
+    if not new_status:
+        return Response({"error": "Status is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validate if the new status is in the STATUS_CHOICES
+    if new_status not in dict(EmployeeKYC.STATUS_CHOICES):
+        return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update the Status field for all documents associated with the employee_id
+    updated_count = 0
+    for document in documents:
+        document.Status = new_status
+        document.save()
+        updated_count += 1
+
+    return Response({
+        "message": f"Status updated successfully for {updated_count} document(s)", 
+        "new_status": new_status
+    }, status=status.HTTP_200_OK)

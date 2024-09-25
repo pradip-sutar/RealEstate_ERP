@@ -52,7 +52,8 @@ class EmployeeSalarySerializer(serializers.ModelSerializer):
         model = Employee_Salary
         fields = '__all__'
     
-class EmployeeDocumentSerializer(serializers.ModelSerializer):
+
+class EmployeeKYCDocumentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Employee_Document
+        model = EmployeeKYC
         fields = '__all__'

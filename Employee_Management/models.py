@@ -1,6 +1,6 @@
 from django.db import models
 from Department.models import *
-from app1.models import *
+from System_Admin.models import *
 
 # Create your models here.
 class Company_profile(models.Model):
@@ -151,12 +151,26 @@ class Employee_Salary(models.Model):
     def __str__(self):
         return f"Employee Salary ({self.department} - {self.designation})"
     
-class Employee_Document(models.Model):
-    files = models.FileField(upload_to='employee_documents/',blank=True,null=True)
-    name = models.CharField(max_length=255)
-    document_no = models.CharField(max_length=100)
-    validity = models.CharField(max_length=100)
-    issued_by = models.CharField(max_length=255)
 
+
+class EmployeeKYC(models.Model):
+
+    STATUS_CHOICES = [
+        ('Pending','Pending'),
+        ('Completed','Completed')
+    ]
+    employee_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
+    document_name = models.CharField(max_length=100)
+    issued_from = models.CharField(max_length=100)
+    issue_date = models.DateField()
+    document_number = models.CharField(max_length=50)
+    validity = models.DateField()  # Renamed from 'validity'
+    upload = models.FileField(upload_to='employee_documents/', blank=True, null=True)
+    Status = models.CharField(max_length=10, choices=STATUS_CHOICES ,default='Pending')
     def __str__(self):
-        return self.name
+        return self.document_name
+
+    class Meta:
+        verbose_name = "Employee KYC Document"
+        verbose_name_plural = "Employee KYC Documents"
+        ordering = ['issue_date']

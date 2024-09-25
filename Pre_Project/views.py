@@ -25,7 +25,7 @@ def pre_project_new_handler(request):
                 return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
                 
         elif request.method == 'POST':
-
+            print(request.data)
             serializer = PreProjectNewSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()

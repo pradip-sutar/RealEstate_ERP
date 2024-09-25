@@ -6,7 +6,7 @@ class PreProjectNewAdmin(admin.ModelAdmin):
     list_display = ['id',
         'project_name','project_location','ownership_type',
         'project_segment','project_type','project_area','project_description',
-        'approvals','expenses','document_history','generate_agreement','upload_document'
+        'approvals','expenses','document_history','generate_agreement1','generate_agreement2','upload_document1','upload_document2'
     ]
 
 @admin.register(Confirm_Project)
