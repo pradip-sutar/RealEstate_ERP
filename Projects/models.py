@@ -74,6 +74,16 @@ class Project_Tax(models.Model):
     def __str__(self):
         return self.name
     
+class Project_subproject_details:
+    code=models.IntegerField()
+    segment=models.CharField(max_length=100)
+    Name=models.CharField(max_length=100)
+    layout=models.ImageField(upload_to='Product_subproject_image/')
+
+class Project_Nearby:
+    name=models.CharField
+    
+    
 class Project_Product(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)

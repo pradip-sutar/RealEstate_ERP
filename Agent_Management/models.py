@@ -1,6 +1,6 @@
 from django.db import models
 from Department.models import *
-from app1.models import *
+from System_Admin.models import *
 
 # Create your models here.
 class Company_profile(models.Model):
@@ -101,3 +101,10 @@ class Skill_Level(models.Model):
     agent_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
+
+# class Agent_type(models.model):
+#     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE, related_name="agent_company_profiles")
+#     Agent_name=models.CharField(max_length=100)
+
+#     def __str__(self):
+#         return f"{self}"
