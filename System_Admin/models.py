@@ -93,7 +93,6 @@ class System_branch_details(models.Model):
     branch_type = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
     size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)
-    incorporation_age = models.CharField(max_length=255)
     incorporation_date = models.CharField(max_length=100)
     incorporation_certificate = models.FileField(upload_to='incorporation_certificates/',blank=True,null=True)
     tax_certificate_details = models.TextField()
@@ -111,19 +110,20 @@ class System_branch_details(models.Model):
         return f"{self.branch_name} ({self.branch_id})"
     
 class System_branch_brand(models.Model):
+    logo=models.ImageField(upload_to='logo/', null=True, blank=True)
+    favicon=models.ImageField(upload_to='favicon/', null=True, blank=True)
     letter_header = models.FileField(upload_to='letter_headers/',null=True, blank=True)
     letter_footer = models.FileField(upload_to='letter_footers/',null=True, blank=True)
     brand_branch_id = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
     def __str__(self):
-        return f"Brand for Branch ID: {self.branch_branch_id.branch_id}"
+        return f"Brand for Branch ID: {self.brand_branch_id.branch_id}"
     
 class System_branch_contact(models.Model):
     contact_name = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
     contact_email = models.EmailField()
-    contact_phone = models.CharField(max_length=15)
-    contact_whatsapp = models.CharField(max_length=15, blank=True, null=True)
+    contact_no = models.CharField(max_length=15)
     contact_branch_id = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
 
     def __str__(self):

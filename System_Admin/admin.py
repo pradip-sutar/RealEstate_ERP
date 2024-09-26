@@ -20,12 +20,12 @@ class SystemBranchDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_branch_brand)
 class SystemBranchBrandAdmin(admin.ModelAdmin):
-    list_display = ['brand_branch_id', 'letter_header', 'letter_footer']
+    list_display = ['brand_branch_id','logo','favicon','letter_header', 'letter_footer']
     search_fields = ['branch__name']
 
 @admin.register(System_branch_contact)
 class SystemBranchContactAdmin(admin.ModelAdmin):
-    list_display = ['contact_name', 'designation', 'role', 'contact_email', 'contact_phone', 'contact_phone', 'contact_branch_id']
+    list_display = ['contact_name', 'designation', 'role', 'contact_email', 'contact_no', 'contact_branch_id']
     search_fields = ['contact_name', 'designation', 'role', 'contact_email', 'branch__name']
     list_filter = ['contact_branch_id']
 
