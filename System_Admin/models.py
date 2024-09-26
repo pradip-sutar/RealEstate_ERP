@@ -89,7 +89,7 @@ class System_branch_type(models.Model):
 class System_branch_details(models.Model):
     branch_name = models.CharField(max_length=255)
     alias = models.CharField(max_length=255, blank=True, null=True)
-    branch_id = models.BigIntegerField(primary_key=True)
+    company_id = models.ForeignKey(System_company_detail,on_delete=models.CASCADE)
     branch_type = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
     size = models.CharField(max_length=255)
     incorporation_no = models.CharField(max_length=255)

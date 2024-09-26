@@ -16,7 +16,28 @@ class SystemCompanyDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_branch_details)
 class SystemBranchDetailsAdmin(admin.ModelAdmin):
-    list_display = ['branch_name', 'branch_id', 'branch_type', 'country', 'state', 'city', 'branch_email', 'branch_phone']
+    list_display = [
+        'branch_name', 
+        'alias', 
+        'company_id', 
+        'branch_type', 
+        'size', 
+        'incorporation_no', 
+        'incorporation_date', 
+        'incorporation_certificate',
+        'tax_certificate_details', 
+        'PAN', 
+        'country', 
+        'state', 
+        'city', 
+        'PIN', 
+        'address', 
+        'registered_office_address', 
+        'branch_email', 
+        'branch_phone', 
+        'branch_whatsapp'
+    ]
+
 
 @admin.register(System_branch_brand)
 class SystemBranchBrandAdmin(admin.ModelAdmin):

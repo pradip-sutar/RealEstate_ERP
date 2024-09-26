@@ -280,7 +280,6 @@ def system_branch_handler(request):
             'branch_type': request.data.get('branch_type'),
             'size': request.data.get('size'),
             'incorporation_no': request.data.get('incorporation_no'),
-            'incorporation_age': request.data.get('incorporation_age'),
             'incorporation_date': request.data.get('incorporation_date'),
             'incorporation_certificate': request.data.get('incorporation_certificate'),
             'tax_certificate_details': request.data.get('tax_certificate_details'),
