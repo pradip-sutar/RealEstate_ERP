@@ -156,39 +156,39 @@ def system_company_details_handler(request):
             other_data['company_id'] = company_instance.companyid
 
             # Save Brand Detail
-            # brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
-            # if brand_serializer.is_valid():
-            #     brand_serializer.save()
-            # else:
-            #     return JsonResponse(brand_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
+            if brand_serializer.is_valid():
+                brand_serializer.save()
+            else:
+                return JsonResponse(brand_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # # Save Business Detail
-            # business_serializer = SystemBusinessDetailSerializer(data=business_data)
-            # if business_serializer.is_valid():
-            #     business_serializer.save()
-            # else:
-            #     return JsonResponse(business_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save Business Detail
+            business_serializer = SystemBusinessDetailSerializer(data=business_data)
+            if business_serializer.is_valid():
+                business_serializer.save()
+            else:
+                return JsonResponse(business_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # # Save Contact Detail
-            # contact_serializer = SystemContactDetailSerializer(data=contact_data)
-            # if contact_serializer.is_valid():
-            #     contact_serializer.save()
-            # else:
-            #     return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save Contact Detail
+            contact_serializer = SystemContactDetailSerializer(data=contact_data)
+            if contact_serializer.is_valid():
+                contact_serializer.save()
+            else:
+                return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # # Save Social Detail
-            # social_serializer = SystemSocialDetailSerializer(data=social_data)
-            # if social_serializer.is_valid():
-            #     social_serializer.save()
-            # else:
-            #     return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save Social Detail
+            social_serializer = SystemSocialDetailSerializer(data=social_data)
+            if social_serializer.is_valid():
+                social_serializer.save()
+            else:
+                return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # # Save Other Detail
-            # other_serializer = SystemOtherDetailSerializer(data=other_data)
-            # if other_serializer.is_valid():
-            #     other_serializer.save()
-            # else:
-            #     return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save Other Detail
+            other_serializer = SystemOtherDetailSerializer(data=other_data)
+            if other_serializer.is_valid():
+                other_serializer.save()
+            else:
+                return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 

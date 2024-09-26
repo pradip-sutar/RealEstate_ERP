@@ -30,7 +30,7 @@ class SystemBranchContactAdmin(admin.ModelAdmin):
     list_filter = ['contact_branch_id']
 
 @admin.register(System_brand_detail)
-class SystemBrandDetailsAdmin(admin.ModelAdmin):
+class SystemBrandDetailAdmin(admin.ModelAdmin):
     list_display = ['company_id', 'brand_logo', 'favicon', 'letter_header', 'letter_footer']
 
 @admin.register(System_business_detail)
