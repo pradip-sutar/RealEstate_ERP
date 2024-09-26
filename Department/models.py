@@ -5,6 +5,9 @@ class Department_Name(models.Model):
     id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255,unique=True)
     status = models.BooleanField()
+    document_rights=models.JSONField(blank=True, null=True)
+
+
     # roles = models.ForeignKey(Roles, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.name

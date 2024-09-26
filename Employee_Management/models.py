@@ -19,6 +19,7 @@ class Company_profile(models.Model):
     level = models.CharField(max_length=255)
     grade = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
+    document_rights=models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return self.name

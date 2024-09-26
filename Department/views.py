@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from django.db import transaction
 import random
 from django.http import JsonResponse
+from rest_framework.response import Response
+
 
 # Create your views here.
 @api_view(['GET', 'POST', 'PUT'])
@@ -207,3 +209,26 @@ def designation_rights_handler(request):
             return JsonResponse({"error": "Role not found."}, status=status.HTTP_404_NOT_FOUND)
         
         return JsonResponse({"message": "Roles and rights saved/updated successfully."}, status=status.HTTP_201_CREATED)
+
+
+
+
+@api_view(['PUT'])
+def department_doc_right(request):
+    print(request.data)
+    department_id = request.data.get('department_id')
+    
+    if not department_id:
+        return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        department = Department_Name.objects.get(id=department_id)
+    except Department_Name.DoesNotExist:
+        return Response({'error': f'Department with id {department_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        serializer = DepartmentNameSerializer(department, data=request.data, partial=True)  # partial=True allows updating specific fields
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -11,6 +11,8 @@ urlpatterns = [
     path('employee-kyc/<int:employee_id>/', employee_kyc_detail, name='employee_kyc_detail'),
     path('employee-kyc-name/', get_unique_employee_kyc, name='employee_kyc_detail'),
     path('employee-kyc-update/', update_status, name='employee_kyc_detail'),
+    path('emp-doc-rights/',employee_document_rights, name='employee_document_rights')
+
 
 
     

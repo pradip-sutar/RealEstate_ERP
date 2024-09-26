@@ -358,3 +358,27 @@ def update_status(request):
         "message": f"Status updated successfully for {updated_count} document(s)", 
         "new_status": new_status
     }, status=status.HTTP_200_OK)
+
+
+
+@api_view(['PUT'])
+def employee_document_rights(request):
+    # Extract the empid from the request data
+    empid = request.data.get('empid')
+    
+    if not empid:
+        return Response({'error': 'empid is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Fetch the company profile using the empid
+        company_profile = Company_profile.objects.get(empid=empid)
+    except Company_profile.DoesNotExist:
+        return Response({'error': f'Company profile with empid {empid} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        # Use serializer to update document_rights or any other fields passed
+        serializer = CompanyProfileSerializer(company_profile, data=request.data, partial=True)  # partial=True allows updating specific fields
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
