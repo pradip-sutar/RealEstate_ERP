@@ -47,7 +47,7 @@ class SystemContactDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_social_detail)
 class SystemSocialDetailsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'Email','contact','icon']
+    list_display = ['id', 'email','contact_no','image']
 
 @admin.register(System_other_detail)
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
