@@ -116,29 +116,49 @@ def create_emp_profile(request):
 def system_company_details_handler(request):
     if request.method == 'POST':
         print(request.data)
+        
         # Helper function to split and organize the data by prefix
         def organize_data(data, prefix):
             prefix_data = {}
             for key, value in data.items():
                 if key.startswith(prefix):
-                    # Extract the field inside the brackets, e.g. company_detail[companyid] -> companyid
-                    field_name = key.split('[')[1][:-1]
+                    field_name = key.split('[')[1][:-1]  # Extract the field inside the brackets
                     prefix_data[field_name] = value  # Assuming value is in list form like ['100']
             return prefix_data
+        
+        def organize_list_data(data, prefix):
+            """Organize nested list-like data."""
+            list_data = []
+            index = 0
+            while True:
+                entry_data = {}
+                found = False
+                for key, value in data.items():
+                    if key.startswith(f'{prefix}[{index}]'):
+                        field_name = key.split('[')[2][:-1]  # Extract field name
+                        entry_data[field_name] = value
+                        found = True
+                if not found:
+                    break
+                list_data.append(entry_data)
+                index += 1
+            return list_data
 
         # Extract and organize the data based on the prefix
         company_data = organize_data(request.data, 'company_detail')
-        print("company data ..................",company_data)
+        print("company data ..................", company_data)
         brand_data = organize_data(request.data, 'brand_detail')
-        print("brand data ..................",brand_data)
+        print("brand data ..................", brand_data)
         business_data = organize_data(request.data, 'business_detail')
-        print("business data ..................",business_data)
+        print("business data ..................", business_data)
         contact_data = organize_data(request.data, 'contact_detail')
-        print("contact data ..................",contact_data)
-        social_data = organize_data(request.data, 'social_detail')
-        print("social data ..................",social_data)
-        other_data = organize_data(request.data, 'other_detail')
-        print("other data ..................",other_data)
+        print("contact data ..................", contact_data)
+
+        # For lists like social_detail and other_detail, we use the new organize_list_data function
+        social_data_list = organize_list_data(request.data, 'social_detail')
+        print("social data ..................", social_data_list)
+        other_data_list = organize_list_data(request.data, 'other_detail')
+        print("other data ..................", other_data_list)
 
         try:
             # Save Company Detail
@@ -152,8 +172,6 @@ def system_company_details_handler(request):
             brand_data['company_id'] = company_instance.companyid
             business_data['company_id'] = company_instance.companyid
             contact_data['company_id'] = company_instance.companyid
-            social_data['company_id'] = company_instance.companyid
-            other_data['company_id'] = company_instance.companyid
 
             # Save Brand Detail
             brand_serializer = SystemCompanyBrandSerializer(data=brand_data)
@@ -176,19 +194,23 @@ def system_company_details_handler(request):
             else:
                 return JsonResponse(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # Save Social Detail
-            social_serializer = SystemSocialDetailSerializer(data=social_data)
-            if social_serializer.is_valid():
-                social_serializer.save()
-            else:
-                return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save each Social Detail (handling multiple entries)
+            for social_data in social_data_list:
+                social_data['company_id'] = company_instance.companyid
+                social_serializer = SystemSocialDetailSerializer(data=social_data)
+                if social_serializer.is_valid():
+                    social_serializer.save()
+                else:
+                    return JsonResponse(social_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # Save Other Detail
-            other_serializer = SystemOtherDetailSerializer(data=other_data)
-            if other_serializer.is_valid():
-                other_serializer.save()
-            else:
-                return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Save each Other Detail (handling multiple entries)
+            for other_data in other_data_list:
+                other_data['company_id'] = company_instance.companyid
+                other_serializer = SystemOtherDetailSerializer(data=other_data)
+                if other_serializer.is_valid():
+                    other_serializer.save()
+                else:
+                    return JsonResponse(other_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 
