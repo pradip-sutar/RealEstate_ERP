@@ -65,8 +65,8 @@ class System_contact_detail(models.Model):
         return f"{self.name} ({self.company_id.name})"
 
 class System_social_detail(models.Model):
-    name = models.CharField(max_length=255)  # Changed to JSONField
-    # url = models.URLField(max_length=255)  
+    Email=models.EmailField()
+    contact=models.IntegerField()
     icon = models.ImageField(upload_to='social_icon/', blank=True, null=True) 
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
