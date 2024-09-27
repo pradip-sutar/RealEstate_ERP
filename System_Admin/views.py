@@ -377,8 +377,24 @@ def system_branch_handler(request):
 @transaction.atomic
 def system_bank_details_handler(request):
     if request.method == 'POST':
-        data = request.data
-        serializer = SystemBankDetailsSerializer(data=data)
+        # Parse form-data and handle file uploads
+        data_list = []
+        i = 0
+        while f"bank_name[{i}]" in request.POST:
+            data = {
+                'bank_name': request.POST.get(f"bank_name[{i}]"),
+                'branch_name': request.POST.get(f"branch_name[{i}]"),
+                'IFSC': request.POST.get(f"IFSC[{i}]"),
+                'account_name': request.POST.get(f"account_name[{i}]"),
+                'account_no': request.POST.get(f"account_no[{i}]"),
+                'account_type': request.POST.get(f"account_type[{i}]"),
+                'bank_logo': request.FILES.get(f"bank_logo[{i}]")  # Handle file upload
+            }
+            print(data)
+            data_list.append(data)
+            i += 1
+
+        serializer = SystemBankDetailsSerializer(data=data_list, many=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({"message": "Bank details saved", "data": serializer.data}, status=201)
@@ -403,17 +419,23 @@ def system_bank_details_handler(request):
 @api_view(['GET', 'POST'])
 def system_board_of_directors_handler(request):
     if request.method == 'POST':
-        serializer = SystemBoardOfDirectorsSerializer(data=request.data)
+        # Ensure that we can handle both single and multiple instances
+        data = request.data
+        if not isinstance(data, list):
+            data = [data]  # Convert single object to a list if necessary
+        print(data)
+
+        serializer = SystemBoardOfDirectorsSerializer(data=data, many=True)  # Handle multiple instances
         if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()  # Save all instances
+            return JsonResponse({"message": "Board of Directors details saved", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':
         directors = System_Board_of_Directors.objects.all()
         serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
         return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
-
 
 @api_view(['GET', 'POST'])
 @transaction.atomic
