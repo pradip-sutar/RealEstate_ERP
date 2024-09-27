@@ -14,6 +14,7 @@ class Department_Name(models.Model):
 class Department_Designation(models.Model):
     designation = models.CharField(max_length=255)
     dept_name = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
     # rights = models.CharField(max_length=50)
     def __str__(self):
         return self.designation
