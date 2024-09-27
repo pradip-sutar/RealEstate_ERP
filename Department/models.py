@@ -22,7 +22,6 @@ class Department_Designation(models.Model):
 class Department_Grade(models.Model):
     level = models.CharField(max_length=100)
     grade_description = models.TextField()
-    status = models.CharField(max_length=20)
     def __str__(self):
         return self.grade_description
     

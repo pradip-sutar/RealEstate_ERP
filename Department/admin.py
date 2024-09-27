@@ -8,11 +8,11 @@ class Department_Name(admin.ModelAdmin):
 
 @admin.register(Department_Designation)
 class Department_Designation(admin.ModelAdmin):
-    list_display = ['designation', 'dept_name']
+    list_display = ['designation', 'dept_name', 'status']
 
 @admin.register(Department_Grade)
 class Department_Grade(admin.ModelAdmin):
-    list_display = ['level', 'grade_description', 'status']
+    list_display = ['level', 'grade_description']
 
 @admin.register(Department_Roles_Rights)
 class DepartmentRolesRightsAdmin(admin.ModelAdmin):
