@@ -1,0 +1,10 @@
+# Ignore all __pycache__ folders
+**/__pycache__/
+
+# Ignore all migrations folders in any subdirectory
+**/migrations/
+
+
+media
+
+ERPenv
