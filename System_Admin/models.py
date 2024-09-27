@@ -81,6 +81,9 @@ class System_other_detail(models.Model):
     def __str__(self):
         return f"Other Details ({self.company_id.name})"
     
+
+########################################################## System Admin Branch info model started #########################################################
+
 class System_branch_type(models.Model):
     type_name = models.CharField(max_length=100)
     def __str__(self):
@@ -107,7 +110,7 @@ class System_branch_details(models.Model):
     branch_phone = models.CharField(max_length=15)
     branch_whatsapp = models.CharField(max_length=15, blank=True, null=True)
     def __str__(self):
-        return f"{self.branch_name} ({self.branch_id})"
+        return f"{self.id}"
     
 class System_branch_brand(models.Model):
     logo=models.ImageField(upload_to='logo/', null=True, blank=True)
@@ -116,7 +119,7 @@ class System_branch_brand(models.Model):
     letter_footer = models.FileField(upload_to='letter_footers/',null=True, blank=True)
     brand_branch_id = models.ForeignKey(System_branch_details, on_delete=models.CASCADE)
     def __str__(self):
-        return f"Brand for Branch ID: {self.brand_branch_id.branch_id}"
+        return f"Brand for Branch ID: {self.brand_branch_id.id}"
     
 class System_branch_contact(models.Model):
     contact_name = models.CharField(max_length=255)
