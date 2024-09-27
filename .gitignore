@@ -1,22 +1,53 @@
+Agent_Management/__pycache__
+Agent_Management/migrations
+
+Authentication/__pycache__
+Authentication/migrations
+
+customer/__pycache__
+customer/migrations
+
+Department/__pycache__
+Department/migrations
 
 Employee_Management/__pycache__
 Employee_Management/migrations
 
+Enquiry_Bucket/__pycache__
+Enquiry_Bucket/migrations
 
-# Pre_Project/__pycache__
-# Pre_Project/migrations
+incentive/__pycache__
+incentive/migrations
 
+Pre_Project/__pycache__
+Pre_Project/migrations
 
-# Projects/__pycache__
-# Projects/migrations
+Project_Products/__pycache__
+Project_Products/migrations
 
+Projects/__pycache__
+Projects/migrations
 
-# Team_Management/__pycache__
-# Team_Management/migrations
+RealEstate_ERP/__pycache__
+RealEstate_ERP/migrations
 
+Roles_Rights/__pycache__
+Roles_Rights/migrations
 
-# Department/__pycache__
-# Department/migrations
+sales/__pycache__
+sales/migrations
+
+subproject/__pycache__
+subproject/migrations
+
+subproject_product/__pycache__
+subproject_product/migrations
+
+System_Admin/__pycache__
+System_Admin/migrations
+
+Team_Management/__pycache__
+Team_Management/migrations
 
 media
 
