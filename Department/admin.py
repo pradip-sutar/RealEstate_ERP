@@ -10,13 +10,9 @@ class Department_Name(admin.ModelAdmin):
 class Department_Designation(admin.ModelAdmin):
     list_display = ['designation', 'dept_name']
 
-@admin.register(Department_Label)
-class Department_Label(admin.ModelAdmin):
-    list_display = ['designation', 'label_description', 'status']
-
 @admin.register(Department_Grade)
 class Department_Grade(admin.ModelAdmin):
-    list_display = ['label', 'grade_description', 'status']
+    list_display = ['level', 'grade_description', 'status']
 
 @admin.register(Department_Roles_Rights)
 class DepartmentRolesRightsAdmin(admin.ModelAdmin):

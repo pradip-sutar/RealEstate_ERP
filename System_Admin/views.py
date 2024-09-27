@@ -399,7 +399,7 @@ def system_bank_details_handler(request):
             serializer.save()
             return JsonResponse({"message": "Bank details saved", "data": serializer.data}, status=201)
         else:
-            return JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.errors, status=400, safe=False)
 
     elif request.method == 'GET':
         bank_name = request.query_params.get('bank_name', None)

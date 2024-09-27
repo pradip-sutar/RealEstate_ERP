@@ -138,7 +138,7 @@ class Employee_Salary(models.Model):
     joining_date = models.CharField(max_length=100)
     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
     designation = models.ForeignKey(Department_Designation, on_delete=models.CASCADE)
-    level = models.ForeignKey(Department_Label, on_delete=models.CASCADE)
+    level = models.CharField(max_length=100)
     grade = models.ForeignKey(Department_Grade, on_delete=models.CASCADE)
     branch = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
     increment_date = models.CharField(max_length=100, blank=True, null=True)

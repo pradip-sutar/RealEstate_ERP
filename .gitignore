@@ -1,9 +1,6 @@
-# app1/__pycache__
-# app1/migrations
 
-
-# Employee_Management/__pycache__
-# Employee_Management/migrations
+Employee_Management/__pycache__
+Employee_Management/migrations
 
 
 # Pre_Project/__pycache__
@@ -20,8 +17,6 @@
 
 # Department/__pycache__
 # Department/migrations
-
-# db.sqlite3
 
 media
 

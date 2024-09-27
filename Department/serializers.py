@@ -12,11 +12,6 @@ class DepartmentDesignationSerializer(serializers.ModelSerializer):
         model = Department_Designation
         fields = '__all__'
 
-class DepartmentLabelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Department_Label
-        fields = '__all__'
-
 class DepartmentGradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department_Grade
