@@ -2,7 +2,6 @@ from django.db import models
 from Roles_Rights.models import Roles, Rights
 # Create your models here.
 class Department_Name(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255,unique=True)
     status = models.BooleanField()
     document_rights=models.JSONField(blank=True, null=True)

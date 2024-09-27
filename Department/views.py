@@ -20,21 +20,12 @@ def department_name_handler(request):
     
     elif request.method == 'POST':
         data = request.data
-        try:
-            while True:
-                id = random.randrange(1000000, 99999999)
-                if not Department_Name.objects.filter(id=id).exists():
-                    data['id'] = id
-                    break
-            
-            serializer = DepartmentNameSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return JsonResponse({"message": "Department created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-            else:
-                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        serializer = DepartmentNameSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Department created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'PUT':
         data = request.data
@@ -62,7 +53,7 @@ def department_designation_handler(request):
     
     elif request.method == 'POST':
         data = request.data
-        print(data)
+        # print(data)
         try:
             if Department_Designation.objects.filter(designation=data.get('designation'), dept_name=data.get('dept_name')).exists():
                 return JsonResponse({"error": "Designation already exists in this department"}, status=status.HTTP_400_BAD_REQUEST)

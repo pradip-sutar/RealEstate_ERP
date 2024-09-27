@@ -80,8 +80,10 @@ class SystemBankDetailsAdmin(admin.ModelAdmin):
     search_fields = ['bank_name', 'branch_name', 'IFSC', 'account_name', 'account_no']
     list_filter = ['account_type']
 
-
-
+@admin.register(System_Board_of_Directors)
+class SystemBoardOfDirectorsAdmin(admin.ModelAdmin):
+    # List display fields in the admin list view
+    list_display = ('name', 'designation', 'date_of_join', 'date_of_leave', 'share', 'stakeholder')
 
 # @admin.register(Team_management)
 # class TeamManagementAdmin(admin.ModelAdmin):

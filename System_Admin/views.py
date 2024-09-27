@@ -273,56 +273,66 @@ def system_branch_type_handler(request):
 def system_branch_handler(request):
     if request.method == 'POST':
         # Extracting data for each serializer
-        branch_details_data = {
-            'branch_name': request.data.get('branch_name'),
-            'alias': request.data.get('alias'),
-            'branch_id': request.data.get('branch_id'),
-            'branch_type': request.data.get('branch_type'),
-            'size': request.data.get('size'),
-            'incorporation_no': request.data.get('incorporation_no'),
-            'incorporation_date': request.data.get('incorporation_date'),
-            'incorporation_certificate': request.data.get('incorporation_certificate'),
-            'tax_certificate_details': request.data.get('tax_certificate_details'),
-            'PAN': request.data.get('PAN'),
-            'country': request.data.get('country'),
-            'state': request.data.get('state'),
-            'city': request.data.get('city'),
-            'PIN': request.data.get('PIN'),
-            'address': request.data.get('address'),
-            'registered_office_address': request.data.get('registered_office_address'),
-            'branch_email': request.data.get('branch_email'),
-            'branch_phone': request.data.get('branch_phone'),
-            'branch_whatsapp': request.data.get('branch_whatsapp')
-        }
+        # branch_details_data = {
+        #     'branch_name': request.data.get('branch_name'),
+        #     'alias': request.data.get('alias'),
+        #     'company_id': request.data.get('company_id'),
+        #     'branch_type': request.data.get('branch_type'),
+        #     'size': request.data.get('size'),
+        #     'incorporation_no': request.data.get('incorporation_no'),
+        #     'incorporation_date': request.data.get('incorporation_date'),
+        #     'incorporation_certificate': request.data.get('incorporation_certificate'),
+        #     'tax_certificate_details': request.data.get('tax_certificate_details'),
+        #     'PAN': request.data.get('PAN'),
+        #     'country': request.data.get('country'),
+        #     'state': request.data.get('state'),
+        #     'city': request.data.get('city'),
+        #     'PIN': request.data.get('PIN'),
+        #     'address': request.data.get('address'),
+        #     'registered_office_address': request.data.get('registered_office_address'),
+        #     'branch_email': request.data.get('branch_email'),
+        #     'branch_phone': request.data.get('branch_phone'),
+        #     'branch_whatsapp': request.data.get('branch_whatsapp')
+        # }
 
         branch_brand_data = {
+            'brand_logo':request.data.get('brand_logo'),
+            'favicon':request.data.get('favicon'),
             'letter_header': request.data.get('letter_header'),
             'letter_footer': request.data.get('letter_footer'),
-            'brand_branch_id': request.data.get('brand_branch_id')
         }
 
-        branch_contact_data = {
-            'contact_name': request.data.get('contact_name'),
-            'designation': request.data.get('designation'),
-            'role': request.data.get('role'),
-            'contact_email': request.data.get('contact_email'),
-            'contact_phone': request.data.get('contact_phone'),
-            'contact_whatsapp': request.data.get('contact_whatsapp'),
-            'contact_branch_id': request.data.get('contact_branch_id')
-        }
-        print(branch_details_data, branch_brand_data, branch_contact_data)
-        if System_branch_details.objects.filter(branch_id=branch_details_data['branch_id']):
-            return JsonResponse({'error': 'Branch ID already exists'}, status=status.HTTP_400_BAD_REQUEST)
-        # Serializing and validating the data
-        branch_details_serializer = SystemBranchDetailsSerializer(
-            data=branch_details_data)
+        # branch_contact_data = {
+        #     'contact_name': request.data.get('contact_name'),
+        #     'designation': request.data.get('designation'),
+        #     'role': request.data.get('role'),
+        #     'contact_email': request.data.get('contact_email'),
+        #     'contact_phone': request.data.get('contact_phone'),
+        #     'contact_whatsapp': request.data.get('contact_whatsapp'),
+        #     'contact_branch_id': request.data.get('contact_branch_id')
+        # }
+        # print(branch_details_data, branch_brand_data, branch_contact_data)
+        print(branch_brand_data)
+        
+        # if System_branch_details.objects.filter(branch_id=branch_details_data['branch_id']):
+        #     return JsonResponse({'error': 'Branch ID already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # company_details_id = System_company_detail.objects.get(companyid=branch_details_data['company_id'])
+        # branch_details_data['company_id']=company_details_id.companyid
+
+        # # Serializing and validating the data
+        # branch_details_serializer = SystemBranchDetailsSerializer(
+        #     data=branch_details_data)
+        
+        # branch_brand_data['brand_branch_id'] = branch_details_serializer.id
         branch_brand_serializer = SystemBranchBrandSerializer(
             data=branch_brand_data)
-        branch_contact_serializer = SystemBranchContactSerializer(
-            data=branch_contact_data)
+        # branch_contact_serializer = SystemBranchContactSerializer(
+        #     data=branch_contact_data)
         # Check validity and handle response
         if branch_details_serializer.is_valid():
             branch_details_serializer.save()
+        
         if branch_brand_serializer.is_valid():
             branch_brand_serializer.save()
         if branch_contact_serializer.is_valid():
@@ -368,8 +378,24 @@ def system_branch_handler(request):
 @transaction.atomic
 def system_bank_details_handler(request):
     if request.method == 'POST':
-        data = request.data
-        serializer = SystemBankDetailsSerializer(data=data)
+        # Parse form-data and handle file uploads
+        data_list = []
+        i = 0
+        while f"bank_name[{i}]" in request.POST:
+            data = {
+                'bank_name': request.POST.get(f"bank_name[{i}]"),
+                'branch_name': request.POST.get(f"branch_name[{i}]"),
+                'IFSC': request.POST.get(f"IFSC[{i}]"),
+                'account_name': request.POST.get(f"account_name[{i}]"),
+                'account_no': request.POST.get(f"account_no[{i}]"),
+                'account_type': request.POST.get(f"account_type[{i}]"),
+                'bank_logo': request.FILES.get(f"bank_logo[{i}]")  # Handle file upload
+            }
+            print(data)
+            data_list.append(data)
+            i += 1
+
+        serializer = SystemBankDetailsSerializer(data=data_list, many=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({"message": "Bank details saved", "data": serializer.data}, status=201)
@@ -394,11 +420,18 @@ def system_bank_details_handler(request):
 @api_view(['GET', 'POST'])
 def system_board_of_directors_handler(request):
     if request.method == 'POST':
-        serializer = SystemBoardOfDirectorsSerializer(data=request.data)
+        # Ensure that we can handle both single and multiple instances
+        data = request.data
+        if not isinstance(data, list):
+            data = [data]  # Convert single object to a list if necessary
+        print(data)
+
+        serializer = SystemBoardOfDirectorsSerializer(data=data, many=True)  # Handle multiple instances
         if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()  # Save all instances
+            return JsonResponse({"message": "Board of Directors details saved", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':
         directors = System_Board_of_Directors.objects.all()
