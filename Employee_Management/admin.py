@@ -6,7 +6,7 @@ from Employee_Management.models import *
 class EmpCompanyProfileAdmin(admin.ModelAdmin):
     list_display = ['empid', 'name', 'mobileno', 'whatsapp', 'email', 'emergency_no',
                     'date_of_joining', 'date_of_leaving', 'branch', 'department',
-                    'designation', 'level', 'grade', 'role'
+                    'designation', 'grade', 'role'
                     ]
 
 @admin.register(Address)

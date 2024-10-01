@@ -16,7 +16,7 @@ class Company_profile(models.Model):
     branch = models.CharField(max_length=255)
     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
     designation = models.CharField(max_length=255)
-    level = models.CharField(max_length=255)
+    # level = models.CharField(max_length=255)
     grade = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
     document_rights=models.JSONField(blank=True, null=True)
@@ -175,3 +175,4 @@ class EmployeeKYC(models.Model):
         verbose_name = "Employee KYC Document"
         verbose_name_plural = "Employee KYC Documents"
         ordering = ['issue_date']
+
