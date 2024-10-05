@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    path('agent_type_handler/', agent_type_handler, name='agent_type_handler'),
     path('agent_management_handler/', agent_management_handler, name='agent_management_handler'),
 ]
 

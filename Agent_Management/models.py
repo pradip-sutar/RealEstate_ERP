@@ -3,9 +3,17 @@ from Department.models import *
 from System_Admin.models import *
 
 # Create your models here.
+class Agent_type(models.Model):
+    department = models.ForeignKey(Department_Name, on_delete=models.CASCADE, related_name="agent_profiles")
+    agent_name=models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.agent_name}"
+    
 class Company_profile(models.Model):
     agentid = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
+    agent_type = models.ForeignKey(Agent_type,on_delete=models.CASCADE)
     mobileno = models.IntegerField()
     whatsapp = models.IntegerField(blank=True, null=True)
     email = models.EmailField()
@@ -15,7 +23,6 @@ class Company_profile(models.Model):
     branch = models.CharField(max_length=255)
     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE, related_name="agent_company_profiles")
     designation = models.CharField(max_length=255)
-    level = models.CharField(max_length=255)
     grade = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
 
@@ -80,6 +87,8 @@ class FamilyProfile(models.Model):
     
 class EducationProfile(models.Model):
     details = models.JSONField()
+    certificate=models.FileField(upload_to='media/profile_pics/certificates', null=True, blank=True)
+    marklist=models.FileField(upload_to='media/profile_pics/certificates', null=True, blank=True)
     agent_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
@@ -92,6 +101,8 @@ class Trainig(models.Model):
     
 class Experience(models.Model):
     details = models.JSONField()
+    experience_letter=models.FileField(upload_to='media/profile_pics/certificates', null=True, blank=True)
+    Joining_letter=models.FileField(upload_to='media/profile_pics/certificates', null=True, blank=True)
     agent_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
@@ -101,10 +112,3 @@ class Skill_Level(models.Model):
     agent_id = models.ForeignKey(Company_profile, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.details}"
-
-# class Agent_type(models.model):
-#     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE, related_name="agent_company_profiles")
-#     Agent_name=models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return f"{self}"

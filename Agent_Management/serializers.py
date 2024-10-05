@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from .models import *
 
+
+class AgentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agent_type
+        fields = ['id', 'department', 'agent_name']
+
 class CompanyProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Company_profile

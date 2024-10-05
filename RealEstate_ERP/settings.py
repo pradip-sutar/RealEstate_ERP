@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'Enquiry_Bucket',
     'Roles_Rights',
     'Agent_Management',
-    'Authentication',
+    # 'Authentication',
     'subproject',
     'subproject_product',
     'incentive',

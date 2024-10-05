@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('employee_data/', employee_data, name='employee_management'),
+    path('employee_management_handler/', employee_data, name='employee_management'),
     path('employee_bank_handler/', bank_others_view, name='bank_others_view'),
     path('employee_salary_handler/', employee_salary_handler, name='employee_salary_handler'),
     path('employee-kyc/', employee_kyc_list, name='employee_kyc_list'),

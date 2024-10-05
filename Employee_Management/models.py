@@ -126,6 +126,7 @@ class Bank_Others(models.Model):
     insurance_provider = models.CharField(max_length=255, blank=True, null=True)
     insurance_state = models.CharField(max_length=255, blank=True, null=True)
     insurance_branch = models.CharField(max_length=255, blank=True, null=True)
+    employee_id = models.ForeignKey(Company_profile,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.bank_name
@@ -138,16 +139,14 @@ class Employee_Salary(models.Model):
     joining_date = models.CharField(max_length=100)
     department = models.ForeignKey(Department_Name, on_delete=models.CASCADE)
     designation = models.ForeignKey(Department_Designation, on_delete=models.CASCADE)
-    level = models.CharField(max_length=100)
     grade = models.ForeignKey(Department_Grade, on_delete=models.CASCADE)
     branch = models.ForeignKey(System_branch_type, on_delete=models.CASCADE)
     increment_date = models.CharField(max_length=100, blank=True, null=True)
     promotion_date = models.CharField(max_length=100, blank=True, null=True)
     increased_salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     increased_ctc = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    promotion_letter = models.FileField(upload_to='promotion_letters/', blank=True, null=True)
     transfer_date = models.CharField(max_length=100, blank=True, null=True)
-    transfer_letter = models.FileField(upload_to='transfer_letters/', blank=True, null=True)
+    employee_id = models.ForeignKey(Company_profile,on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Employee Salary ({self.department} - {self.designation})"

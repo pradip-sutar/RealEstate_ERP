@@ -65,15 +65,15 @@ class BankOthersAdmin(admin.ModelAdmin):
         'insurance_no', 
         'insurance_provider', 
         'insurance_state', 
-        'insurance_branch'
+        'insurance_branch',
     ]
 
 @admin.register(Employee_Salary)
 class EmployeeSalaryAdmin(admin.ModelAdmin):
     list_display = [
-        'joining_salary', 'ctc', 'joining_date', 'department', 'designation', 'level', 'grade', 
+        'joining_salary', 'ctc', 'joining_letter','joining_date', 'department', 'designation', 'grade', 
         'branch', 'increment_date', 'promotion_date', 'increased_salary', 
-        'increased_ctc', 'transfer_date'
+        'increased_ctc', 'transfer_date','employee_id'
     ]
 
 

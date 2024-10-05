@@ -20,6 +20,7 @@ from .serializers import *
 @transaction.atomic
 def employee_data(request):
     if request.method == 'POST':
+        # print(request.data)
         # Helper function to split and organize the data by prefix
         def organized_data(data, prefix):
             prefix_data = {}
@@ -29,94 +30,163 @@ def employee_data(request):
                     field_name = key.split('[')[1][:-1]
                     prefix_data[field_name] = value  # Assuming value is in list form like ['100']
             return prefix_data
+        
+        def organize_family_data(data, prefix):
+            """Organize indexed form data into a list of dictionaries for FamilyProfile JSONField."""
+            family_list = []
+            index = 0
+            
+            while True:
+                family_member_data = {}
+                found = False
+
+                # Iterate through all the key-value pairs in the data
+                for key, value in data.items():
+                    if key.startswith(f'{prefix}[{index}]'):
+                        field_name = key.split('.')[1]  # Extract the field name after the dot (e.g., 'name', 'rel')
+                        family_member_data[field_name] = value[0] if isinstance(value, list) and value else value
+                        found = True
+                
+                if not found:
+                    break
+
+                family_list.append(family_member_data)
+                index += 1
+
+            return family_list
+
+        def organize_education_data(data, prefix, files):
+            """
+            Organize indexed form data into a list of dictionaries for EducationProfile JSONField.
+            Handles file fields separately.
+            """
+            education_list = []
+            index = 0
+            
+            while True:
+                education_data = {}
+                found = False
+                certificate = None
+                marklist = None
+
+                # Iterate through all the key-value pairs in the data
+                for key, value in data.items():
+                    if key.startswith(f'{prefix}[{index}]'):
+                        # Extract the field name after the dot (e.g., 'courceName', 'boardName')
+                        field_name = key.split('.')[1]
+                        if field_name in ['certificate', 'marklist']:
+                            # Handle file fields from the files dictionary
+                            if field_name == 'certificate' and f'{prefix}[{index}].certificate' in files:
+                                certificate = files[f'{prefix}[{index}].certificate']
+                            if field_name == 'marklist' and f'{prefix}[{index}].marklist' in files:
+                                marklist = files[f'{prefix}[{index}].marklist']
+                        else:
+                            # Store other fields in the education_data dictionary
+                            education_data[field_name] = value[0] if isinstance(value, list) and value else value
+                            found = True
+
+                if not found:
+                    break
+
+                # Add the education data to the list
+                education_list.append({
+                    'details': education_data,
+                    'certificate': certificate,
+                    'marklist': marklist
+                })
+                index += 1
+
+            return education_list
 
         # Extract and organize the data based on the prefix
         company_data = organized_data(request.data, 'company_data')
         # print("company data ..................",company_data)
-        Adress_data= organized_data(request.data, 'Adress_data')
-        # print("adress data ..................",Adress_data)
+        address_data= organized_data(request.data, 'address_data')
+        # print("adress data ..................",address_data)
         personal_data = organized_data(request.data, 'personal_data')
-        # print("business data ..................",business_data)
-        family_data = organized_data(request.data, 'family_data')
-        # print("contact data ..................",contact_data)
-        education_data = organized_data(request.data, 'education_data')
-        # print("education data ..................",education_data)
-        training_data = organized_data(request.data, 'training_data')
-        # print("training data ..................",training_data)
-        Experience_data = organized_data(request.data, 'Experience_data')
+        # print("personal_data ..................",personal_data)
+        family_data = organize_family_data(request.data, 'family_data')
+        # print("family_data ..................",family_data)
+        education_data_list = organize_education_data(request.data, 'education_data',request.FILES)
+        print("education data ..................",education_data_list)
+        training_data = organize_family_data(request.data, 'training_data')
+        print("training data ..................",training_data)
+        Experience_data = organize_education_data(request.data, 'Experience_data',request.FILES)
     
         skills_data = organized_data(request.data, 'skills_data')
 
 
         try:
-            # Save Company Detail
-            company_serializer = CompanyProfileSerializer(data=company_data)
-            if company_serializer.is_valid():
-                emmployee_instance = company_serializer.save()  # Save and get the instance
-            else:
-                return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            with transaction.atomic():
+                # Save Company Detail
+                company_serializer = CompanyProfileSerializer(data=company_data)
+                if company_serializer.is_valid():
+                    emmployee_instance = company_serializer.save()  # Save and get the instance
+                else:
+                    return JsonResponse(company_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            # Attach employee_id to the related details before saving them
-            Adress_data['employee_id'] = emmployee_instance.empid
-            personal_data['employee_id'] = emmployee_instance.empid
-            family_data['employee_id'] = emmployee_instance.empid
-            education_data['employee_id'] = emmployee_instance.empid
-            training_data['employee_id'] = emmployee_instance.empid
-            Experience_data['employee_id'] = emmployee_instance.empid
-            skills_data['employee_id'] = emmployee_instance.empid
+                # Attach employee_id to the related details before saving them
+                address_data['employee_id'] = emmployee_instance.empid
+                personal_data['employee_id'] = emmployee_instance.empid
+                
+                # Save Address Detail
+                Adress_serializer = AddressSerializer(data=address_data)
+                if Adress_serializer.is_valid():
+                    Adress_serializer.save()
+                else:
+                    return JsonResponse(Adress_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+                #  Save personal Detail
+                personal_serializer = PersonalProfileSerializer(data=personal_data)
+                if personal_serializer.is_valid():
+                    personal_serializer.save()
+                else:
+                    return JsonResponse(personal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+                #  Save family Detail
+                employee = Company_profile.objects.get(empid=emmployee_instance.empid)  # Example employee lookup
+                family_profile = FamilyProfile(details=family_data, employee_id=employee)
+                family_profile.save()
 
-            # Save Address Detail
-            Adress_serializer = AddressSerializer(data=Adress_data)
-            if Adress_serializer.is_valid():
-                Adress_serializer.save()
-            else:
-                return JsonResponse(Adress_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                #  Save education_data Detail
+                for education_data in education_data_list:
+                    # Extract details and file fields
+                    details = education_data['details']
+                    certificate = education_data.get('certificate', None)
+                    marklist = education_data.get('marklist', None)
+                    # Create the EducationProfile instance
+                    education_profile = EducationProfile(
+                        details=details,
+                        certificate=certificate,
+                        marklist=marklist,
+                        employee_id=employee  # Reference to the employee
+                    )
+                    education_profile.save()
 
-            #  Save personal Detail
-            personal_serializer = PersonalProfileSerializer(data=personal_data)
-            if personal_serializer.is_valid():
-                personal_serializer.save()
-            else:
-                return JsonResponse(personal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                #  Save training Detail
+                training_profile = Trainig(details=training_data, employee_id=employee)
+                training_profile.save()
+                
+                # #  Save experience Detail
+                for data in Experience_data:
+                    # Extract details and file fields
+                    details = data['details']
+                    certificate = data.get('certificate', None)
+                    marklist = data.get('marklist', None)
+                    # Create the EducationProfile instance
+                    education_profile = Experience(
+                        details=details,
+                        experience_letter=certificate,
+                        Joining_letter=marklist,
+                        employee_id=employee  # Reference to the employee
+                    )
+                    education_profile.save()
+                
+                #  Save skills Detail
+                family_profile = Skill_Level(details=skills_data, employee_id=employee)
+                family_profile.save()
 
-            #  Save family Detail
-            family_serializer = FamilyProfileSerializer(data=family_data)
-            if family_serializer.is_valid():
-                family_serializer.save()
-            else:
-                return JsonResponse(family_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-            #  Save education_data Detail
-            education_serializer = EducationProfileSerializer(data=education_data)
-            if education_serializer.is_valid():
-                education_serializer.save()
-            else:
-                return JsonResponse(education_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-            #  Save training Detail
-            training_serializer = TrainigSerializer(data=training_data)
-            if training_serializer.is_valid():
-                training_serializer.save()
-            else:
-                return JsonResponse(training_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
-            #  Save experience Detail
-            experience_serializer = ExperienceSerializer(data=training_data)
-            if experience_serializer.is_valid():
-                experience_serializer.save()
-            else:
-                return JsonResponse(experience_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
-            #  Save skills Detail
-            skills_serializer = SkillLevelSerializer(data=training_data)
-            if skills_serializer.is_valid():
-                skills_serializer.save()
-            else:
-                return JsonResponse(skills_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-            return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
+                return JsonResponse({'message': 'All details saved successfully.'}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -198,6 +268,7 @@ def employee_salary_handler(request):
         return JsonResponse({'data':serializer.data}, safe=False, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
+        print(request.data)
         serializer = EmployeeSalarySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
