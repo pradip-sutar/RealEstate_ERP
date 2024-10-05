@@ -190,22 +190,26 @@ def designation_rights_handler(request):
 
 
 
-@api_view(['PUT'])
-def department_doc_right(request):
-    print(request.data)
-    department_id = request.data.get('department_id')
-    
-    if not department_id:
-        return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        department = Department_Name.objects.get(id=department_id)
-    except Department_Name.DoesNotExist:
-        return Response({'error': f'Department with id {department_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+@api_view(['POST'])
+def department_view(request):
+    if isinstance(request.data, list):
+        # Handle a list of dictionaries
+        for item in request.data:
+            department_id = item.get('department_id')
+            if not department_id:
+                return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'PUT':
-        serializer = DepartmentNameSerializer(department, data=request.data, partial=True)  # partial=True allows updating specific fields
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Process each item
+            # Add your logic here (e.g., save the item, update existing records, etc.)
+
+    else:
+        # Handle a single dictionary (object)
+        department_id = request.data.get('department_id')
+        if not department_id:
+            return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Add your logic here (e.g., save the object, update existing record, etc.)
+
+    # If everything goes well, return a success response
+    return Response({'message': 'Data processed successfully'}, status=status.HTTP_200_OK)
+
