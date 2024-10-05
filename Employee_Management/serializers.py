@@ -57,3 +57,9 @@ class EmployeeKYCDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmployeeKYC
         fields = '__all__'
+
+
+class DocumentMasterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Document_master
+        fields = '__all__'

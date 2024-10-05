@@ -453,3 +453,60 @@ def employee_document_rights(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+#======================= document master views ======================================#
+
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def document_master_view(request, pk=None):
+    # GET all documents or a single document if pk is provided
+    if request.method == 'GET':
+        if pk:
+            try:
+                document = Document_master.objects.get(pk=pk)
+                serializer = DocumentMasterSerializer(document)
+                return Response(serializer.data)
+            except Document_master.DoesNotExist:
+                return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            documents = Document_master.objects.all()
+            serializer = DocumentMasterSerializer(documents, many=True)
+            return Response(serializer.data)
+    
+    # POST to create one or multiple documents
+    elif request.method == 'POST':
+        # Check if the data is a list (multiple documents) or a single object
+        if isinstance(request.data, list):
+            # Handle multiple instances
+            serializer = DocumentMasterSerializer(data=request.data, many=True)
+        else:
+            # Handle single instance
+            serializer = DocumentMasterSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()  # This will create multiple instances if many=True
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # PUT (update) an existing document
+    elif request.method == 'PUT':
+        try:
+            document = Document_master.objects.get(pk=pk)
+            serializer = DocumentMasterSerializer(document, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Document_master.DoesNotExist:
+            return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    # DELETE an existing document
+    elif request.method == 'DELETE':
+        try:
+            document = Document_master.objects.get(pk=pk)
+            document.delete()
+            return Response({'message': 'Document deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+        except Document_master.DoesNotExist:
+            return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)

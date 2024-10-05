@@ -1,5 +1,8 @@
 from django.db import models
 from Roles_Rights.models import Roles, Rights
+
+
+
 # Create your models here.
 class Department_Name(models.Model):
     name = models.CharField(max_length=255,unique=True)

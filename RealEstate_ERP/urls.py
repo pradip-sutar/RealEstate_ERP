@@ -3,8 +3,8 @@ from django.urls import path, include
 from System_Admin import views
 from django.conf.urls.static import static
 from django.conf import settings
-from rest_framework.authtoken.views import obtain_auth_token
-from . import views
+# from rest_framework.authtoken.views import obtain_auth_token
+# from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/',include('subproject_product.urls')),
     path('api/',include('incentive.urls')),
     path('api/',include('customer.urls')),
-    path('api/',include('sales.urls'))
+    path('api/',include('sales.urls')),
 
 
 

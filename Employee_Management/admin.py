@@ -81,3 +81,12 @@ class EmployeeSalaryAdmin(admin.ModelAdmin):
 class EmployeeKYCAdmin(admin.ModelAdmin):
     list_display = ('employee_id','document_name', 'issued_from', 'issue_date', 'document_number', 'validity', 'upload','Status')
     search_fields = ('document_name', 'issued_from', 'document_number')
+
+
+@admin.register(Document_master)
+class DocumentMasterAdmin(admin.ModelAdmin):
+    list_display = ('id','document_name')  # Fields to display in the list view
+    search_fields = ['document_name']  # Fields to search in the admin
+
+
+
