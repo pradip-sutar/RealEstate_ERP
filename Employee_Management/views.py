@@ -434,32 +434,76 @@ def update_status(request):
 
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Company_profile
+
 @api_view(['POST'])
 def employee_document_rights(request):
     if not isinstance(request.data, list):
         return Response({'error': 'Request data must be a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Iterate over each employee's data in the request
-    for item in request.data:
-        empid = item.get('empid')
+    created = False  # To track if any new entries are created
+    updated = False  # To track if any existing entries are updated
 
-        if not empid:
-            return Response({'error': 'empid is required for each employee'}, status=status.HTTP_400_BAD_REQUEST)
+    # Iterate over each department's data in the request
+    for item in request.data:
+        department_id = item.get('department_id')  # Use 'department_id' from request to fetch 'empid'
+        document_name = item.get('document_name')
+        sections = item.get('sections')
+        upload = item.get('upload')
+
+        if not department_id:
+            return Response({'error': 'department_id is required for each department'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Fetch the company profile using the empid
-            company_profile = Company_profile.objects.get(empid=empid)
+            # Fetch the company profile using the empid, where empid corresponds to department_id in the request
+            company_profile = Company_profile.objects.get(empid=department_id)
         except Company_profile.DoesNotExist:
-            return Response({'error': f'Company profile with empid {empid} not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': f'Company profile with empid {department_id} not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Use serializer to update document_rights or any other fields for each employee
-        serializer = CompanyProfileSerializer(company_profile, data=item, partial=True)  # partial=True allows updating specific fields
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Prepare the document rights data structure
+        new_document_rights = {
+            "document_name": document_name,
+            "sections": sections,
+            "upload": upload
+        }
 
-        serializer.save()
+        # Check if document_rights already contains an entry for this document_name
+        if company_profile.document_rights:
+            existing_rights = company_profile.document_rights
+            document_found = False
 
-    return Response({'message': 'Data updated successfully for all employees'}, status=status.HTTP_200_OK)
+            # Update the existing document rights if found
+            for idx, document in enumerate(existing_rights):
+                if document.get('document_name') == document_name:
+                    existing_rights[idx] = new_document_rights
+                    document_found = True
+                    updated = True  # Mark as updated
+                    break
+
+            if not document_found:
+                # If the document_name is not found, append the new entry
+                existing_rights.append(new_document_rights)
+                created = True  # Mark as created
+
+            company_profile.document_rights = existing_rights
+        else:
+            # If the field is empty or None, initialize with the new document rights
+            company_profile.document_rights = [new_document_rights]
+            created = True  # Mark as created
+
+        # Save the updated profile
+        company_profile.save()
+
+    # Return the appropriate response based on whether items were created or updated
+    if created:
+        return Response({'message': 'New document rights created successfully.'}, status=status.HTTP_201_CREATED)
+    elif updated:
+        return Response({'message': 'Document rights updated successfully.'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': 'No changes made to document rights.'}, status=status.HTTP_200_OK)
 
 
 

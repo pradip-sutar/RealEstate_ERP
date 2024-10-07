@@ -191,36 +191,77 @@ def designation_rights_handler(request):
 
 #============================ Document rights ================================#
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Department_Name
-
 @api_view(['POST'])
 def department_view(request):
     if not isinstance(request.data, list):
         return Response({'error': 'Request data must be a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
 
+    created = False  # To track if new data is created
+    updated = False  # To track if existing data is updated
+
     # Iterate over each department's data in the request
     for item in request.data:
-        department_id = item.get('id')
-        document_rights = item.get('document_rights')
+        department_id = item.get('department_id')  # Map 'department_id' from request
+        document_name = item.get('document_name')
+        sections = item.get('sections')
+        upload = item.get('upload')
 
-        if not department_id or not document_rights:
-            return Response({'error': 'Both id and document_rights are required for each department'},
+        if not department_id or not document_name:
+            return Response({'error': 'Both department_id and document_name are required for each department'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        # Construct the new document_rights entry
+        new_document_rights = {
+            'document_name': document_name,
+            'sections': sections,
+            'upload': upload
+        }
+
         try:
-            # Get the department by id
+            # Get the department by id (department_id in this case)
             department = Department_Name.objects.get(id=department_id)
+            
+            # Initialize document_rights as an empty list if it's None or invalid
+            if not isinstance(department.document_rights, list):
+                department.document_rights = []
+
+            existing_rights = department.document_rights
+            document_found = False
+
+            # Check if the document with the same name exists, then update it
+            for idx, document in enumerate(existing_rights):
+                # Ensure each item in existing_rights is a dictionary
+                if isinstance(document, dict) and document.get('document_name') == document_name:
+                    # Update existing document rights
+                    existing_rights[idx] = new_document_rights
+                    document_found = True
+                    updated = True
+                    break
+
+            if not document_found:
+                # Append the new document if it does not exist
+                existing_rights.append(new_document_rights)
+                created = True
+                
+            department.document_rights = existing_rights
+            department.save()
+
         except Department_Name.DoesNotExist:
             return Response({'error': f'Department with id {department_id} not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Update the document_rights field
-        department.document_rights = document_rights
-        department.save()
+    # Return the appropriate response based on whether items were created or updated
+    if created and updated:
+        return Response({'message': 'New documents created and existing ones updated for some departments.'}, status=status.HTTP_200_OK)
+    elif created:
+        return Response({'message': 'New document(s) created for the department(s).'}, status=status.HTTP_201_CREATED)
+    elif updated:
+        return Response({'message': 'Document rights updated successfully for the existing department(s).'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'message': 'No changes made to department(s).'}, status=status.HTTP_200_OK)
 
-    return Response({'message': 'document_rights updated successfully for all departments'}, status=status.HTTP_200_OK)
+
+
+
 
 
 
