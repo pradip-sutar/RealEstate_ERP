@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view
 from django.db import transaction
 from rest_framework.response import Response
 from collections import defaultdict
+import os
+from django.conf import settings
 # Create your views here.
 
 
@@ -432,27 +434,33 @@ def update_status(request):
 
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 def employee_document_rights(request):
-    # Extract the empid from the request data
-    empid = request.data.get('empid')
-    
-    if not empid:
-        return Response({'error': 'empid is required'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        # Fetch the company profile using the empid
-        company_profile = Company_profile.objects.get(empid=empid)
-    except Company_profile.DoesNotExist:
-        return Response({'error': f'Company profile with empid {empid} not found'}, status=status.HTTP_404_NOT_FOUND)
+    if not isinstance(request.data, list):
+        return Response({'error': 'Request data must be a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'PUT':
-        # Use serializer to update document_rights or any other fields passed
-        serializer = CompanyProfileSerializer(company_profile, data=request.data, partial=True)  # partial=True allows updating specific fields
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # Iterate over each employee's data in the request
+    for item in request.data:
+        empid = item.get('empid')
+
+        if not empid:
+            return Response({'error': 'empid is required for each employee'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Fetch the company profile using the empid
+            company_profile = Company_profile.objects.get(empid=empid)
+        except Company_profile.DoesNotExist:
+            return Response({'error': f'Company profile with empid {empid} not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Use serializer to update document_rights or any other fields for each employee
+        serializer = CompanyProfileSerializer(company_profile, data=item, partial=True)  # partial=True allows updating specific fields
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+    return Response({'message': 'Data updated successfully for all employees'}, status=status.HTTP_200_OK)
+
 
 
 
@@ -510,3 +518,33 @@ def document_master_view(request, pk=None):
             return Response({'message': 'Document deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
         except Document_master.DoesNotExist:
             return Response({'error': 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+#================================== fetch document rights ======================================
+
+
+@api_view(['GET'])
+def doc_rights_fetch(request):
+  
+    try:
+        company_profiles = Company_profile.objects.all()
+        serializer = CompanyProfileSerializer(company_profiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+#============= Dowmload api =========================#
+
+from django.http import FileResponse, Http404
+
+@api_view(['GET'])
+def download_file(request, file_name):
+  
+    file_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', file_name)
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        return response
+    raise Http404("File does not exist")

@@ -12,7 +12,15 @@ urlpatterns = [
     path('employee-kyc/<int:employee_id>/', employee_kyc_detail, name='employee_kyc_detail'),
     path('employee-kyc-name/', get_unique_employee_kyc, name='get_unique_employee_kyc'),
     path('employee-kyc-update/', update_status, name='update_employee_kyc_status'),      
-    path('emp-doc-rights/', employee_document_rights, name='employee_document_rights'),  
+    path('emp-doc-rights/', employee_document_rights, name='employee_document_rights'),
+
+
+    path('fetch-emp-rights/', doc_rights_fetch, name='fetch_document_rights'),
+
+
+    path('download/<str:file_name>/', download_file, name='file-download'),
+
+
     path('document-master/', document_master_view, name='document-master-list'),
     path('document-master/<int:pk>/', document_master_view, name='document-detail'),
 ]

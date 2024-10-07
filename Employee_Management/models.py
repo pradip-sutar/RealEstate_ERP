@@ -166,6 +166,7 @@ class EmployeeKYC(models.Model):
     document_number = models.CharField(max_length=50)
     validity = models.DateField()  # Renamed from 'validity'
     upload = models.FileField(upload_to='employee_documents/', blank=True, null=True)
+    # download=models.FileField(upload_to='employee_documents/', blank=True, null=True)
     Status = models.CharField(max_length=10, choices=STATUS_CHOICES ,default='Pending')
     def __str__(self):
         return self.document_name

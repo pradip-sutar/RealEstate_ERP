@@ -189,27 +189,50 @@ def designation_rights_handler(request):
 
 
 
+#============================ Document rights ================================#
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Department_Name
 
 @api_view(['POST'])
 def department_view(request):
-    if isinstance(request.data, list):
-        # Handle a list of dictionaries
-        for item in request.data:
-            department_id = item.get('department_id')
-            if not department_id:
-                return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not isinstance(request.data, list):
+        return Response({'error': 'Request data must be a list of objects'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Process each item
-            # Add your logic here (e.g., save the item, update existing records, etc.)
+    # Iterate over each department's data in the request
+    for item in request.data:
+        department_id = item.get('id')
+        document_rights = item.get('document_rights')
 
-    else:
-        # Handle a single dictionary (object)
-        department_id = request.data.get('department_id')
-        if not department_id:
-            return Response({'error': 'department_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not department_id or not document_rights:
+            return Response({'error': 'Both id and document_rights are required for each department'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        # Add your logic here (e.g., save the object, update existing record, etc.)
+        try:
+            # Get the department by id
+            department = Department_Name.objects.get(id=department_id)
+        except Department_Name.DoesNotExist:
+            return Response({'error': f'Department with id {department_id} not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # If everything goes well, return a success response
-    return Response({'message': 'Data processed successfully'}, status=status.HTTP_200_OK)
+        # Update the document_rights field
+        department.document_rights = document_rights
+        department.save()
 
+    return Response({'message': 'document_rights updated successfully for all departments'}, status=status.HTTP_200_OK)
+
+
+
+#================================== fetch document rights ======================================
+
+
+@api_view(['GET'])
+def doc_rights_fetch(request):
+  
+    try:
+        company_profiles = Department_Name.objects.all()
+        serializer = DepartmentNameSerializer(company_profiles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
