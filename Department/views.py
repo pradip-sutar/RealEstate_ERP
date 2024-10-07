@@ -205,6 +205,7 @@ def department_view(request):
         document_name = item.get('document_name')
         sections = item.get('sections')
         upload = item.get('upload')
+        download=item.get('download')
 
         if not department_id or not document_name:
             return Response({'error': 'Both department_id and document_name are required for each department'},
@@ -214,7 +215,8 @@ def department_view(request):
         new_document_rights = {
             'document_name': document_name,
             'sections': sections,
-            'upload': upload
+            'upload': upload,
+            'download':download
         }
 
         try:

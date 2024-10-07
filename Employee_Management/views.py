@@ -453,6 +453,7 @@ def employee_document_rights(request):
         document_name = item.get('document_name')
         sections = item.get('sections')
         upload = item.get('upload')
+        download=item.get('download')
 
         if not department_id:
             return Response({'error': 'department_id is required for each department'}, status=status.HTTP_400_BAD_REQUEST)
@@ -467,7 +468,8 @@ def employee_document_rights(request):
         new_document_rights = {
             "document_name": document_name,
             "sections": sections,
-            "upload": upload
+            "upload": upload,
+            "download":download
         }
 
         # Check if document_rights already contains an entry for this document_name
