@@ -570,13 +570,29 @@ def document_master_view(request, pk=None):
 
 @api_view(['GET'])
 def doc_rights_fetch(request):
-  
+    department_id = request.query_params.get('department_id')  # Get department_id from query params
+
+    if not department_id:
+        return Response({"error": "department_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Try to fetch from Department_Name first
     try:
-        company_profiles = Company_profile.objects.all()
-        serializer = CompanyProfileSerializer(company_profiles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        department = Department_Name.objects.get(id=department_id)
+        document_rights = department.document_rights  # Fetch document_rights
+        return Response({'department_id': department_id, 'document_rights': document_rights}, status=status.HTTP_200_OK)
+    except Department_Name.DoesNotExist:
+        pass  # If not found, proceed to search in Company_profile
+
+    # If not found in Department_Name, try fetching from Company_profile
+    try:
+        company_profile = Company_profile.objects.get(empid=department_id)  # Use empid as department_id in Company_profile
+        document_rights = company_profile.document_rights  # Fetch document_rights
+        return Response({'department_id': department_id, 'document_rights': document_rights}, status=status.HTTP_200_OK)
+    except Company_profile.DoesNotExist:
+        return Response({"error": f"Document rights not found for department_id {department_id}"}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 
 

@@ -259,21 +259,3 @@ def department_view(request):
     else:
         return Response({'message': 'No changes made to department(s).'}, status=status.HTTP_200_OK)
 
-
-
-
-
-
-
-#================================== fetch document rights ======================================
-
-
-@api_view(['GET'])
-def doc_rights_fetch(request):
-  
-    try:
-        company_profiles = Department_Name.objects.all()
-        serializer = DepartmentNameSerializer(company_profiles, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

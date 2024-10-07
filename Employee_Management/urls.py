@@ -15,7 +15,7 @@ urlpatterns = [
     path('emp-doc-rights/', employee_document_rights, name='employee_document_rights'),
 
 
-    path('fetch-emp-rights/', doc_rights_fetch, name='fetch_document_rights'),
+    path('fetch-doc-rights/', doc_rights_fetch, name='fetch_document_rights'),
 
 
     path('download/<str:file_name>/', download_file, name='file-download'),
