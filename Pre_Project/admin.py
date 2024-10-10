@@ -40,7 +40,11 @@ class ConfirmProjectAdmin(admin.ModelAdmin):
         'expenses',   # Custom method
         'document_history'  # Custom method
     )
-
+def project_id(self, obj):
+        return obj.project_id.project_id  # Access project_id from PreProjectNew
+    
+project_id.short_description = 'Project ID'
+   
 @admin.register(Projectsegment)
 class ProjectSegmentAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')

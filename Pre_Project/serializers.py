@@ -80,6 +80,7 @@ class ApprovalBodySerializer(serializers.ModelSerializer):
 
 
 class ConfirmProjectSerializer(serializers.ModelSerializer):
+    project_id = serializers.CharField(source='project_id.project_id')  # Access project_id from PreProjectNew
     class Meta:
         model = Confirm_Project
         fields = '__all__' 

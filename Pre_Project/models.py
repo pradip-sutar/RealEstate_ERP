@@ -115,7 +115,7 @@ class DocumentUpload(models.Model):
 
 
 class Confirm_Project(models.Model):
-    project_id = models.ForeignKey(PreProjectNew, on_delete=models.SET_NULL, null=True, to_field='project_id',related_name='confirm_projects')
+    project_id = models.CharField(max_length=255)
     project_city = models.CharField(max_length=255)
     ownership_type = models.CharField(max_length=3)
     project_segments = models.JSONField()  # Store as a JSON array
