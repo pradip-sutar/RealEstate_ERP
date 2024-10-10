@@ -8,17 +8,17 @@ urlpatterns = [
     path('employee_management_handler/', employee_data, name='employee_management'),
     path('employee_bank_handler/', bank_others_view, name='bank_others_view'),
     path('employee_salary_handler/', employee_salary_handler, name='employee_salary_handler'),
-    path('employee-kyc/', employee_kyc_list, name='employee_kyc_list'),
-    path('employee-kyc/<int:employee_id>/', employee_kyc_detail, name='employee_kyc_detail'),
-    path('employee-kyc-name/', get_unique_employee_kyc, name='get_unique_employee_kyc'),
-    path('employee-kyc-update/', update_status, name='update_employee_kyc_status'),      
+    path('employee-admin-kyc/', employee_kyc_list, name='employee_kyc_list'),
+    path('employee-kyc-details/<int:employee_id>/', employee_kyc_detail, name='employee_kyc_detail'),
+    path('unique-employee-name/', get_unique_employee_kyc, name='get_unique_employee_kyc'),
+    path('employee-status-update/', update_status, name='update_employee_kyc_status'),      
     path('emp-doc-rights/', employee_document_rights, name='employee_document_rights'),
 
 
     path('fetch-doc-rights/', doc_rights_fetch, name='fetch_document_rights'),
 
 
-    path('download/<str:file_name>/', download_file, name='file-download'),
+    path('document-download/<str:empid>/<str:document_name>/', document_download, name='document-download'),
 
 
     path('document-master/', document_master_view, name='document-master-list'),

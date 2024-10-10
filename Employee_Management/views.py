@@ -282,10 +282,32 @@ def employee_salary_handler(request):
 
 @api_view(['GET', 'POST'])
 def employee_kyc_list(request):
+    print(request.data)
     if request.method == 'GET':
+        # Fetch all EmployeeKYC records
         documents = EmployeeKYC.objects.all()
-        serializer = EmployeeKYCDocumentSerializer(documents, many=True)
-        return Response(serializer.data)
+
+        # Create a dictionary to ensure only one record per employee_id is included
+        unique_documents = {}
+        for document in documents:
+            if document.employee_id not in unique_documents:
+                unique_documents[document.employee_id] = document
+
+        # Fetch related employee_name and status from the Company_profile table
+        data = []
+        for employee_id, document in unique_documents.items():
+            try:
+                # Fetch the corresponding Company_profile entry
+                company_profile = Company_profile.objects.get(empid=employee_id)
+                data.append({
+                    'id': document.employee_id,
+                    'status': document.Status,  # Assuming status is from EmployeeKYC model
+                    'employee_name': company_profile.name,  # Assuming employee_name is in Company_profile
+                })
+            except Company_profile.DoesNotExist:
+                continue  # Skip if no company profile is found for the given employee_id
+
+        return Response(data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
         # Retrieve employee ID from request
@@ -602,11 +624,21 @@ def doc_rights_fetch(request):
 
 from django.http import FileResponse, Http404
 
+
 @api_view(['GET'])
-def download_file(request, file_name):
-  
-    file_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', file_name)
-    if os.path.exists(file_path):
-        response = FileResponse(open(file_path, 'rb'))
-        return response
-    raise Http404("File does not exist")
+def document_download(request, empid, document_name):
+    try:
+        # Fetch the specific document for the given employee_id and document_name
+        document = EmployeeKYC.objects.get(employee_id=empid, document_name=document_name)
+        
+        if document.upload:
+            # Return the file as a downloadable response
+            response = FileResponse(document.upload.open(), as_attachment=True)
+            response['Content-Disposition'] = f'attachment; filename="{document.upload.name}"'
+            return response
+        else:
+            return Response({"error": "No file uploaded for this document."}, status=status.HTTP_404_NOT_FOUND)
+    except EmployeeKYC.DoesNotExist:
+        return Response({"error": "Document not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
