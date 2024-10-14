@@ -5,7 +5,7 @@ from . models import *
 from django.http import JsonResponse
 from . serializers import *
 from rest_framework import status
-
+import json
 # Create your views here.
 
 
@@ -113,7 +113,18 @@ def confirm_project_handler(request, project_id=None):
     try:
         if request.method == 'POST':
             # print(request.data)
+            if request.content_type.startswith('multipart/form-data'):
+                data = request.POST
+            elif request.content_type == 'application/json':
+                data = json.loads(request.body)
+            else:
+                return JsonResponse({'error': 'Unsupported Content-Type'}, status=status.HTTP_400_BAD_REQUEST)
             # Handle POST request - Transfer PreProjectNew to Confirm_Project
+
+            project_id = data.get('project_id')
+            if not project_id:
+                return JsonResponse({'error': 'project_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
             try:
                 pre_project = PreProjectNew.objects.get(project_id=request.data.get('project_id'))
                 

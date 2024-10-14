@@ -106,7 +106,7 @@ class DocumentUpload(models.Model):
 
     pre_project = models.ForeignKey(PreProjectNew, related_name='uploads', on_delete=models.CASCADE)
     document = models.FileField(upload_to='uploads/')
-    approval_body = models.ForeignKey(Approval_body, on_delete=models.CASCADE, null=True)
+    # approval_body = models.ForeignKey(Approval_body, on_delete=models.CASCADE, null=True)
     document_type = models.CharField(max_length=100, choices=DOCUMENT_TYPE_CHOICES,  # Use choices here
         default=APPROVAL,  # Optionally, set a default
     )  # This should exist
@@ -120,7 +120,7 @@ class Confirm_Project(models.Model):
     ownership_type = models.CharField(max_length=3)
     project_segments = models.JSONField()  # Store as a JSON array
     project_name = models.CharField(max_length=255)
-    project_types = models.CharField(max_length=255)
+    project_types = models.JSONField()
     project_address = models.CharField(max_length=255)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)

@@ -67,5 +67,5 @@ class ApprovalBodyAdmin(admin.ModelAdmin):
 
 @admin.register(DocumentUpload)
 class DocumentUploadAdmin(admin.ModelAdmin):
-    list_display = ('pre_project','document_type','approval_body','document')
+    list_display = ('pre_project','document_type','document')
     search_fields = ('pre_project__project_name',)
