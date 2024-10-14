@@ -169,6 +169,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://192.168.73.63:5173',
     'http://localhost:3000',
+    'https://realestate.vichaarlab.in',
     ]
 
 # AUTH_USER_MODEL = 'auth.User'
