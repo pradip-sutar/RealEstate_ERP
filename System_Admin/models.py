@@ -75,7 +75,7 @@ class System_social_detail(models.Model):
 
 class System_other_detail(models.Model):
     name = models.CharField(max_length=255)  # Changed to JSONField
-    desc = models.TextField()
+    desc = models.TextField(blank=True, null=True)
     company_id = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
 
     def __str__(self):

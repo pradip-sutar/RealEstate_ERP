@@ -72,7 +72,7 @@ class SystemSocialDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(System_other_detail)
 class SystemOtherDetailsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'desc','company_id']
+    list_display = ['id', 'name','desc','company_id']
 
 @admin.register(System_bank_details)
 class SystemBankDetailsAdmin(admin.ModelAdmin):
