@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime
 from django.db.models import Max
 from System_Admin.models import System_company_detail
 
@@ -33,8 +34,7 @@ class PreProjectNew(models.Model):
         ('OWN', 'Owned'),
         ('REN', 'Rented'),
     ]
-    project_id = models.CharField(max_length=11, unique=True, blank=True, editable=False, primary_key=True)
-    # company_name = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
+    project_id = models.CharField(max_length=100, unique=True, blank=True, editable=False, primary_key=True)
     project_city = models.CharField(max_length=255)
     ownership_type = models.CharField(max_length=3, choices=OWNERSHIP_TYPE_CHOICES)
     project_segments = models.CharField(max_length=100)
@@ -56,32 +56,33 @@ class PreProjectNew(models.Model):
         super(PreProjectNew, self).save(*args, **kwargs)
 
     def generate_project_id(self):
-        # Fetch the code from related company_name (System_company_detail)
-        # company_code = self.company_name.code.upper() if self.company_name and self.company_name.code else 'XXX'
-        
-        # Fetch project_type (string directly, since it's a choice field)
-        project_code = self.project_types.upper()
-
-        # Use first three letters of project_location as the location code (or adjust as per your need)
+        # Fetch the company name from the System_company_detail model
+        company = System_company_detail.objects.first()
+        if company:
+            company_code = company.name[:2].upper()  # First 2 letters of the company name
+        else:
+            company_code = 'XX'  # Default value in case there's no company data
+        # First two letters of project name
+        project_code = self.project_name[:2].upper() if self.project_name else 'PR'
+        # First three letters of project city
         location_code = self.project_city[:3].upper() if self.project_city else 'LOC'
-        
-        # Base project_id without serial
-        base_id = f"{project_code}{location_code}"
-
-        # Fetch the current max serial number for this base_id
+        # Get current year
+        current_year = datetime.now().year
+        # Fetch the current max serial number for this base ID
+        base_id = f"{company_code}{project_code}{location_code}{current_year}"
         last_project = PreProjectNew.objects.filter(project_id__startswith=base_id).aggregate(max_id=Max('project_id'))
         last_id = last_project['max_id']
 
-        if last_id and len(last_id) == len(base_id) + 4:
-            last_serial = int(last_id[-4:])
+        if last_id and len(last_id) == len(base_id) + 3:
+            last_serial = int(last_id[-3:])
             new_serial = last_serial + 1
         else:
             new_serial = 1
 
-        # Zero-pad the serial number to 4 digits
-        serial_str = f"{new_serial:04d}"
+        # Zero-pad the serial number to 3 digits
+        serial_str = f"{new_serial:03d}"
+        return f"{base_id}/{serial_str}"
 
-        return f"{base_id}{serial_str}"
 
     def __str__(self):
         return self.project_name
