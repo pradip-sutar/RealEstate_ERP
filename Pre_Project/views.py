@@ -73,7 +73,7 @@ def pre_project_new_handler(request):
                     # Delete the project by project_id
                     project = PreProjectNew.objects.get(project_id=project_id)
                     project.delete()
-                    return JsonResponse({"message": "Pre-Project deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+                    return JsonResponse({"message": "Pre-Project deleted successfully."}, status=status.HTTP_200_OK)
                 except PreProjectNew.DoesNotExist:
                     return JsonResponse(
                         {"error": f"Pre-Project with project_id '{project_id}' does not exist."},
@@ -112,55 +112,55 @@ def pre_project_new_handler(request):
 def confirm_project_handler(request, project_id=None):
     try:
         if request.method == 'POST':
-            # print(request.data)
-            if request.content_type.startswith('multipart/form-data'):
-                data = request.POST
-            elif request.content_type == 'application/json':
-                data = json.loads(request.body)
-            else:
-                return JsonResponse({'error': 'Unsupported Content-Type'}, status=status.HTTP_400_BAD_REQUEST)
-            # Handle POST request - Transfer PreProjectNew to Confirm_Project
+            # # print(request.data)
+            # if request.content_type.startswith('multipart/form-data'):
+            data = request.POST
+            # elif request.content_type == 'application/json':
+            #     data = json.loads(request.body)
+            # else:
+            #     return JsonResponse({'error': 'Unsupported Content-Type'}, status=status.HTTP_400_BAD_REQUEST)
+            # # Handle POST request - Transfer PreProjectNew to Confirm_Project
 
-            project_id = data.get('project_id')
+            project_id = request.GET.get('project_id')
+            print(project_id)
             if not project_id:
                 return JsonResponse({'error': 'project_id is required'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                pre_project = PreProjectNew.objects.get(project_id=request.data.get('project_id'))
+                pre_project = PreProjectNew.objects.get(project_id=project_id)
                 
                 # Create Confirm_Project instance with the PreProjectNew reference
                 confirm_project = Confirm_Project.objects.create(
                     project_id=pre_project.project_id,  # Set project_id to the PreProjectNew instance
-                    project_city=request.data.get('project_city'),
-                    ownership_type=request.data.get('ownership_type'),
-                    project_segments=request.data.get('project_segments'),
-                    project_name=request.data.get('project_name'),
-                    project_types=request.data.get('project_types'),
-                    project_address=request.data.get('project_address'),
-                    longitude=request.data.get('longitude'),
-                    latitude=request.data.get('latitude'),
-                    project_measurement=request.data.get('project_measurement'),
-                    project_description=request.data.get('project_description'),
-                    project_area=request.data.get('project_area'),
-                    approvals=request.data.get('approvals'),
-                    expenses=request.data.get('expenses'),
-                    document_history=request.data.get('document_history'),
+                    project_city=pre_project.project_city,
+                    ownership_type=pre_project.ownership_type,
+                    project_segments=pre_project.project_segments,
+                    project_name=pre_project.project_name,
+                    project_types=pre_project.project_types,
+                    project_address=pre_project.project_address,
+                    longitude=pre_project.longitude,
+                    latitude=pre_project.latitude,
+                    project_measurement=pre_project.project_measurement,
+                    project_description=pre_project.project_description,
+                    project_area=pre_project.project_area,
+                    approvals=pre_project.approvals,
+                    expenses=pre_project.expenses,
+                    document_history=pre_project.document_history,
                 )
 
                 # Handle uploads (assuming files are uploaded separately)
-                uploads = request.FILES.getlist('uploads')
-                uploads_data = []
+                uploads = DocumentUpload.objects.get(pre_project=project_id)
 
                 for file in uploads:
-                    document_upload = DocumentUpload.objects.create(
+                    DocumentUpload.objects.create(
                         pre_project=pre_project,  # Reference to PreProjectNew
                         document=file,
-                        approval_body=None,  # Assign this appropriately if needed
+                        # approval_body=None,  # Assign this appropriately if needed
                     )
-                    uploads_data.append(document_upload)
+                    # uploads.append(document_upload)
 
                 # Add uploads to the Confirm_Project instance
-                confirm_project.uploads.set(uploads_data)
+                confirm_project.uploads.set(uploads)
                 # print(confirm_project)
                 confirm_project.save()
 

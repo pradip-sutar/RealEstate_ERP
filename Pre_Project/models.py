@@ -33,7 +33,7 @@ class PreProjectNew(models.Model):
         ('OWN', 'Owned'),
         ('REN', 'Rented'),
     ]
-    project_id = models.CharField(max_length=11, unique=True, blank=True, editable=False)
+    project_id = models.CharField(max_length=11, unique=True, blank=True, editable=False, primary_key=True)
     # company_name = models.ForeignKey(System_company_detail, on_delete=models.CASCADE)
     project_city = models.CharField(max_length=255)
     ownership_type = models.CharField(max_length=3, choices=OWNERSHIP_TYPE_CHOICES)

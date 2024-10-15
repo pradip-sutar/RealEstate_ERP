@@ -5,7 +5,7 @@ from .models import *
 class DocumentUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentUpload
-        fields = ['id', 'document']  # Include any other fields you want to expose
+        fields = ['id', 'document_type','document']  # Include any other fields you want to expose
 
 class PreProjectNewSerializer(serializers.ModelSerializer):
     # Optionally include the document uploads if needed
@@ -81,6 +81,7 @@ class ApprovalBodySerializer(serializers.ModelSerializer):
 
 class ConfirmProjectSerializer(serializers.ModelSerializer):
     project_id = serializers.CharField(source='project_id.project_id')  # Access project_id from PreProjectNew
+    uploads = DocumentUploadSerializer(many=True, read_only=True)
     class Meta:
         model = Confirm_Project
         fields = '__all__' 
