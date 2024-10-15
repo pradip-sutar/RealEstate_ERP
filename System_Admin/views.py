@@ -127,15 +127,16 @@ def system_company_details_handler(request):
             return prefix_data
         
         def organize_list_data(data, prefix):
-            """Organize nested list-like data."""
+            """Organize nested list-like data with dot notation."""
             list_data = []
             index = 0
             while True:
                 entry_data = {}
                 found = False
                 for key, value in data.items():
-                    if key.startswith(f'{prefix}[{index}]'):
-                        field_name = key.split('[')[2][:-1]  # Extract field name
+                    # Check if the key starts with the prefix and has the dot notation
+                    if key.startswith(f'{prefix}[{index}].'):
+                        field_name = key.split('.')[1]  # Extract the field name after the dot
                         entry_data[field_name] = value
                         found = True
                 if not found:

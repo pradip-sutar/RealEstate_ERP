@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-s2t15la3dmjleevit5nb7$6ow5tk538#&be4#ac^6j0mjh81!7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','realestatebackend.vichaarlab.in']
 
 
 # Application definition
@@ -148,6 +148,7 @@ USE_TZ = True
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'https://realestatebackend.vichaarlab.in',
     # Add other trusted origins if necessary
 ]
 
@@ -168,6 +169,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://192.168.73.63:5173',
     'http://localhost:3000',
+    'https://realestate.vichaarlab.in',
     ]
 
 # AUTH_USER_MODEL = 'auth.User'
