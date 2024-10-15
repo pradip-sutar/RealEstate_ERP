@@ -93,7 +93,7 @@ class PreProjectNew(models.Model):
 
 class DocumentUpload(models.Model):
 
-    APPROVAL = 'approval'
+    APPROVAL = 'approvals'
     HISTORY = 'history'
     AGREEMENT = 'agreement'
 

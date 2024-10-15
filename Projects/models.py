@@ -81,7 +81,7 @@ class Project_subproject_details:
     layout=models.ImageField(upload_to='Product_subproject_image/')
 
 class Project_Nearby:
-    name=models.CharField
+    name=models.CharField(max_length=255)
     
     
 class Project_Product(models.Model):

@@ -3,6 +3,7 @@ from django.db import models
 
 class ProductSpecification(models.Model):
     product_code = models.CharField(max_length=255)
+    product_name=models.CharField(max_length=255)
     image = models.ImageField(upload_to='product_specifications/', blank=True, null=True)
     specification = models.CharField(max_length=255)
     size = models.CharField(max_length=100)

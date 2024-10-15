@@ -43,7 +43,7 @@ class PreProjectNewSerializer(serializers.ModelSerializer):
 
         # Save each uploaded approval document
         for upload in approval_documents:
-            DocumentUpload.objects.create(pre_project=preproject, document=upload, document_type='approval')
+            DocumentUpload.objects.create(pre_project=preproject, document=upload, document_type='approvals')
 
         # Save each uploaded history document
         for upload in history_documents:
