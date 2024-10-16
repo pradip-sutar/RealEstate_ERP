@@ -74,14 +74,17 @@ class Project_Tax(models.Model):
     def __str__(self):
         return self.name
     
-class Project_subproject_details:
+
+#=============================  project tab models ====================================#
+
+class Project_subproject_details(models.Model):
     code=models.IntegerField()
     segment=models.CharField(max_length=100)
-    Name=models.CharField(max_length=100)
+    name=models.CharField(max_length=100)
     layout=models.ImageField(upload_to='Product_subproject_image/')
-
-class Project_Nearby:
-    name=models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.name
     
     
 class Project_Product(models.Model):
@@ -96,7 +99,7 @@ class Project_Product(models.Model):
     cost = models.DecimalField(max_digits=15, decimal_places=2)
     amenity = models.ForeignKey(Project_Amenity_Master, on_delete=models.CASCADE)
     description = models.TextField()
-    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    confirm_project_id = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -119,6 +122,13 @@ class Project_add_Amenity(models.Model):
     def __str__(self):
         return self.title.name
     
+
+class Project_Nearby:
+    name=models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.name
+
 class Project_add_Commission(models.Model):
     commission = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -126,6 +136,8 @@ class Project_add_Commission(models.Model):
     def __str__(self):
         return self.commission
     
+
+
 class Project_add_Tax(models.Model):
     name = models.CharField(max_length=255)
     tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -133,6 +145,7 @@ class Project_add_Tax(models.Model):
     def __str__(self):
         return self.name
     
+
 class Project_add_PaidAmenity(models.Model):
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='Paid_amenities/')
@@ -141,6 +154,7 @@ class Project_add_PaidAmenity(models.Model):
     def __str__(self):
         return self.title
     
+
 class Project_add_Price(models.Model):
     name = models.CharField(max_length=255)
     purchase = models.CharField(max_length=255)

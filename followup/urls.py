@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import manage_data
+from .views import *
 
 urlpatterns = [
-    path('api/<str:model_name>/', manage_data, name='list-create'),
-    path('api/<str:model_name>/<str:obj_id>/', manage_data, name='retrieve-update-delete'),
+    path('enquiry/', enquiry_view, name='enquiry'),
+    path('quotation/', quotation_view, name='quotation'),
+    path('visit/', visit_view, name='visit'),
+    path('site-visit-schedule/', site_visit_schedule_view, name='site_visit_schedule'),
 ]

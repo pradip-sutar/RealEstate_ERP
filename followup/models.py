@@ -1,4 +1,5 @@
 from django.db import models
+from Projects.models import *
 from Pre_Project.models import *
 from subproject_product.models import *
 
@@ -23,7 +24,7 @@ class Enquiry(models.Model):
     mode_of_communication = models.CharField(max_length=20)
     visit = models.CharField(max_length=255)
     qoute = models.CharField(max_length=255)
-    product=models.ForeignKey(ProductSpecification, on_delete=models.CASCADE)
+    product=models.ForeignKey(Project_Product, on_delete=models.CASCADE)
  
 
     def __str__(self):
@@ -33,12 +34,12 @@ class Enquiry(models.Model):
 class Quotation(models.Model):
     customer_id = models.ForeignKey(Enquiry, on_delete=models.CASCADE)
     enquiry_id = models.CharField(max_length=20)
-    quote_id = models.CharField(max_length=20, primary_key=True)
+    quote_id = models.CharField(max_length=20)
     version = models.DecimalField(max_digits=5, decimal_places=3)
     date = models.DateField()
     stage = models.CharField(max_length=20)
     project = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
-    products = models.ForeignKey()
+    products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     quotation = models.TextField(blank=True)
     follow_up_status = models.CharField(max_length=20, blank=True)
@@ -48,20 +49,37 @@ class Quotation(models.Model):
     def __str__(self):
         return self.quote_id
     
-class Visit(models.model):
-    customer_id = models.ForeignKey(Enquiry, on_delete=models.CASCADE)
+class Visit(models.Model):
+    customer_id = models.ForeignKey(Enquiry, on_delete=models.CASCADE, related_name='visits')
     enquiry_id = models.CharField(max_length=20)
     quote_id = models.CharField(max_length=20, primary_key=True)
     version = models.DecimalField(max_digits=5, decimal_places=3)
     date = models.DateField()
     stage = models.CharField(max_length=20)
     project = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
-    products = models.ForeignKey()
+    products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    visit = models.CharField(blank=True)
+    visit = models.CharField(max_length=255, blank=True)
     follow_up_status = models.CharField(max_length=20, blank=True)
     mode = models.CharField(max_length=20)
     created_by = models.CharField(max_length=20)
 
     def __str__(self):
-        return self
+        return self.customer_id
+
+
+class Site_visit_schedule(models.Model):
+    visit_id=models.CharField(max_length=255)
+    project_name = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
+    date_time = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    purpose = models.CharField(max_length=255)
+    visit_number = models.CharField(max_length=255)
+    site_manager = models.CharField(max_length=255)
+    visitors=models.JSONField()
+    date = models.DateField()
+    time = models.TimeField()
+    field_employee_name = models.CharField(max_length=255)
+    sub_projects = models.ForeignKey(Project_subproject_details, on_delete=models.CASCADE)
+    property = models.CharField(max_length=255)
+    report = models.CharField(max_length=255)

@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'subproject_product',
     'incentive',
     'customer',
-    'sales'
+    'sales',
+    'followup'
 ]
 
 MIDDLEWARE = [
