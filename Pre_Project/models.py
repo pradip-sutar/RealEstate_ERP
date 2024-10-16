@@ -44,11 +44,10 @@ class PreProjectNew(models.Model):
     longitude=models.CharField(max_length=200)
     latitude=models.CharField(max_length=200)
     project_measurement=models.CharField(max_length=255)
+    measurement_unit=models.CharField(max_length=255)
     project_description = models.TextField()
     project_area = models.CharField(max_length=250)
-    approvals = models.JSONField()  # To store multiple approval entries
     expenses = models.JSONField()  # To store multiple expense entries
-    document_history = models.JSONField()  # To store multiple document history entries
 
     def save(self, *args, **kwargs):
         if not self.project_id:
@@ -86,31 +85,29 @@ class PreProjectNew(models.Model):
 
     def __str__(self):
         return self.project_name
-    
 
+class Approval(models.Model):
+    approvalBody = models.CharField(max_length=100)
+    applyDate = models.DateField()
+    employeeName = models.CharField(max_length=100)
+    agency = models.CharField(max_length=100)
+    approvalDate = models.DateField()
+    validityNo = models.BigIntegerField()
+    document = models.FileField(upload_to='approval_document/', null=True, blank=True)
+    preproject = models.ForeignKey(PreProjectNew,on_delete=models.CASCADE)
 
+class Document_History(models.Model):
+    documentType = models.CharField(max_length=100)
+    documentNo = models.BigIntegerField()
+    issuedBy = models.CharField(max_length=100)
+    issueDate = models.DateField()
+    validation = models.CharField(max_length=100)
+    uploadDocument = models.FileField(upload_to='document_history/', null=True, blank=True)
+    preproject = models.ForeignKey(PreProjectNew,on_delete=models.CASCADE)
 
-
-class DocumentUpload(models.Model):
-
-    APPROVAL = 'approval'
-    HISTORY = 'history'
-    AGREEMENT = 'agreement'
-
-
-    DOCUMENT_TYPE_CHOICES = [
-        (APPROVAL, 'Approval Document'),
-        (HISTORY, 'History Document'),
-        (AGREEMENT, 'Agreement Document'),
-    ]
-
-
-    pre_project = models.ForeignKey(PreProjectNew, related_name='uploads', on_delete=models.CASCADE)
-    document = models.FileField(upload_to='uploads/')
-    # approval_body = models.ForeignKey(Approval_body, on_delete=models.CASCADE, null=True)
-    document_type = models.CharField(max_length=100, choices=DOCUMENT_TYPE_CHOICES,  # Use choices here
-        default=APPROVAL,  # Optionally, set a default
-    )  # This should exist
+class Agreement(models.Model):
+    upload_document = models.FileField(upload_to='agreements/', null=True, blank=True)
+    preproject = models.ForeignKey(PreProjectNew,on_delete=models.CASCADE)
 
     
 
@@ -128,10 +125,7 @@ class Confirm_Project(models.Model):
     project_measurement = models.DecimalField(max_digits=10, decimal_places=2)
     project_description = models.TextField()
     project_area = models.CharField(max_length=250)
-    approvals = models.JSONField()  # JSONField for multiple approval entries
     expenses = models.JSONField()  # JSONField for multiple expense entries
-    document_history = models.JSONField()  # JSONField for multiple document history entries
-    uploads = models.ManyToManyField(DocumentUpload, blank=True)  # Many-to-many relationship
     
     def __str__(self):
         return self.project_name

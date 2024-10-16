@@ -36,15 +36,68 @@ def pre_project_new_handler(request):
                 return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
 
         elif request.method == 'POST':
-            # Create a serializer instance with the request context
-            serializer = PreProjectNewSerializer(data=request.data, context={'request': request})
+            print(request.data)
+            try:
+                with transaction.atomic():
+                    def organize_list_data(data, prefix):
+                        """Organize nested list-like data with dot notation."""
+                        list_data = []
+                        index = 0
+                        while True:
+                            entry_data = {}
+                            found = False
+                            for key, value in data.items():
+                                # Check if the key starts with the prefix and has the dot notation
+                                if key.startswith(f'{prefix}[{index}].'):
+                                    field_name = key.split('.')[1]  # Extract the field name after the dot
+                                    entry_data[field_name] = value
+                                    found = True
+                            if not found:
+                                break
+                            list_data.append(entry_data)
+                            index += 1
+                        return list_data
+                    
+                    document_history = organize_list_data(request.data, 'document_history')
+                    approval_body = organize_list_data(request.data, 'approval_body')
+                    agreement = organize_list_data(request.data, 'agreement')
+                    # Create a serializer instance with the request context
 
-            if serializer.is_valid():
-                serializer.save()  # Save the project and associated uploads
-                return JsonResponse({"message": "Pre-Project created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-            else:
-                return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    PreProjectSerializer = PreProjectNewSerializer(data=request.data)
+                    if PreProjectSerializer.is_valid():
+                        pre_project = PreProjectSerializer.save()  # Save the project and associated uploads
+                    else:
+                        return JsonResponse(PreProjectSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    # add the preproject id into the other models
+                    
+                    for approval in approval_body:
+                        approval['preproject']=pre_project.project_id
+                        approvalSerializer = ApprovalSerializer(data = approval)
+                        if approvalSerializer.is_valid():
+                            approvalSerializer.save()  # Save the approval
+                        else:
+                            return JsonResponse(approvalSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    for document in document_history:
+                        document['preproject']=pre_project.project_id
+                        documentSerializer = DocumentHistorySerializer(data = document)
+                        if documentSerializer.is_valid():
+                            documentSerializer.save()  # Save the approval
+                        else:
+                            return JsonResponse(documentSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    for agreement_data in agreement:
+                        agreement_data['preproject']=pre_project.project_id
+                        agreementSerializer = AgreementSerializer(data = agreement_data)
+                        if agreementSerializer.is_valid():
+                            agreementSerializer.save()  # Save the approval
+                        else:
+                            return JsonResponse(agreementSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+                    return JsonResponse({"message": "Pre-Project created successfully"}, status=status.HTTP_201_CREATED)
+                # else:
+                #     return JsonResponse(PreProjectSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         elif request.method == 'PUT':
             project_id = request.query_params.get('project_id', None)
             if project_id:
