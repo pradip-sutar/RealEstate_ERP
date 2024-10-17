@@ -51,6 +51,7 @@ def pre_project_new_handler(request):
                 # Fetch all projects if no specific project_id is provided
                 preprojects = PreProjectNew.objects.all()
                 preproject_serializer = PreProjectNewSerializer(preprojects, many=True)
+                print(preproject_serializer)
 
                 # Fetch all approvals, documents, and agreements
                 approvals = Approval.objects.all()
