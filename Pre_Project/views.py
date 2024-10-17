@@ -218,7 +218,7 @@ def confirm_project_handler(request, project_id=None):
             # # Handle POST request - Transfer PreProjectNew to Confirm_Project
 
             project_id = request.GET.get('project_id')
-            print(project_id)
+            # print(project_id)
             if not project_id:
                 return JsonResponse({'error': 'project_id is required'}, status=status.HTTP_400_BAD_REQUEST)
 

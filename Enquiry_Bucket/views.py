@@ -6,6 +6,7 @@ from .serializers import *
 
 @api_view(['GET', 'POST', 'PUT'])
 def quotation_type_handler(request):
+    print(request.data)
     if request.method == 'GET':
         # If `id` is provided in the query params, retrieve the specific object
         quotation_id = request.query_params.get('id', None)
@@ -23,6 +24,7 @@ def quotation_type_handler(request):
             return Response(serializer.data)
 
     elif request.method == 'POST':
+        print(request.data)
         serializer = QuotationTypeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
