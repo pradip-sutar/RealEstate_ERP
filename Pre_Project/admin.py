@@ -16,34 +16,41 @@ class PreProjectNewAdmin(admin.ModelAdmin):
         'project_measurement',
         'project_description', 
         'project_area', 
-        'approvals', 
         'expenses', 
-        'document_history', 
     )
 
-@admin.register(Confirm_Project)
-class ConfirmProjectAdmin(admin.ModelAdmin):
-    list_display = (
-        'project_id',
-        'project_city',
-        'ownership_type',
-        'project_segments',
-        'project_name',
-        'project_types',
-        'project_address',
-        'longitude',
-        'latitude',
-        'project_measurement',
-        'project_description',
-        'project_area',
-        'approvals',  # Custom method
-        'expenses',   # Custom method
-        'document_history'  # Custom method
-    )
-def project_id(self, obj):
-        return obj.project_id.project_id  # Access project_id from PreProjectNew
-    
-project_id.short_description = 'Project ID'
+@admin.register(Approval)
+class ApprovalAdmin(admin.ModelAdmin):
+    list_display = ['approvalBody', 'applyDate', 'employeeName', 'agency', 'approvalDate', 'validityNo', 'document', 'preproject']
+
+@admin.register(Document_History)
+class DocumentHistoryAdmin(admin.ModelAdmin):
+    list_display = ['documentType', 'documentNo', 'issuedBy', 'issueDate', 'validation', 'uploadDocument', 'preproject']
+
+@admin.register(Agreement)
+class AgreementAdmin(admin.ModelAdmin):
+    list_display = ['upload_document', 'preproject']
+
+# @admin.register(Confirm_Project)
+# class ConfirmProjectAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'project_id',
+#         'project_city',
+#         'ownership_type',
+#         'project_segments',
+#         'project_name',
+#         'project_types',
+#         'project_address',
+#         'longitude',
+#         'latitude',
+#         'project_measurement',
+#         'project_description',
+#         'project_area',
+#         'approvals',  # Custom method
+#         'expenses',   # Custom method
+#         'document_history'  # Custom method
+#     )
+
    
 @admin.register(Projectsegment)
 class ProjectSegmentAdmin(admin.ModelAdmin):
@@ -65,7 +72,3 @@ class ApprovalBodyAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
     search_fields = ['name']
 
-@admin.register(DocumentUpload)
-class DocumentUploadAdmin(admin.ModelAdmin):
-    list_display = ('pre_project','document_type','document')
-    search_fields = ('pre_project__project_name',)
