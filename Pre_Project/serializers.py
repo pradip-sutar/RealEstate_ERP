@@ -28,23 +28,23 @@ class PreProjectNewSerializer(serializers.ModelSerializer):
 class ProjectSegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projectsegment
-        fields = ['id', 'name']
+        fields = '__all__'
 
 class ProjectTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projecttype
-        fields = ['id', 'name']
+        fields = '__all__'
 
 class DocumentTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Documenttype
-        fields = ['id', 'name']
+        fields = '__all__'
 
 class ApprovalBodySerializer(serializers.ModelSerializer):
     class Meta:
         model = Approval_body
-        fields = ['id', 'name']  # Include ID for reference if needed
+        fields = '__all__'  # Include ID for reference if needed
 
 
 # class ConfirmProjectSerializer(serializers.ModelSerializer):

@@ -17,23 +17,65 @@ def pre_project_new_handler(request):
             project_id = request.query_params.get('project_id', None)
 
             if project_id:
+                # Fetch a single project by project_id
                 try:
-                    # Fetch project by project_id
                     project = PreProjectNew.objects.get(project_id=project_id)
-                    serializer = PreProjectNewSerializer(project)
-                    return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+                    project_serializer = PreProjectNewSerializer(project)
+
+                    # Fetch related data (approvals, documents, agreements) linked to the project
+                    approvals = Approval.objects.filter(preproject=project)
+                    approvals_serializer = ApprovalBodySerializer(approvals, many=True)
+
+                    document_history = Document_History.objects.filter(preproject=project)
+                    document_serializer = DocumentHistorySerializer(document_history, many=True)
+
+                    agreements = Agreement.objects.filter(preproject=project)
+                    agreement_serializer = AgreementSerializer(agreements, many=True)
+
+                    # Combine the project and related data
+                    data = {
+                        "preproject": project_serializer.data,
+                        "approvals": approvals_serializer.data,
+                        "document_history": document_serializer.data,
+                        "agreement": agreement_serializer.data,
+                    }
+                    return JsonResponse({"data": data}, status=status.HTTP_200_OK)
 
                 except PreProjectNew.DoesNotExist:
-                    # Return a response if project_id doesn't exist
                     return JsonResponse(
                         {"error": f"Pre-Project with project_id '{project_id}' does not exist."},
                         status=status.HTTP_404_NOT_FOUND
                     )
+
             else:
-                # Return all projects if no specific project_id is provided
-                projects = PreProjectNew.objects.all()
-                serializer = PreProjectNewSerializer(projects, many=True)
-                return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+                # Fetch all projects if no specific project_id is provided
+                preprojects = PreProjectNew.objects.all()
+                preproject_serializer = PreProjectNewSerializer(preprojects, many=True)
+
+                # Fetch all approvals, documents, and agreements
+                approvals = Approval.objects.all()
+                approvals_serializer = ApprovalSerializer(approvals, many=True)
+
+                document_history = Document_History.objects.all()
+                document_serializer = DocumentHistorySerializer(document_history, many=True)
+
+                agreements = Agreement.objects.all()
+                agreement_serializer = AgreementSerializer(agreements, many=True)
+
+                # Combine the data
+                data = {
+                    "preproject": preproject_serializer.data,
+                    "approvals": approvals_serializer.data,
+                    "document_history": document_serializer.data,
+                    "agreement": agreement_serializer.data,
+                }
+
+                return JsonResponse({"data": data}, status=status.HTTP_200_OK)
+
+        # Add logic for POST, PUT, DELETE if needed
+
+    # except Exception as e:
+    #     return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         elif request.method == 'POST':
             print(request.data)
