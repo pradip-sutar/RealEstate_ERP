@@ -48,36 +48,40 @@ def pre_project_new_handler(request):
                     )
 
             else:
-                # Fetch all projects if no specific project_id is provided
+                # Fetch all projects
                 preprojects = PreProjectNew.objects.all()
-                preproject_serializer = PreProjectNewSerializer(preprojects, many=True)
-                print(preproject_serializer)
 
-                # Fetch all approvals, documents, and agreements
-                approvals = Approval.objects.all()
-                approvals_serializer = ApprovalSerializer(approvals, many=True)
+                # Create a list to hold all projects with their related data
+                all_projects_data = []
 
-                document_history = Document_History.objects.all()
-                document_serializer = DocumentHistorySerializer(document_history, many=True)
+                for project in preprojects:
+                    # Serialize each project
+                    project_serializer = PreProjectNewSerializer(project)
 
-                agreements = Agreement.objects.all()
-                agreement_serializer = AgreementSerializer(agreements, many=True)
+                    # Fetch related data for the current project
+                    approvals = Approval.objects.filter(preproject=project)
+                    approvals_serializer = ApprovalSerializer(approvals, many=True)
 
-                # Combine the data
-                data = {
-                    "preproject": preproject_serializer.data,
-                    "approvals": approvals_serializer.data,
-                    "document_history": document_serializer.data,
-                    "agreement": agreement_serializer.data,
-                }
+                    document_history = Document_History.objects.filter(preproject=project)
+                    document_serializer = DocumentHistorySerializer(document_history, many=True)
 
-                return JsonResponse({"data": data}, status=status.HTTP_200_OK)
+                    agreements = Agreement.objects.filter(preproject=project)
+                    agreement_serializer = AgreementSerializer(agreements, many=True)
 
-        # Add logic for POST, PUT, DELETE if needed
+                    # Construct a dictionary for the current project with all its related data
+                    project_data = {
+                        "preproject": project_serializer.data,
+                        "approvals": approvals_serializer.data,
+                        "document_history": document_serializer.data,
+                        "agreement": agreement_serializer.data,
+                    }
 
-    # except Exception as e:
-    #     return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                    # Append this project's data to the list
+                    all_projects_data.append(project_data)
 
+                # Return the list of all projects with their related data
+                return JsonResponse({"data": all_projects_data}, status=status.HTTP_200_OK)
+            
         elif request.method == 'POST':
             print(request.data)
             try:
@@ -205,86 +209,106 @@ def pre_project_new_handler(request):
 
 @api_view(['GET', 'POST', 'DELETE'])
 @transaction.atomic
-def confirm_project_handler(request, project_id=None):
+def confirm_project_handler(request):
     try:
         if request.method == 'POST':
-            # # print(request.data)
-            # if request.content_type.startswith('multipart/form-data'):
-            data = request.POST
-            # elif request.content_type == 'application/json':
-            #     data = json.loads(request.body)
-            # else:
-            #     return JsonResponse({'error': 'Unsupported Content-Type'}, status=status.HTTP_400_BAD_REQUEST)
-            # # Handle POST request - Transfer PreProjectNew to Confirm_Project
-
-            project_id = request.GET.get('project_id')
-            # print(project_id)
+            project_id = request.query_params.get('project_id',None)
+            print(project_id)
             if not project_id:
                 return JsonResponse({'error': 'project_id is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-            try:
-                pre_project = PreProjectNew.objects.get(project_id=project_id)
-                
-                # Create Confirm_Project instance with the PreProjectNew reference
-                confirm_project = Confirm_Project.objects.create(
-                    project_id=pre_project.project_id,  # Set project_id to the PreProjectNew instance
-                    project_city=pre_project.project_city,
-                    ownership_type=pre_project.ownership_type,
-                    project_segments=pre_project.project_segments,
-                    project_name=pre_project.project_name,
-                    project_types=pre_project.project_types,
-                    project_address=pre_project.project_address,
-                    longitude=pre_project.longitude,
-                    latitude=pre_project.latitude,
-                    project_measurement=pre_project.project_measurement,
-                    project_description=pre_project.project_description,
-                    project_area=pre_project.project_area,
-                    approvals=pre_project.approvals,
-                    expenses=pre_project.expenses,
-                    document_history=pre_project.document_history,
-                )
+            # try:
+            pre_project = PreProjectNew.objects.get(project_id=project_id)
+            # Create Confirm_Project instance with the PreProjectNew reference
+            confirm_project = Confirm_Project.objects.create(
+                project_id=pre_project.project_id,  # Set project_id to the PreProjectNew instance
+                project_city=pre_project.project_city,
+                ownership_type=pre_project.ownership_type,
+                project_segments=pre_project.project_segments,
+                project_name=pre_project.project_name,
+                project_types=pre_project.project_types,
+                project_address=pre_project.project_address,
+                longitude=pre_project.longitude,
+                latitude=pre_project.latitude,
+                project_measurement=pre_project.project_measurement,
+                project_description=pre_project.project_description,
+                project_area=pre_project.project_area,
+                expenses=pre_project.expenses,
+            )
+            # confirm_project_id = confirm_project.project_id
+            approvals = Approval.objects.filter(preproject=project_id)
+            for approval in approvals:
+                # Serialize the data from `approval` to create a new ConfirmApproval
+                approval_data = {
+                    "approvalBody": approval.approvalBody,
+                    "applyDate": approval.applyDate,
+                    "employeeName": approval.employeeName,
+                    "agency": approval.agency,
+                    "approvalDate": approval.approvalDate,
+                    "validityNo": approval.validityNo,
+                    "document": approval.document,  # Assuming it's a file path
+                    "preproject": approval.preproject.project_id  # Assuming this field is related to the preproject ID
+                }
+                print(approval_data)
+                approval_serializer = ConfirmApprovalSerializer(data=approval_data)
+                # Validate and save if valid
+                if approval_serializer.is_valid():
+                    approval_serializer.save()
+                else:
+                    print(approval_serializer.errors)  # Print any errors in validation
+            
+            document_histories = Document_History.objects.filter(preproject=project_id)
+            for document_history in document_histories:
+                print(document_history)
 
-                # Handle uploads (assuming files are uploaded separately)
-                uploads = DocumentUpload.objects.get(pre_project=project_id)
+                # Serialize the data from `Document_History` to create a new Confirm_Document_History
+                document_history_data = {
+                    "documentType": document_history.documentType,
+                    "documentNo": document_history.documentNo,
+                    "issuedBy": document_history.issuedBy,
+                    "issueDate": document_history.issueDate,
+                    "validation": document_history.validation,
+                    "uploadDocument": document_history.uploadDocument,  # Assuming it's a file path
+                    "preproject": document_history.preproject.project_id  # Assuming this field is related to the preproject ID
+                }
 
-                for file in uploads:
-                    DocumentUpload.objects.create(
-                        pre_project=pre_project,  # Reference to PreProjectNew
-                        document=file,
-                        # approval_body=None,  # Assign this appropriately if needed
-                    )
-                    # uploads.append(document_upload)
+                document_history_serializer = ConfirmDocumentHistorySerializer(data=document_history_data)
 
-                # Add uploads to the Confirm_Project instance
-                confirm_project.uploads.set(uploads)
-                # print(confirm_project)
-                confirm_project.save()
+                # Validate and save if valid
+                if document_history_serializer.is_valid():
+                    document_history_serializer.save()
+                else:
+                    print(document_history_serializer.errors)  # Print any errors in validation
 
-                # Optionally, delete the PreProjectNew instance after transfer
-                pre_project.delete()
+            agreements = Agreement.objects.filter(preproject=project_id)
+            for agreement in agreements:
+                print(agreement)
+                # Serialize the data from `Agreement` to create a new Confirm_Agreement
+                agreement_data = {
+                    "upload_document": agreement.upload_document,  # Assuming it's a file path
+                    "preproject": agreement.preproject.project_id  # Assuming this field is related to the preproject ID
+                }
+                agreement_serializer = ConfirmAgreementSerializer(data=agreement_data)
+                # Validate and save if valid
+                if agreement_serializer.is_valid():
+                    agreement_serializer.save()
+                else:
+                    print(agreement_serializer.errors)  # Print any errors in validation
 
-                return JsonResponse(
-                    {'message': 'Project transferred to ConfirmProject and deleted from PreProjectNew successfully'},
-                    status=status.HTTP_201_CREATED
-                )
+            # After transfer all the data of PreProject it would delete....
+            pre_project.delete()
 
-            except PreProjectNew.DoesNotExist:
-                return JsonResponse({'error': 'Pre-Project not found'}, status=status.HTTP_404_NOT_FOUND)
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return JsonResponse({'message': "Confirm project created successfully"}, status=status.HTTP_201_CREATED)
 
         elif request.method == 'GET':
             # Handle GET request - Fetch Confirm_Project by query parameters
             try:
                 project_id = request.query_params.get('project_id', None)
-                project_city = request.query_params.get('project_city', None)
                 
                 # You can filter based on these fields
                 filters = {}
                 if project_id:
                     filters['project_id'] = project_id
-                if project_city:
-                    filters['project_city'] = project_city
 
                 # Fetch all projects matching the filters
                 projects = Confirm_Project.objects.filter(**filters)

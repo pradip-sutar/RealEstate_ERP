@@ -113,22 +113,46 @@ class Agreement(models.Model):
 
 
 class Confirm_Project(models.Model):
-    project_id = models.CharField(max_length=255)
+    project_id = models.CharField(max_length=100, unique=True, blank=True, editable=False, primary_key=True)
     project_city = models.CharField(max_length=255)
-    ownership_type = models.CharField(max_length=3)
-    project_segments = models.JSONField()  # Store as a JSON array
+    ownership_type = models.CharField(max_length=10)
+    project_segments = models.CharField(max_length=100)
     project_name = models.CharField(max_length=255)
-    project_types = models.JSONField()
-    project_address = models.CharField(max_length=255)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    project_measurement = models.DecimalField(max_digits=10, decimal_places=2)
+    project_types = models.CharField(max_length=100)
+    project_address=models.CharField(max_length=250)
+    longitude=models.CharField(max_length=200)
+    latitude=models.CharField(max_length=200)
+    project_measurement=models.CharField(max_length=255)
+    measurement_unit=models.CharField(max_length=255)
     project_description = models.TextField()
     project_area = models.CharField(max_length=250)
-    expenses = models.JSONField()  # JSONField for multiple expense entries
+    expenses = models.JSONField()
     
     def __str__(self):
         return self.project_name
+
+class Confirm_Approval(models.Model):
+    approvalBody = models.CharField(max_length=100)
+    applyDate = models.DateField()
+    employeeName = models.CharField(max_length=100)
+    agency = models.CharField(max_length=100)
+    approvalDate = models.DateField()
+    validityNo = models.BigIntegerField()
+    document = models.FileField(upload_to='confirm_approval_document/', null=True, blank=True)
+    preproject = models.ForeignKey(Confirm_Project,on_delete=models.CASCADE)
+
+class Confirm_Document_History(models.Model):
+    documentType = models.CharField(max_length=100)
+    documentNo = models.BigIntegerField()
+    issuedBy = models.CharField(max_length=100)
+    issueDate = models.DateField()
+    validation = models.CharField(max_length=100)
+    uploadDocument = models.FileField(upload_to='confirm_document_history/', null=True, blank=True)
+    preproject = models.ForeignKey(Confirm_Project,on_delete=models.CASCADE)
+
+class Confirm_Agreement(models.Model):
+    upload_document = models.FileField(upload_to='confirm_agreements/', null=True, blank=True)
+    preproject = models.ForeignKey(Confirm_Project,on_delete=models.CASCADE)
 
     
 

@@ -222,34 +222,62 @@ def system_company_details_handler(request):
     elif request.method == 'GET':
         company_id = request.query_params.get('company_id', None)
         if company_id is not None:
-            company_details = System_company_detail.objects.filter(companyid=company_id)
-            brand_details = System_brand_detail.objects.filter(company_id=company_id)
-            contact_details = System_contact_detail.objects.filter(company_id=company_id)
-            business_details = System_business_detail.objects.filter(company_id=company_id)
-            social_details = System_social_detail.objects.filter(company_id=company_id)
-            other_details = System_other_detail.objects.filter(company_id=company_id)
+            try:
+                # Fetch the company details
+                company_details = System_company_detail.objects.get(companyid=company_id)
 
-            details_serializer = SystemCompanyDetailsSerializer(company_details, many=True)
-            brand_serializer = SystemCompanyBrandSerializer(brand_details, many=True)
-            contact_serializer = SystemContactDetailSerializer(contact_details, many=True)
-            business_serializer = SystemBusinessDetailSerializer(business_details, many=True)
-            social_serializer = SystemSocialDetailSerializer(social_details, many=True)
-            other_serializer = SystemOtherDetailSerializer(other_details, many=True)
+                # Fetch related brand, contact, business, social, and other details
+                brand_details = System_brand_detail.objects.filter(company_id=company_details)
+                contact_details = System_contact_detail.objects.filter(company_id=company_details)
+                business_details = System_business_detail.objects.filter(company_id=company_details)
+                social_details = System_social_detail.objects.filter(company_id=company_details)
+                other_details = System_other_detail.objects.filter(company_id=company_details)
 
-            return JsonResponse({
-                "data": {
-                    "details": details_serializer.data,
-                    "brand_info": brand_serializer.data,
-                    "contact_info": contact_serializer.data,
-                    "business_details": business_serializer.data,
-                    "social_details": social_serializer.data,
-                    "other_details": other_serializer.data
+                # Serialize all the details
+                details_serializer = SystemCompanyDetailsSerializer(company_details)
+                brand_serializer = SystemCompanyBrandSerializer(brand_details, many=True)
+                contact_serializer = SystemContactDetailSerializer(contact_details, many=True)
+                business_serializer = SystemBusinessDetailSerializer(business_details, many=True)
+                social_serializer = SystemSocialDetailSerializer(social_details, many=True)
+                other_serializer = SystemOtherDetailSerializer(other_details, many=True)
+
+                # Construct the response data
+                response_data = {
+                    "data": {
+                        "details": details_serializer.data,
+                        "brand_info": brand_serializer.data,
+                        "contact_info": contact_serializer.data,
+                        "business_details": business_serializer.data,
+                        "social_details": social_serializer.data,  # Multiple entries
+                        "other_details": other_serializer.data     # Multiple entries
+                    }
                 }
-            }, status=200)
+
+                # Return the JSON response
+                return JsonResponse(response_data, status=200)
+
+            except System_company_detail.DoesNotExist:
+                return JsonResponse({"error": f"Company with id {company_id} not found."}, status=404)
+
         else:
+            # If no company_id is provided, return all company details
             company_details = System_company_detail.objects.all()
             serializer = SystemCompanyDetailsSerializer(company_details, many=True)
             return JsonResponse({"data": serializer.data}, status=200)
+        
+    elif request.method == 'DELETE':
+        company_id = request.query_params.get('company_id', None)
+        if company_id is not None:
+            try:
+                # Fetch and delete the company details
+                company_details = System_company_detail.objects.get(companyid=company_id)
+                company_details.delete()
+
+                return JsonResponse({"message": "Company details deleted successfully."}, status=200)
+
+            except System_company_detail.DoesNotExist:
+                return JsonResponse({"error": f"Company with id {company_id} not found."}, status=404)
+
         
         
 @api_view(['POST', 'GET'])
@@ -270,7 +298,7 @@ def system_branch_type_handler(request):
         return JsonResponse({"data": serializer.data}, status=200)
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'DELETE', 'PUT', 'PATCH'])
 @transaction.atomic
 def system_branch_handler(request):
     if request.method == 'POST':
@@ -355,27 +383,93 @@ def system_branch_handler(request):
 
     elif request.method == 'GET':
         try:
-            # Fetching all details
-            branch_details = System_branch_details.objects.all()
-            branch_brand = System_branch_brand.objects.all()
-            branch_contact = System_branch_contact.objects.all()
+            branch_id = request.query_params.get('branch_id', None)
+            if branch_id:
+                try:
+                    branch_instance = System_branch_details.objects.get(id=branch_id)
+                    branch_brand = System_branch_brand.objects.get(brand_branch_id=branch_id)
+                    branch_contact = System_branch_contact.objects.get(contact_branch_id=branch_id)
+                except System_branch_details.DoesNotExist:
+                    return JsonResponse({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)
+                
+                branch_details_serializer = SystemBranchDetailsSerializer(branch_instance)
+                branch_brand_serializer = SystemBranchBrandSerializer(branch_brand)
+                branch_contact_serializer = SystemBranchContactSerializer(branch_contact)
+                data = [branch_details_serializer.data, branch_brand_serializer.data, branch_contact_serializer.data]
+                return JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+            else:
+                # Fetching all details
+                branch_details = System_branch_details.objects.all()
+                branch_brand = System_branch_brand.objects.all()
+                branch_contact = System_branch_contact.objects.all()
 
-            # Serializing data
-            branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
-            branch_brand_serializer = SystemBranchBrandSerializer(branch_brand, many=True)
-            branch_contact_serializer = SystemBranchContactSerializer(branch_contact, many=True)
+                # Serializing data
+                branch_details_serializer = SystemBranchDetailsSerializer(branch_details, many=True)
+                branch_brand_serializer = SystemBranchBrandSerializer(branch_brand, many=True)
+                branch_contact_serializer = SystemBranchContactSerializer(branch_contact, many=True)
 
-            # Returning JsonResponse
-            return JsonResponse({
-                'branch_details': branch_details_serializer.data,
-                'branch_brand': branch_brand_serializer.data,
-                'branch_contact': branch_contact_serializer.data,
-            }, status=status.HTTP_200_OK)
+                # Returning JsonResponse
+                return JsonResponse({
+                    'branch_details': branch_details_serializer.data,
+                    'branch_brand': branch_brand_serializer.data,
+                    'branch_contact': branch_contact_serializer.data,
+                }, status=status.HTTP_200_OK)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # PUT method - Update the entire branch record
+    elif request.method == 'PUT':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is None:
+            return JsonResponse({'error': 'Branch ID is required for updating'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            branch_instance = System_branch_details.objects.get(id=branch_id)
+        except System_branch_details.DoesNotExist:
+            return JsonResponse({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        branch_details_serializer = SystemBranchDetailsSerializer(branch_instance, data=request.data, partial=False)
+
+        if branch_details_serializer.is_valid():
+            branch_details_serializer.save()
+            return JsonResponse(branch_details_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse(branch_details_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # PATCH method - Partially update the branch details
+    elif request.method == 'PATCH':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is None:
+            return JsonResponse({'error': 'Branch ID is required for partial update'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            branch_instance = System_branch_details.objects.get(id=branch_id)
+        except System_branch_details.DoesNotExist:
+            return JsonResponse({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        branch_details_serializer = SystemBranchDetailsSerializer(branch_instance, data=request.data, partial=True)
+
+        if branch_details_serializer.is_valid():
+            branch_details_serializer.save()
+            return JsonResponse(branch_details_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return JsonResponse(branch_details_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # DELETE method - Delete a branch by ID
+    elif request.method == 'DELETE':
+        branch_id = request.query_params.get('branch_id', None)
+        if branch_id is None:
+            return JsonResponse({'error': 'Branch ID is required for deletion'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            branch_instance = System_branch_details.objects.get(id=branch_id)
+        except System_branch_details.DoesNotExist:
+            return JsonResponse({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        branch_instance.delete()
+        return JsonResponse({'message': 'Branch deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['POST', 'GET'])
+@api_view(['POST', 'GET', 'DELETE', 'PUT', 'PATCH'])
 @transaction.atomic
 def system_bank_details_handler(request):
     if request.method == 'POST':
@@ -416,9 +510,22 @@ def system_bank_details_handler(request):
         bank_details = System_bank_details.objects.filter(**filters)
         serializer = SystemBankDetailsSerializer(bank_details, many=True)
         return JsonResponse({"data": serializer.data}, status=200)
+    
+    elif request.method == 'DELETE':
+        bank_id = request.query_params.get('bank_id', None)
+        if bank_id is None:
+            return JsonResponse({'error': 'Bank ID is required for deletion'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            bank_instance = System_bank_details.objects.get(id=bank_id)
+        except System_bank_details.DoesNotExist:
+            return JsonResponse({'error': 'Bank not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        bank_instance.delete()
+        return JsonResponse({'message': 'Bank deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE', 'PUT', 'PATCH'])
 def system_board_of_directors_handler(request):
     if request.method == 'POST':
         # Ensure that we can handle both single and multiple instances
@@ -435,9 +542,28 @@ def system_board_of_directors_handler(request):
             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'GET':
-        directors = System_Board_of_Directors.objects.all()
-        serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
-        return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+        board_id = request.query_params.get('board_id',None)
+        if board_id:
+            directors = System_Board_of_Directors.objects.filter(id=board_id)
+            serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+        else:
+            directors = System_Board_of_Directors.objects.all()
+            serializer = SystemBoardOfDirectorsSerializer(directors, many=True)
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK, safe=False)
+        
+    elif request.method == 'DELETE':
+        board_id = request.query_params.get('board_id', None)
+        if board_id is None:
+            return JsonResponse({'error': 'Board ID is required for deletion'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            board_instance = System_Board_of_Directors.objects.get(id=board_id)
+        except System_Board_of_Directors.DoesNotExist:
+            return JsonResponse({'error': 'Board not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        board_instance.delete()
+        return JsonResponse({'message': 'Board deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST'])
 @transaction.atomic

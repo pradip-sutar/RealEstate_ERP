@@ -47,9 +47,25 @@ class ApprovalBodySerializer(serializers.ModelSerializer):
         fields = '__all__'  # Include ID for reference if needed
 
 
-# class ConfirmProjectSerializer(serializers.ModelSerializer):
-#     project_id = serializers.CharField(source='project_id.project_id')  # Access project_id from PreProjectNew
-#     uploads = DocumentUploadSerializer(many=True, read_only=True)
-#     class Meta:
-#         model = Confirm_Project
-#         fields = '__all__' 
+class ConfirmProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Confirm_Project
+        fields = '__all__' 
+
+# Serializer for Confirm_Approval model
+class ConfirmApprovalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Confirm_Approval
+        fields = '__all__'  # This includes all fields of the model
+
+# Serializer for Confirm_Document_History model
+class ConfirmDocumentHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Confirm_Document_History
+        fields = '__all__'  # This includes all fields of the model
+
+# Serializer for Confirm_Agreement model
+class ConfirmAgreementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Confirm_Agreement
+        fields = '__all__'  # This includes all fields of the model

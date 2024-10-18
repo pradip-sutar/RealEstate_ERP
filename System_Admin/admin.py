@@ -17,6 +17,7 @@ class SystemCompanyDetailsAdmin(admin.ModelAdmin):
 @admin.register(System_branch_details)
 class SystemBranchDetailsAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'branch_name', 
         'alias', 
         'company_id', 
