@@ -24,7 +24,7 @@ def pre_project_new_handler(request):
 
                     # Fetch related data (approvals, documents, agreements) linked to the project
                     approvals = Approval.objects.filter(preproject=project)
-                    approvals_serializer = ApprovalBodySerializer(approvals, many=True)
+                    approvals_serializer = ApprovalSerializer(approvals, many=True)
 
                     document_history = Document_History.objects.filter(preproject=project)
                     document_serializer = DocumentHistorySerializer(document_history, many=True)
