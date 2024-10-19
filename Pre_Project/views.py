@@ -302,55 +302,38 @@ def confirm_project_handler(request):
 
         elif request.method == 'GET':
             # Handle GET request - Fetch Confirm_Project by query parameters
-            try:
-                project_id = request.query_params.get('project_id', None)
-                
-                # You can filter based on these fields
-                filters = {}
-                if project_id:
-                    filters['project_id'] = project_id
+            project_id = request.query_params.get('project_id', None)
 
-                # Fetch all projects matching the filters
-                projects = Confirm_Project.objects.filter(**filters)
+            if project_id:
+                # Fetch a single project by project_id
+                try:
+                    project = Confirm_Project.objects.get(project_id=project_id)
+                    project_serializer = ConfirmProjectSerializer(project)
 
-                if not projects.exists():
-                    return JsonResponse({'message': 'No projects found'}, status=status.HTTP_404_NOT_FOUND)
+                    # Fetch related data (approvals, documents, agreements) linked to the project
+                    approvals = Confirm_Approval.objects.filter(preproject=project)
+                    approvals_serializer = ConfirmApprovalSerializer(approvals, many=True)
 
-                # Prepare the response data
-                project_data = []
-                for project in projects:
-                    # Include the uploaded document URLs
-                    uploads = [
-                        {
-                            "file_name": upload.document.name,  # Filename of the document
-                            "file_url": upload.document.url    # URL to access the document
-                        }
-                        for upload in project.uploads.all()
-                    ]
-                    
-                    project_data.append({
-                        'project_id': project.project_id,
-                        'project_city': project.project_city,
-                        'ownership_type': project.ownership_type,
-                        'project_segments': project.project_segments,
-                        'project_name': project.project_name,
-                        'project_types': project.project_types,
-                        'project_address': project.project_address,
-                        'longitude': project.longitude,
-                        'latitude': project.latitude,
-                        'project_measurement': project.project_measurement,
-                        'project_description': project.project_description,
-                        'project_area': project.project_area,
-                        'approvals': project.approvals,
-                        'expenses': project.expenses,
-                        'document_history': project.document_history,
-                        'uploads': uploads  # Add uploads (file URLs)
-                    })
+                    document_history = Confirm_Document_History.objects.filter(preproject=project)
+                    document_serializer = ConfirmDocumentHistorySerializer(document_history, many=True)
 
-                return JsonResponse({'projects': project_data}, status=status.HTTP_200_OK, safe=False)
+                    agreements = Confirm_Agreement.objects.filter(preproject=project)
+                    agreement_serializer = ConfirmAgreementSerializer(agreements, many=True)
 
-            except Exception as e:
-                return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    # Combine the project and related data
+                    data = {
+                        "preproject": project_serializer.data,
+                        "approvals": approvals_serializer.data,
+                        "document_history": document_serializer.data,
+                        "agreement": agreement_serializer.data,
+                    }
+                    return JsonResponse({"data": data}, status=status.HTTP_200_OK)
+
+                except PreProjectNew.DoesNotExist:
+                    return JsonResponse(
+                        {"error": f"Pre-Project with project_id '{project_id}' does not exist."},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
 
 
         elif request.method == 'DELETE':
