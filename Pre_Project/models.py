@@ -113,7 +113,7 @@ class Agreement(models.Model):
 
 
 class Confirm_Project(models.Model):
-    project_id = models.CharField(max_length=100, unique=True, blank=True, primary_key=True)
+    project_id = models.CharField(max_length=100, unique=True, primary_key=True)
     project_city = models.CharField(max_length=255)
     ownership_type = models.CharField(max_length=10)
     project_segments = models.CharField(max_length=100)
