@@ -187,26 +187,6 @@ def pre_project_new_handler(request):
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-
-# @api_view(['POST'])
-# @transaction.atomic
-# def delete_pre_project_handler(request, id=None):
-#     try:
-#         if request.method == 'POST':
-#             if id:
-#                 try:
-#                     project = PreProjectNew.objects.get(id=id)
-#                     project.delete()
-#                     return JsonResponse({'message': 'Pre-Project deleted'}, status=status.HTTP_200_OK)
-#                 except PreProjectNew.DoesNotExist:
-#                     return JsonResponse({'error': 'Pre-Project not found'}, status=status.HTTP_404_NOT_FOUND)
-#             else:
-#                 return JsonResponse({'error': 'ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
-#     except Exception as e:
-#         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
 @api_view(['GET', 'POST', 'DELETE'])
 @transaction.atomic
 def confirm_project_handler(request):
@@ -329,11 +309,45 @@ def confirm_project_handler(request):
                     }
                     return JsonResponse({"data": data}, status=status.HTTP_200_OK)
 
-                except PreProjectNew.DoesNotExist:
+                except Confirm_Project.DoesNotExist:
                     return JsonResponse(
-                        {"error": f"Pre-Project with project_id '{project_id}' does not exist."},
+                        {"error": f"Confirm Project with project_id '{project_id}' does not exist."},
                         status=status.HTTP_404_NOT_FOUND
                     )
+            else:
+                # Fetch all projects
+                preprojects = Confirm_Project.objects.all()
+
+                # Create a list to hold all projects with their related data
+                all_projects_data = []
+
+                for project in preprojects:
+                    # Serialize each project
+                    project_serializer = ConfirmProjectSerializer(project)
+
+                    # Fetch related data for the current project
+                    approvals = Confirm_Approval.objects.filter(preproject=project)
+                    approvals_serializer = ConfirmApprovalSerializer(approvals, many=True)
+
+                    document_history = Confirm_Document_History.objects.filter(preproject=project)
+                    document_serializer = ConfirmDocumentHistorySerializer(document_history, many=True)
+
+                    agreements = Confirm_Agreement.objects.filter(preproject=project)
+                    agreement_serializer = ConfirmAgreementSerializer(agreements, many=True)
+
+                    # Construct a dictionary for the current project with all its related data
+                    project_data = {
+                        "preproject": project_serializer.data,
+                        "approvals": approvals_serializer.data,
+                        "document_history": document_serializer.data,
+                        "agreement": agreement_serializer.data,
+                    }
+
+                    # Append this project's data to the list
+                    all_projects_data.append(project_data)
+
+                # Return the list of all projects with their related data
+                return JsonResponse({"data": all_projects_data}, status=status.HTTP_200_OK)
 
 
         elif request.method == 'DELETE':
