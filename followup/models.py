@@ -24,7 +24,7 @@ class Enquiry(models.Model):
     mode_of_communication = models.CharField(max_length=20)
     visit = models.CharField(max_length=255)
     qoute = models.CharField(max_length=255)
-    product=models.ForeignKey(Project_Product, on_delete=models.CASCADE)
+    # product=models.ForeignKey(Project_Product, on_delete=models.CASCADE)
  
 
     def __str__(self):
@@ -39,7 +39,7 @@ class Quotation(models.Model):
     date = models.DateField()
     stage = models.CharField(max_length=20)
     project = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
-    products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
+    # products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     quotation = models.TextField(blank=True)
     follow_up_status = models.CharField(max_length=20, blank=True)
@@ -57,7 +57,7 @@ class Visit(models.Model):
     date = models.DateField()
     stage = models.CharField(max_length=20)
     project = models.ForeignKey(Confirm_Project, on_delete=models.CASCADE)
-    products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
+    # products = models.ForeignKey(Project_Product, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     visit = models.CharField(max_length=255, blank=True)
     follow_up_status = models.CharField(max_length=20, blank=True)
@@ -80,6 +80,6 @@ class Site_visit_schedule(models.Model):
     date = models.DateField()
     time = models.TimeField()
     field_employee_name = models.CharField(max_length=255)
-    sub_projects = models.ForeignKey(Project_subproject_details, on_delete=models.CASCADE)
+    # sub_projects = models.ForeignKey(Project_subproject_details, on_delete=models.CASCADE)
     property = models.CharField(max_length=255)
     report = models.CharField(max_length=255)

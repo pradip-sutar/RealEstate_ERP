@@ -20,7 +20,7 @@ urlpatterns = [
     path('api/',include('Enquiry_Bucket.urls')),
     path('api/',include('Roles_Rights.urls')),
     path('api/',include('Authentication.urls')),
-    path('api/',include('subproject.urls')),
+    path('api/',include('Project_Project.urls')),
     path('api/',include('subproject_product.urls')),
     path('api/',include('incentive.urls')),
     path('api/',include('customer.urls')),

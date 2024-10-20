@@ -80,7 +80,7 @@ class PreProjectNew(models.Model):
 
         # Zero-pad the serial number to 3 digits
         serial_str = f"{new_serial:03d}"
-        return f"{base_id}/{serial_str}"
+        return f"{base_id}-{serial_str}"
 
 
     def __str__(self):

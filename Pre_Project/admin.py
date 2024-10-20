@@ -40,7 +40,7 @@ class ConfirmProjectAdmin(admin.ModelAdmin):
     list_display = ('project_id', 'project_name', 'project_city', 'ownership_type', 'project_segments', 'project_types', 'project_area')
     search_fields = ('project_name', 'project_city', 'project_types', 'ownership_type')
     list_filter = ('project_city', 'ownership_type', 'project_segments', 'project_types')
-    readonly_fields = ('project_id',)  # Making project_id read-only since it's not editable
+    # readonly_fields = ('project_id',)  # Making project_id read-only since it's not editable
 
 @admin.register(Confirm_Approval)
 class ConfirmApprovalAdmin(admin.ModelAdmin):

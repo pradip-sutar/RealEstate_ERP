@@ -358,11 +358,6 @@ def confirm_project_handler(request):
                 try:
                     # Get the Confirm_Project instance by project_id
                     confirm_project = Confirm_Project.objects.get(project_id=project_id)
-                    
-                    # Log for debugging
-                    # print(f"Deleting Confirm_Project: {confirm_project.project_name}")
-                    
-                    # Delete the project
                     confirm_project.delete()
 
                     return JsonResponse(

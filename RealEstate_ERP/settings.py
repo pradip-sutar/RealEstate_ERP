@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'Roles_Rights',
     'Agent_Management',
     # 'Authentication',
-    'subproject',
+    'Project_Project',
     'subproject_product',
     'incentive',
     'customer',

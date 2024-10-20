@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class SubprojectConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'subproject'
+    name = 'Project_Project'
