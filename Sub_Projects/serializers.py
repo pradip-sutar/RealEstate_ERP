@@ -17,3 +17,18 @@ class ProductCostSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCost
         fields = '__all__'
+
+class ProductInventoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductInventories
+        fields = '__all__'
+
+class SubProductImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubProductImages
+        fields = '__all__'
+
+class PaymentSlabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentSlab
+        fields = '__all__'

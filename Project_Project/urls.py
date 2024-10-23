@@ -11,5 +11,4 @@ urlpatterns = [
     path('project_nearby_handler/', nearby_handler, name='paid_amenity_handler'),
     path('project_specification_handler/', project_specification_handler, name='project_specification_handler'),
     path('project_images_handler/', project_images_handler, name='project_images_handler'),
-    path('generate_pdf/', generate_pdf, name='generate_pdf'),
 ]

@@ -440,37 +440,3 @@ def project_images_handler(request):
         image_instance = ProjectImages.objects.get(id=image_id)
         image_instance.delete()
         return JsonResponse({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-    
-import pdfkit
-from django.http import HttpResponse
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-import os
-
-@api_view(['POST'])
-def generate_pdf(request):
-    # Example: Get HTML content from the POST request body (you can modify as needed)
-    html_content = request.data.get('html_content', '')
-    print(html_content)
-    if not html_content:
-        return Response({"error": "No HTML content provided."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    # Define options for PDF (optional, customize margins, etc.)
-    options = {
-        'page-size': 'A4',
-        'margin-top': '10mm',
-        'margin-right': '10mm',
-        'margin-bottom': '10mm',
-        'margin-left': '10mm',
-        'encoding': "UTF-8",
-    }
-
-    # Generate PDF from HTML content
-    pdf_file = pdfkit.from_string(html_content, False, options=options)
-
-    # Prepare the response as a downloadable file
-    response = HttpResponse(pdf_file, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="generated_file.pdf"'
-
-    return response
