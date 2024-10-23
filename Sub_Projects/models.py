@@ -3,7 +3,7 @@ from Project_Project.models import *
 
 # 1. Product Details Model
 class ProductDetails(models.Model):
-    code = models.CharField(max_length=100)
+    code = models.AutoField(primary_key=True)
     segment = models.CharField(max_length=100)
     product_type = models.CharField(max_length=100)
     variant = models.CharField(max_length=100)
