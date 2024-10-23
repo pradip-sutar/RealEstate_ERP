@@ -37,6 +37,7 @@ class ProjectPaidAmenitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NearBySerializer(serializers.ModelSerializer):
+    segment_type = serializers.CharField(source='type.name',read_only=True)
     class Meta:
         model = NearBy
         fields = '__all__'

@@ -5,20 +5,32 @@ from django.http import JsonResponse
 from django.db import transaction
 from .models import *
 from .serializers import *
-
+from Project_Project.models import Confirm_Project
+from Pre_Project.serializers import ConfirmProjectSerializer
 # 1. View for Project_subproject_details
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 @transaction.atomic
 def project_subproject_details_handler(request):
     if request.method == 'GET':
-        subproject_id = request.query_params.get('subproject_id', None)
         confirm_project_id = request.query_params.get('confirm_project_id', None)
-        if subproject_id:
-            subprojects = Project_subproject_details.objects.filter(id=subproject_id)
-        else:
+        if confirm_project_id:
             subprojects = Project_subproject_details.objects.filter(confirm_project_id=confirm_project_id)
-        serializer = ProjectSubprojectDetailsSerializer(subprojects, many=True)
-        return JsonResponse(serializer.data, safe=False)
+            confirm_project = Confirm_Project.objects.filter(project_id=confirm_project_id).first()
+            if not confirm_project:
+                return JsonResponse({"error": "Confirm project not found"}, status=404)
+
+            confirm_project_serializer = ConfirmProjectSerializer(confirm_project)
+            confirm_project_details = confirm_project_serializer.data  # Get serialized confirm project data
+
+            # Serialize subprojects and embed confirm_project_details in each subproject
+            subproject_serializer = ProjectSubprojectDetailsSerializer(subprojects, many=True)
+            subproject_data = subproject_serializer.data
+            # Add confirm_project_details to each subproject in the response
+            for subproject in subproject_data:
+                subproject['confirm_project_details'] = confirm_project_details
+            return JsonResponse(subproject_data, safe=False)
+        else:
+            return JsonResponse({"error": "confirm_project_id is required"}, status=400)
 
     elif request.method == 'POST':
         data = request.data
@@ -65,9 +77,9 @@ def project_subproject_details_handler(request):
 @transaction.atomic
 def project_commission_handler(request):
     if request.method == 'GET':
-        commission_id = request.query_params.get('commission_id', None)
-        if commission_id:
-            commissions = Project_Commission.objects.filter(id=commission_id)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            commissions = Project_Commission.objects.filter(confirm_project_id=confirm_project_id)
         else:
             commissions = Project_Commission.objects.all()
         serializer = ProjectCommissionSerializer(commissions, many=True)
@@ -118,9 +130,9 @@ def project_commission_handler(request):
 @transaction.atomic
 def project_payment_slab_handler(request):
     if request.method == 'GET':
-        slab_id = request.query_params.get('slab_id', None)
-        if slab_id:
-            slabs = Project_PaymentSlab.objects.filter(id=slab_id)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            slabs = Project_PaymentSlab.objects.filter(confirm_project_id=confirm_project_id)
         else:
             slabs = Project_PaymentSlab.objects.all()
         serializer = ProjectPaymentSlabSerializer(slabs, many=True)
@@ -171,9 +183,9 @@ def project_payment_slab_handler(request):
 @transaction.atomic
 def project_tax_handler(request):
     if request.method == 'GET':
-        tax_id = request.query_params.get('tax_id', None)
-        if tax_id:
-            taxes = Project_Tax.objects.filter(id=tax_id)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            taxes = Project_Tax.objects.filter(confirm_project_id=confirm_project_id)
         else:
             taxes = Project_Tax.objects.all()
         serializer = ProjectTaxSerializer(taxes, many=True)
@@ -224,9 +236,9 @@ def project_tax_handler(request):
 @transaction.atomic
 def project_amenity_handler(request):
     if request.method == 'GET':
-        amenity_id = request.query_params.get('amenity_id', None)
-        if amenity_id:
-            amenities = Project_Amenity.objects.filter(id=amenity_id)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            amenities = Project_Amenity.objects.filter(confirm_project_id=confirm_project_id)
         else:
             amenities = Project_Amenity.objects.all()
         serializer = ProjectAmenitySerializer(amenities, many=True)
@@ -277,9 +289,9 @@ def project_amenity_handler(request):
 @transaction.atomic
 def project_paid_amenity_handler(request):
     if request.method == 'GET':
-        paid_amenity_id = request.query_params.get('paid_amenity_id', None)
-        if paid_amenity_id:
-            paid_amenities = Project_PaidAmenity.objects.filter(id=paid_amenity_id)
+        confirm_project_id = request.query_params.get('confirm_project_id', None)
+        if confirm_project_id:
+            paid_amenities = Project_PaidAmenity.objects.filter(confirm_project_id=confirm_project_id)
         else:
             paid_amenities = Project_PaidAmenity.objects.all()
         serializer = ProjectPaidAmenitySerializer(paid_amenities, many=True)
@@ -354,8 +366,8 @@ def nearby_handler(request):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        confirm_project_id = request.query_params.get('confirm_project_id')
-        nearby = NearBy.objects.get(confirm_project_id=confirm_project_id)
+        nearby_id = request.query_params.get('nearby_id')
+        nearby = NearBy.objects.get(id=nearby_id)
         nearby.delete()
         return JsonResponse({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -389,8 +401,8 @@ def project_specification_handler(request):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        confirm_project_id = request.query_params.get('confirm_project_id')
-        specification = ProjectSpecification.objects.get(confirm_project_id=confirm_project_id)
+        specification_id = request.query_params.get('specification_id')
+        specification = ProjectSpecification.objects.get(id=specification_id)
         specification.delete()
         return JsonResponse({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -424,7 +436,41 @@ def project_images_handler(request):
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
-        confirm_project_id = request.query_params.get('confirm_project_id')
-        image_instance = ProjectImages.objects.get(confirm_project_id=confirm_project_id)
+        image_id = request.query_params.get('image_id')
+        image_instance = ProjectImages.objects.get(id=image_id)
         image_instance.delete()
         return JsonResponse({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    
+import pdfkit
+from django.http import HttpResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+import os
+
+@api_view(['POST'])
+def generate_pdf(request):
+    # Example: Get HTML content from the POST request body (you can modify as needed)
+    html_content = request.data.get('html_content', '')
+    print(html_content)
+    if not html_content:
+        return Response({"error": "No HTML content provided."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Define options for PDF (optional, customize margins, etc.)
+    options = {
+        'page-size': 'A4',
+        'margin-top': '10mm',
+        'margin-right': '10mm',
+        'margin-bottom': '10mm',
+        'margin-left': '10mm',
+        'encoding': "UTF-8",
+    }
+
+    # Generate PDF from HTML content
+    pdf_file = pdfkit.from_string(html_content, False, options=options)
+
+    # Prepare the response as a downloadable file
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="generated_file.pdf"'
+
+    return response

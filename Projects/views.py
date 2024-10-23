@@ -177,20 +177,19 @@ def project_tax_list(request):
     
 
 @api_view(['GET', 'POST'])
-def project_product_list(request):
+def project_segment_handler(request):
     if request.method == 'GET':
-        confirm_project_id = request.query_params.get('confirm_project_id', None)
-        print(confirm_project_id)
-        if confirm_project_id:
-            product_details = Project_Product.objects.filter(confirm_project_id=confirm_project_id)
+        segment_id = request.query_params.get('segment_id', None)
+        if segment_id:
+            product_details = Segment.objects.filter(id=segment_id)
         else:
-            product_details = Project_Product.objects.all()
-        serializer = ProjectProductSerializer(product_details, many=True)
+            product_details = Segment.objects.all()
+        serializer = ProjectSegmentSerializer(product_details, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
         print(request.data)
-        serializer = ProjectProductSerializer(data=request.data)
+        serializer = ProjectSegmentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
@@ -198,136 +197,133 @@ def project_product_list(request):
     
 
 @api_view(['GET', 'POST'])
-def project_add_payment_list_handler(request):
+def project_varient_handler(request):
     if request.method == 'GET':
-        confirm_project_id = request.query_params.get('confirm_project_id', None)
-        print(confirm_project_id)
-        if confirm_project_id:
-            payments = Project_add_Payment.objects.filter(confirm_project_id=confirm_project_id)
+        varient_id = request.query_params.get('varient_id', None)
+        if varient_id:
+            payments = Varient.objects.filter(id=varient_id)
         else:
-            payments = Project_add_Payment.objects.all()
-        
-        serializer = ProjectAddPaymentSerializer(payments, many=True)
+            payments = Varient.objects.all()
+        serializer = ProjectVarientSerializer(payments, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
-        serializer = ProjectAddPaymentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
-        
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
-    
-@api_view(['GET', 'POST'])
-def project_add_amenity_list_handler(request):
-    if request.method == 'GET':
-        confirm_project_id = request.query_params.get('confirm_project_id', None)
-        if confirm_project_id:
-            commission = Project_add_Amenity.objects.filter(confirm_project_id=confirm_project_id)
-        else:
-            commission = Project_add_Amenity.objects.all()
-        
-        serializer = ProjectAddAmenitySerializer(commission, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    
-    elif request.method == 'POST':
-        serializer = ProjectAddAmenitySerializer(data=request.data)
+        serializer = ProjectVarientSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
     
-
-@api_view(['GET', 'POST'])
-@transaction.atomic
-def project_add_commission_handler(request):
-    if request.method == 'GET':
-        confirm_project_id = request.query_params.get('confirm_project_id', None)
-        if confirm_project_id:
-            commission = Project_add_Commission.objects.filter(confirm_project_id=confirm_project_id)
-        else:
-            commission = Project_add_Commission.objects.all()
+# @api_view(['GET', 'POST'])
+# def project_add_amenity_list_handler(request):
+#     if request.method == 'GET':
+#         confirm_project_id = request.query_params.get('confirm_project_id', None)
+#         if confirm_project_id:
+#             commission = Project_add_Amenity.objects.filter(confirm_project_id=confirm_project_id)
+#         else:
+#             commission = Project_add_Amenity.objects.all()
         
-        serializer = ProjectAddCommissionSerializer(commission, many=True)
-        return JsonResponse(serializer.data, safe=False)
+#         serializer = ProjectAddAmenitySerializer(commission, many=True)
+#         return JsonResponse(serializer.data, safe=False)
+    
+#     elif request.method == 'POST':
+#         serializer = ProjectAddAmenitySerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED, safe=False)
+#         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST, safe=False)
+    
 
-    elif request.method == 'POST':
-        data = request.data
-        serializer = ProjectAddCommissionSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Commission added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# @transaction.atomic
+# def project_add_commission_handler(request):
+#     if request.method == 'GET':
+#         confirm_project_id = request.query_params.get('confirm_project_id', None)
+#         if confirm_project_id:
+#             commission = Project_add_Commission.objects.filter(confirm_project_id=confirm_project_id)
+#         else:
+#             commission = Project_add_Commission.objects.all()
         
-@api_view(['GET', 'POST'])
-@transaction.atomic
-def project_add_tax_handler(request):
-    if request.method == 'GET':
-        taxes = Project_add_Tax.objects.all()
-        serializer = ProjectAddTaxSerializer(taxes, many=True)
-        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+#         serializer = ProjectAddCommissionSerializer(commission, many=True)
+#         return JsonResponse(serializer.data, safe=False)
 
-    elif request.method == 'POST':
-        data = request.data
-        serializer = ProjectAddTaxSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Tax added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     elif request.method == 'POST':
+#         data = request.data
+#         serializer = ProjectAddCommissionSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Commission added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+# @api_view(['GET', 'POST'])
+# @transaction.atomic
+# def project_add_tax_handler(request):
+#     if request.method == 'GET':
+#         taxes = Project_add_Tax.objects.all()
+#         serializer = ProjectAddTaxSerializer(taxes, many=True)
+#         return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
 
-@api_view(['GET', 'POST'])
-@transaction.atomic
-def project_add_paid_amenity_handler(request):
-    if request.method == 'GET':
-        confirm_project_id = request.query_params.get('confirm_project_id', None)
-        if confirm_project_id:
-            paidamenity = Project_add_PaidAmenity.objects.filter(confirm_project_id=confirm_project_id)
-        else:
-            paidamenity = Project_add_PaidAmenity.objects.all()
-        serializer = ProjectAddPaidAmenitySerializer(paidamenity, many=True)
-        return JsonResponse(serializer.data, safe=False)
+#     elif request.method == 'POST':
+#         data = request.data
+#         serializer = ProjectAddTaxSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Tax added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'POST':
-        data = request.data
-        serializer = ProjectAddPaidAmenitySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Paid amenity added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# @transaction.atomic
+# def project_add_paid_amenity_handler(request):
+#     if request.method == 'GET':
+#         confirm_project_id = request.query_params.get('confirm_project_id', None)
+#         if confirm_project_id:
+#             paidamenity = Project_add_PaidAmenity.objects.filter(confirm_project_id=confirm_project_id)
+#         else:
+#             paidamenity = Project_add_PaidAmenity.objects.all()
+#         serializer = ProjectAddPaidAmenitySerializer(paidamenity, many=True)
+#         return JsonResponse(serializer.data, safe=False)
 
-@api_view(['GET', 'POST'])
-@transaction.atomic
-def project_add_price_handler(request):
-    if request.method == 'GET':
-        prices = Project_add_Price.objects.all()
-        serializer = ProjectAddPriceSerializer(prices, many=True)
-        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+#     elif request.method == 'POST':
+#         data = request.data
+#         serializer = ProjectAddPaidAmenitySerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Paid amenity added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'POST':
-        data = request.data
-        serializer = ProjectAddPriceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Price added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# @transaction.atomic
+# def project_add_price_handler(request):
+#     if request.method == 'GET':
+#         prices = Project_add_Price.objects.all()
+#         serializer = ProjectAddPriceSerializer(prices, many=True)
+#         return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
 
-@api_view(['GET', 'POST'])
-@transaction.atomic
-def project_add_inventory_handler(request):
-    if request.method == 'GET':
-        inventories = Project_add_Inventory.objects.all()
-        serializer = ProjectAddInventorySerializer(inventories, many=True)
-        return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+#     elif request.method == 'POST':
+#         data = request.data
+#         serializer = ProjectAddPriceSerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Price added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'POST':
-        data = request.data
-        serializer = ProjectAddInventorySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({"message": "Inventory added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# @transaction.atomic
+# def project_add_inventory_handler(request):
+#     if request.method == 'GET':
+#         inventories = Project_add_Inventory.objects.all()
+#         serializer = ProjectAddInventorySerializer(inventories, many=True)
+#         return JsonResponse({"data": serializer.data}, status=status.HTTP_200_OK)
+
+#     elif request.method == 'POST':
+#         data = request.data
+#         serializer = ProjectAddInventorySerializer(data=data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse({"message": "Inventory added successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+#         else:
+#             return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

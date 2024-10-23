@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'Pre_Project',
     'Projects',
     'Department',
-    'Project_Products',
+    'Sub_Projects',
     'Enquiry_Bucket',
     'Roles_Rights',
     'Agent_Management',
