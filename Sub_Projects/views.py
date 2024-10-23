@@ -12,7 +12,7 @@ def product_details_handler(request):
     if request.method == 'GET':
         subproject_id = request.query_params.get('subproject_id',None)
         if subproject_id:
-            product_detail = ProductDetails.objects.filter(subproject_id=subproject_id)
+            product_details = ProductDetails.objects.filter(subproject_id=subproject_id)
         else:
             product_details = ProductDetails.objects.all()
         serializer = ProductDetailsSerializer(product_details, many=True)
