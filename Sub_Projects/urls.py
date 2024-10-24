@@ -11,7 +11,7 @@ urlpatterns = [
     path('product_cost_handler/', views.product_cost_handler, name='product_cost_handler'),
     path('product_inventories_handler/', views.product_inventories_handler, name='product_inventories_handler'),
     path('sub_product_images_handler/', views.sub_product_images_handler, name='sub_product_images_handler'),
-    path('payment_slab_handler/', views.payment_slab_handler, name='payment_slab_handler'),
+    path('sub_payment_slab_handler/', views.payment_slab_handler, name='sub_payment_slab_handler'),
 
 ]
 
