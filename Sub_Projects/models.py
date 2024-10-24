@@ -1,12 +1,12 @@
 from django.db import models
 from Project_Project.models import *
-
+from Projects.models import *
 # 1. Product Details Model
 class ProductDetails(models.Model):
     code = models.AutoField(primary_key=True)
-    segment = models.CharField(max_length=100)
-    product_type = models.CharField(max_length=100)
-    variant = models.CharField(max_length=100)
+    segment = models.ForeignKey(Segment,on_delete=models.CASCADE)
+    product_type = models.ForeignKey(Project_Product_Type,on_delete=models.CASCADE)
+    variant = models.ForeignKey(Varient,on_delete=models.CASCADE)
     layout = models.ImageField(upload_to='product_details_layouts/')
     units = models.IntegerField()
     subproject_id = models.ForeignKey(Project_subproject_details, on_delete=models.CASCADE)
@@ -27,8 +27,8 @@ class RaiseCost(models.Model):
 # 3. Product Cost Model
 class ProductCost(models.Model):
     product_type_code = models.CharField(max_length=100)
-    product_type = models.CharField(max_length=100)
-    variant = models.CharField(max_length=100)
+    product_type = models.ForeignKey(Project_Product_Type,on_delete=models.CASCADE)
+    variant = models.ForeignKey(Varient,on_delete=models.CASCADE)
     floor_lane = models.CharField(max_length=100)
     facing = models.CharField(max_length=100)
     build_up_area = models.CharField(max_length=100)
@@ -44,8 +44,8 @@ class ProductCost(models.Model):
     
 class ProductInventories(models.Model):
     product_type_code = models.CharField(max_length=100)
-    product_type = models.CharField(max_length=100)
-    variant = models.CharField(max_length=100)
+    product_type = models.ForeignKey(Project_Product_Type,on_delete=models.CASCADE)
+    variant = models.ForeignKey(Varient,on_delete=models.CASCADE)
     floor_lane = models.CharField(max_length=100)
     facing = models.CharField(max_length=100)
     build_up_area = models.CharField(max_length=100)
@@ -68,7 +68,7 @@ class SubProductImages(models.Model):
         return self.type
 
 class PaymentSlab(models.Model):
-    segment = models.CharField(max_length=100)
+    segment = models.ForeignKey(Segment,on_delete=models.CASCADE)
     milestones = models.CharField(max_length=100)
     payment_slab = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()

@@ -12,8 +12,8 @@ urlpatterns = [
 
 
     #==================== master end-points ==========================================#
-    path('project_segments/', views.project_segment_list, name='project_segment_list'),
-    path('project_types/', views.project_type_list, name='project_type_list'),
+        path('project_segments/', views.project_segment_list, name='project_segment_list'),
+        path('project_types/', views.project_type_list, name='project_type_list'),
     path('document_types/', views.document_type_list, name='document_type_list'),
 
     path('approval-bodies/', views.approval_body_view, name='approval-body-list-create'),  # For listing and creating
