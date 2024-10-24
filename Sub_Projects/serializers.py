@@ -11,6 +11,7 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
 
 # 2. Raise Cost Serializer
 class RaiseCostSerializer(serializers.ModelSerializer):
+    raise_cost_name = serializers.CharField(source='raise_type.name',read_only=True)
     class Meta:
         model = RaiseCost
         fields = '__all__'

@@ -16,7 +16,7 @@ class ProductDetails(models.Model):
 
 # 2. Raise Cost Model
 class RaiseCost(models.Model):
-    raise_type = models.CharField(max_length=100)
+    raise_type = models.ForeignKey(Project_RaiseCost_Type,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     cost_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
     subproject_id = models.ForeignKey(Project_subproject_details, on_delete=models.CASCADE)
