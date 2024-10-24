@@ -78,5 +78,11 @@ class Project_Tax(models.Model):
 class Segment(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 class Varient(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
