@@ -47,7 +47,7 @@ def raise_cost_handler(request):
     if request.method == 'GET':
         subproject_id = request.query_params.get('subproject_id',None)
         if subproject_id:
-            raise_cost = RaiseCost.objects.filter(subproject_id=subproject_id)
+            raise_costs = RaiseCost.objects.filter(subproject_id=subproject_id)
         else:
             raise_costs = RaiseCost.objects.all()
         serializer = RaiseCostSerializer(raise_costs, many=True)
