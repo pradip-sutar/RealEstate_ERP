@@ -47,7 +47,7 @@ class ProductInventories(models.Model):
     product_type = models.ForeignKey(Project_Product_Type,on_delete=models.CASCADE)
     variant = models.ForeignKey(Varient,on_delete=models.CASCADE)
     floor_lane = models.CharField(max_length=100)
-    facing = models.CharField(max_length=100)
+    facing = models.ForeignKey(Project_Facing_Master,on_delete=models.CASCADE)
     build_up_area = models.CharField(max_length=100)
     carpet_area = models.CharField(max_length=100)
     layout = models.ImageField(upload_to='product_cost_layouts/')

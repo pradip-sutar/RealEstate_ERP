@@ -25,6 +25,7 @@ class ProductCostSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductInventoriesSerializer(serializers.ModelSerializer):
+    facing_name = serializers.CharField(source='facing.name', read_only=True)
     product_type_name = serializers.CharField(source='product_type.name', read_only=True)
     varient_name = serializers.CharField(source='variant.name', read_only=True)
     class Meta:
